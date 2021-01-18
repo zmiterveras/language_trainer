@@ -553,7 +553,7 @@ class MyWindowE(QtWidgets.QWidget):
         lE_key = QtWidgets.QLineEdit()
         lE_kf = QtWidgets.QLineEdit()
         lE_w = QtWidgets.QLineEdit()
-        lE_f = QtWidgets.QLineEdit()
+        lE_f = QtWidgets.QLineEdit() 
         lE_pl = QtWidgets.QLineEdit()
         cb_pn = QtWidgets.QComboBox()
         cb_pn.addItems(self.lst2)
@@ -653,6 +653,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.clear()
         self.edit_dict()
         
+###################################################Deutsch        
 class MyWindowD(MyWindowE):
     def __init__(self,parent=None):
         MyWindowE.__init__(self, parent)
@@ -663,7 +664,7 @@ class MyWindowD(MyWindowE):
             value2 = cb_ar.currentText()
             value3 = lE_w.text()
             value4 = lE_f.text()
-            value5 = lE_pl.text()
+            value5 = cb_pl.currentText()
             value6_1 = cb_pn.currentText()
             value6_2 = cb_pn.currentIndex()
             if (value1 and value3) == '':
@@ -729,15 +730,16 @@ class MyWindowD(MyWindowE):
         tlavbox = QtWidgets.QVBoxLayout()
         hbox1 = QtWidgets.QHBoxLayout()
         lE_key = QtWidgets.QLineEdit()
-        article = ['', 'der', 'die', 'das']
+        #article = ['', 'der', 'die', 'das']
         cb_ar = QtWidgets.QComboBox()
-        cb_ar.addItems(article)
+        cb_ar.addItems(['', 'der', 'die', 'das'])
         hbox1.addWidget(lE_key)
         hbox1.addWidget(cb_ar)
         btn1 = QtWidgets.QPushButton('ä, ö, ü, ß')
         lE_w = QtWidgets.QLineEdit()
         lE_f = QtWidgets.QLineEdit()
-        lE_pl = QtWidgets.QLineEdit()
+        cb_pl = QtWidgets.QComboBox()
+        cb_pl.addItems(['','-¨e', '-e', '-¨er', '-en', '-¨', '-s' ])
         cb_pn = QtWidgets.QComboBox()
         cb_pn.addItems(self.lst2)
         btn2 = QtWidgets.QPushButton('Добавить')
@@ -751,13 +753,14 @@ class MyWindowD(MyWindowE):
             cb_pn.setCurrentText(new[-1])
             value_k_old = new[0]
             cb_ar.setCurrentText(new[1])
+            cb_pl.setCurrentText(new[-2])
         new = new[:1] + new[2:]
-        for n, i  in enumerate([lE_key, lE_w, lE_f, lE_pl]):
+        for n, i  in enumerate([lE_key, lE_w, lE_f]):
             i.setText(new[n])       
         form.addRow('Иностранное слово:*', hbox1)
         form.addRow('Перевод:*', lE_w)
         form.addRow('Формы глагола:',lE_f)
-        form.addRow('Множественное число:',lE_pl)
+        form.addRow('Множественное число:',cb_pl)
         form.addRow('Часть речи:', cb_pn)
         form.addRow('Умляут', btn1)
         form.addRow(hbox2)
