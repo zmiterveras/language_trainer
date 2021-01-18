@@ -438,6 +438,31 @@ class MyWindowE(QtWidgets.QWidget):
             btn.clicked.connect(onCheck)
             btn.setAutoDefault(True) # Enter
             ent.returnPressed.connect(btn.click) #enter
+        else:
+            self.onResult()
+            
+    def onResult(self):
+        self.clear()
+        label_rq = QtWidgets.QLabel('<center><b>Задано вопросов:</b></center>')
+        label_rqq = QtWidgets.QLabel('<center>' + str(self.q_count) + '</center>')
+        label_rta = QtWidgets.QLabel('<center><b>Получено правильных ответов:</b></center>')
+        label_rtaa = QtWidgets.QLabel('<center>' + str(self.t_ans_count) + '</center>')
+        label_rtaa.setStyleSheet("color:green")
+        label_rfa = QtWidgets.QLabel('<center><b>Получено неправильных ответов:</b></center>')
+        label_rfaa = QtWidgets.QLabel('<center>' + str(self.q_count - self.t_ans_count) + '</center>')
+        label_rfaa.setStyleSheet("color:red")
+        for i in (label_rq, label_rqq, label_rta, label_rtaa, label_rfa, label_rfaa):
+            self.vtop_t.addWidget(i)
+        self.hLine(self.vtop_t)
+        if self.t_ans_count >= 0.8*self.q_count:
+            rr ='Хорошая работа!!!'
+        elif self.t_ans_count < 0.4*self.q_count:
+            rr = 'Это никуда не годится('
+        else:
+            rr = 'Нужно поднажать)'
+        label_rr = QtWidgets.QLabel('<center><b>' + rr + '</b></center>')
+        self.vtop_t.addWidget(label_rr)
+        
             
     def onTrueAnswer(self):
         self.clear()
@@ -476,7 +501,10 @@ class MyWindowE(QtWidgets.QWidget):
         btnc.setFocus()
         btnc.clicked.connect(self.onRun)
         btnc.setAutoDefault(True)
+        btns = QtWidgets.QPushButton('Stop', self)
+        btns.clicked.connect(self.onResult)
         self.htop_b.addWidget(btnc)
+        self.htop_b.addWidget(btns)
         text = "Правильных ответов/вопросов: " + str(self.t_ans_count) + "/" + str(self.q_count)
         self.label_am.setText(text)
         
