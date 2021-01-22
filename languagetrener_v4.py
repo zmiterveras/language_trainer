@@ -49,6 +49,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.count += 1
         
     def create(self):
+        if not self.win:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран изучаемый язык')
+            return
         s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря')
         if ok and not s:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не задано имя словаря')
@@ -77,6 +80,9 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
     def openDict(self):
+        if not self.win:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран изучаемый язык')
+            return
         open_flag = 0
         self.win.dict_name, fil_ = QtWidgets.QFileDialog.getOpenFileName(None, caption='Открыть словарь')
         if not self.win.dict_name:
@@ -115,6 +121,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def viewAll(self):
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
+            return
         tabview = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
         conn.setDatabaseName(self.win.dict_name)
@@ -124,18 +131,20 @@ class MainWindow(QtWidgets.QMainWindow):
         stm.setSort(1, QtCore.Qt.AscendingOrder)
         stm.setRelation(6,QtSql.QSqlRelation('part', 'partnumber', 'partname'))
         stm.select()
-        var_names = ['Фонетика', 'Артикль']
+        var_names = ['Фонетика', 'Арт-ль']
         if self.lang == 'de':
             var_name = var_names[1]
+            l_1, l_2, l_4, l_5 = 160, 50, 180, 45
         else:
             var_name = var_names[0]
-        for i,n in ((1, 'Слово'),(2, var_name),(3,'Перевод'),(4,'Формы глагла'),(5,'Мн.число'),(6,'Часть речи')):
+            l_1, l_2, l_4, l_5 = 100, 100, 150, 75
+        for i,n in ((1, 'Слово'),(2, var_name),(3,'Перевод'),(4,'Формы глагола'),(5,'Мн.ч-ло'),(6,'Часть речи')):
             stm.setHeaderData(i, QtCore.Qt.Horizontal, n)
         vbox = QtWidgets.QVBoxLayout()
         tv = QtWidgets.QTableView()
         tv.setModel(stm)
         tv.hideColumn(0)
-        for i,n in ((1, 100),(2, 100),(3,300),(4,150),(5,75),(6,150)):
+        for i,n in ((1, l_1),(2, l_2),(3,300),(4,l_4),(5,l_5),(6,150)):
             tv.setColumnWidth(i, n)
         vbox.addWidget(tv)
         btncl = QtWidgets.QPushButton('Close')
