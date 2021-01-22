@@ -731,12 +731,9 @@ class MyWindowD(MyWindowE):
                 if field == 0:
                     lE_key.insert(key)
                     lE_key.setFocus()
-                elif field == 1:
+                else:
                     lE_f.insert(key)
                     lE_f.setFocus()
-                else:
-                    lE_pl.insert(key)
-                    lE_pl.setFocus()
                 tlf.close()
             dic = ['Ä', 'ä' , 'Ö', 'ö' , 'Ü', 'ü', 'ß']
             tlf = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
@@ -744,7 +741,7 @@ class MyWindowD(MyWindowE):
             self.listBox(dic, flag=2, place=tvbox)
             tlfb = QtWidgets.QPushButton('Ok')
             tlcb = QtWidgets.QComboBox()
-            tlcb.addItems(['Слово', 'Форма гл.', 'Мн.число'])
+            tlcb.addItems(['Слово', 'Форма гл.'])
             tvbox.addWidget(tlcb)
             tvbox.addWidget(tlfb)
             tlfb.clicked.connect(onInsert)
@@ -767,7 +764,7 @@ class MyWindowD(MyWindowE):
         lE_w = QtWidgets.QLineEdit()
         lE_f = QtWidgets.QLineEdit()
         cb_pl = QtWidgets.QComboBox()
-        cb_pl.addItems(['','-¨e', '-e', '-¨er', '-en', '-¨', '-s' ])
+        cb_pl.addItems(['','-¨e', '-e', '-¨er', '-n', '-en', '-¨', '-s' ])
         cb_pn = QtWidgets.QComboBox()
         cb_pn.addItems(self.lst2)
         btn2 = QtWidgets.QPushButton('Добавить')
