@@ -18,21 +18,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(QtWidgets.QLabel(text_ch))       
         menuBar = self.menuBar()
         myMenu = menuBar.addMenu('&File')
-        action = myMenu.addAction('&Create',  self.create)
-        action = myMenu.addAction('&Open',  self.openDict)
-        action = myMenu.addAction('&ViewAll',  self.viewAll)
-        action = myMenu.addAction('&Close',  self.close)
+        action = myMenu.addAction('Test',  self.test)
         myLang = menuBar.addMenu('&Language')
-        action = myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu, statusBar))
-        action = myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu, statusBar))
+        action = myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu))
+        action = myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu))
         myAbout = menuBar.addMenu('&About')
         action = myAbout.addAction('&About programm', self.aboutProgramm)
         action = myAbout.addAction('About &me', self.aboutMe)
-        statusBar = self.statusBar()
+        self.statusBar = self.statusBar()
         self.count = 1
         
         
-    def langChoose(self, x, myMenu, statusBar):
+    def langChoose(self, x, myMenu):
+        if self.count != 1: ########
+            if not self.check_change():
+                return########
         if x == 1:
             self.win = MyWindowE()
             self.lang = 'eng '
@@ -42,16 +42,38 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
         if self.count == 1:
-            self.win.label_am.setText('Empty')
+            action = myMenu.addAction('&Create',  self.create)
+            action = myMenu.addAction('&Open',  self.openDict)
             action = myMenu.addAction('&Save',  self.win.save_dict)
-            statusBar.addWidget(self.win.status)
-            statusBar.addPermanentWidget(self.win.label_am)
-            self.count += 1
+            action = myMenu.addAction('&ViewAll',  self.viewAll)
+            action = myMenu.addAction('&Close',  self.close)
+        self.statusBar.addWidget(self.win.status)
+        self.statusBar.addPermanentWidget(self.win.label_am)
+        self.win.label_am.setText('Empty - ' + self.lang)
+        self.count += 1
+        
+            
+    def check_change(self, flag=None): #######
+        result = QtWidgets.QMessageBox.question(None, 'Предупреждение',
+                    'Вы действительно хотите открыть новый словарь?\n' +
+                    'Все несохранненые данные при этом будут потеряны.',
+                    buttons=QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    defaultButton=QtWidgets.QMessageBox.No)
+        if result == 16384:
+            if flag == 1:
+                self.win.label_am.setText(self.lang)
+                self.win.status.setText('')
+                self.win.saveValues()
+                self.win.dw = {}
+            else:
+                self.statusBar.removeWidget(self.win.status)
+                self.statusBar.removeWidget(self.win.label_am)
+            return True
+        
+            
+        
         
     def create(self):
-        if not self.win:
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран изучаемый язык')
-            return
         s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря')
         if ok and not s:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не задано имя словаря')
@@ -80,14 +102,13 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
     def openDict(self):
-        if not self.win:
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран изучаемый язык')
-            return
         open_flag = 0
+        if self.win.dict_name:
+            if not self.check_change(flag=1):
+                return
         self.win.dict_name, fil_ = QtWidgets.QFileDialog.getOpenFileName(None, caption='Открыть словарь')
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
-        #print(self.win.dict_name)
         querystr = """select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural,
             part.partname from dic inner join part on dic.partnumber=part.partnumber
             """
@@ -177,6 +198,15 @@ class MainWindow(QtWidgets.QMainWindow):
         
     def aboutMe(self):
         QtWidgets.QMessageBox.information(None,'Об авторе', 'Автор: @zmv')
+        
+    def test(self):
+        try:
+            print('dict_name: ', self.win.dict_name)
+            print('dw: ', list(self.win.dw.keys())[:5])
+            print('new: ', self.win.newname[0][0])
+        except:
+            print("don't exist")
+            
           
     def closeEvent(self, e):
         #print('Goodbye')
@@ -189,18 +219,24 @@ class MainWindow(QtWidgets.QMainWindow):
 class MyWindowE(QtWidgets.QWidget):
     def __init__(self,parent=None):
         QtWidgets.QWidget.__init__(self, parent)
-        self.makeWidget()
-        self.dw = {}
-        self.newname = [[],[],[],[],[],[]]
-        self.delname = []
-        self.changenote = [[],[],[],[],[],[],[]]
         self.dict_name = ''
+        self.dw = {}
         self.search_flag = 0
         self.search_key = 0
         self.lst1 = [1,2,3,4,5]
         self.lst2 = ['существительное','глагол','прилагательное','наречие', 'другое']
-        self.label_am = QtWidgets.QLabel('')
-        self.status = QtWidgets.QLabel('')
+        self.label_am = QtWidgets.QLabel()
+        self.status = QtWidgets.QLabel()
+        self.makeWidget()
+        self.saveValues()
+        
+    def saveValues(self): #######
+        self.newname = [[],[],[],[],[],[]]
+        self.delname = []
+        self.changenote = [[],[],[],[],[],[],[]]
+        
+        
+        
         
     def makeWidget(self):
         text = 'Программа тренажер\nОткройте или создайте словарь\n Используйте меню File'
@@ -229,6 +265,9 @@ class MyWindowE(QtWidgets.QWidget):
         self.setLayout(self.vbox)
         
     def save_dict(self):
+        if not self.dict_name:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')#######
+            return
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
         conn.setDatabaseName(self.dict_name)
         conn.open()
@@ -266,6 +305,8 @@ class MyWindowE(QtWidgets.QWidget):
             query.bindValue(':id', self.changenote[0])
             query.execBatch()
         conn.close()
+        self.saveValues()#####
+        
         
     def clear(self):
         for i in reversed(range(self.vtop_t.count())):
@@ -355,13 +396,11 @@ class MyWindowE(QtWidgets.QWidget):
             key = self.search_key
         else:
             key = self.lv.currentIndex().data()
-            #print(key)
         keyfon = self.dw[key][1]
         word = self.dw[key][2]
         form = self.dw[key][3]
         plural = self.dw[key][4]
         partname = self.dw[key][5]
-        #print(keyfon, word, form, plural, partname)
         view()
         
     def onTrenning_mode(self):
@@ -727,8 +766,6 @@ class MyWindowD(MyWindowE):
                     for j, n in enumerate(dcont):
                         self.newname[j].append(n)
                 QtWidgets.QMessageBox.information(None,'Инфо', txt + value1)
-                #print('newname= ', self.newname)
-                #print('changenote=', self.changenote)
                 self.clear()
                 self.edit_dict()
                 tla.close()
@@ -764,7 +801,6 @@ class MyWindowD(MyWindowE):
         tlavbox = QtWidgets.QVBoxLayout()
         hbox1 = QtWidgets.QHBoxLayout()
         lE_key = QtWidgets.QLineEdit()
-        #article = ['', 'der', 'die', 'das']
         cb_ar = QtWidgets.QComboBox()
         cb_ar.addItems(['', 'der', 'die', 'das'])
         hbox1.addWidget(lE_key)
@@ -773,7 +809,7 @@ class MyWindowD(MyWindowE):
         lE_w = QtWidgets.QLineEdit()
         lE_f = QtWidgets.QLineEdit()
         cb_pl = QtWidgets.QComboBox()
-        cb_pl.addItems(['','-¨e', '-e', '-¨er', '-n', '-en', '-¨', '-s' ])
+        cb_pl.addItems(['','-¨e', '-e', '-¨er', '-n', '-en', '-¨en', '-¨', '-s' ])
         cb_pn = QtWidgets.QComboBox()
         cb_pn.addItems(self.lst2)
         btn2 = QtWidgets.QPushButton('Добавить')
