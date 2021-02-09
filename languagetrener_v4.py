@@ -30,9 +30,9 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
     def langChoose(self, x, myMenu):
-        if self.count != 1: ########
+        if self.count != 1: 
             if not self.check_change():
-                return########
+                return
         if x == 1:
             self.win = MyWindowE()
             self.lang = 'eng '
@@ -53,7 +53,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.count += 1
         
             
-    def check_change(self, flag=None): #######
+    def check_change(self, flag=None): 
         result = QtWidgets.QMessageBox.question(None, 'Предупреждение',
                     'Вы действительно хотите открыть новый словарь?\n' +
                     'Все несохранненые данные при этом будут потеряны.',
@@ -230,7 +230,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.makeWidget()
         self.saveValues()
         
-    def saveValues(self): #######
+    def saveValues(self): 
         self.newname = [[],[],[],[],[],[]]
         self.delname = []
         self.changenote = [[],[],[],[],[],[],[]]
@@ -305,7 +305,7 @@ class MyWindowE(QtWidgets.QWidget):
             query.bindValue(':id', self.changenote[0])
             query.execBatch()
         conn.close()
-        self.saveValues()#####
+        self.saveValues()
         
         
     def clear(self):
@@ -406,8 +406,25 @@ class MyWindowE(QtWidgets.QWidget):
     def onTrenning_mode(self):
         def onChoice():
             self.ch_value = cb_tm.currentIndex()
+            if self.ch_value == 3:
+                if self.page_max < 2:
+                    text = 'Не достаточно слов для постаничного режима\nИспользуйте другой режим тренировки!'
+                    QtWidgets.QMessageBox.warning(None, 'Предупреждение', text)
+                    return
+                self.page = sp_box.value()
             tm.close()
             self.onTrenning()
+            
+        def pagenation():
+            self.page_max = int(len(self.dw) / 40)
+            self.ch_value = cb_tm.currentIndex()
+            if self.ch_value != 3 or self.page_max < 2:
+                return
+            cb_tm.setEnabled(False)
+            sp_box.setValue(1)
+            sp_box.setRange(1, self.page_max)
+            tmvbox.insertWidget(1, sp_box)
+            
             
         tm = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tm.setWindowTitle('Выбор тренировки')
@@ -415,7 +432,9 @@ class MyWindowE(QtWidgets.QWidget):
         tm.setWindowModality(QtCore.Qt.WindowModal)
         tmvbox = QtWidgets.QVBoxLayout()
         cb_tm = QtWidgets.QComboBox()
-        cb_tm.addItems(['Случайный выбор','Последние 20','Последние 40'])
+        cb_tm.addItems(['Случайный выбор','Последние 20','Последние 40', 'Страница'])
+        cb_tm.currentIndexChanged.connect(pagenation)
+        sp_box = QtWidgets.QSpinBox()
         btn = QtWidgets.QPushButton('Выбрать')
         btn.clicked.connect(onChoice)
         tmvbox.addWidget(cb_tm)
@@ -424,25 +443,34 @@ class MyWindowE(QtWidgets.QWidget):
         tm.show()
         
     def onTrenning(self):
-        def sort(x):
+        def sort(x, flag=None):
             def sortid(item):
                 return item[0]
             if (len(self.newname[0]) + len(list(self.dw.keys()))) < x+1:
-                QtWidgets.QMessageBox.warning(None,'Предупреждение','Не достаточно слов для данного режима тренировки')
-                return
+                QtWidgets.QMessageBox.warning(None,'Предупреждение','Не достаточно слов для данного режима тренировки\n' +
+                                              'Текущая тренировка будет не полной!')
             oldlist = []
             for key in list(self.dw.keys()):
                 if self.dw[key][0] != None:
                     oldlist.append((self.dw[key][0], key))
             oldlist.sort(key=sortid)
-            if len(self.newname[0]) >= x:
-                self.dw_key = self.newname[0][-x:]
+            if not flag:
+                if len(self.newname[0]) >= x:
+                    self.dw_key = self.newname[0][-x:]
+                else:
+                    self.dw_key = self.newname[0]
+                    for item in oldlist[-(x-len(self.newname[0])):]:
+                        self.dw_key.append(item[1])
             else:
-                self.dw_key = self.newname[0]
-                for item in oldlist[-(x-len(self.newname[0])):]:
+                start = (self.page - 1)*40 
+                for item in oldlist[start:start+40]:
                     self.dw_key.append(item[1])
                     
+                
+                
+                    
         if self.dw:
+            self.dw_key = []
             self.status.setText('Режим: тренировка')
             self.q_count = 0
             self.t_ans_count = 0
@@ -450,8 +478,10 @@ class MyWindowE(QtWidgets.QWidget):
                 self.dw_key = list(self.dw.keys())
             elif self.ch_value == 1:
                 sort(20)
-            else:
+            elif self.ch_value == 2:
                 sort(40)
+            else:
+                sort(1, flag=1)
             self.onRun()
         else:
             self.clear()
@@ -733,13 +763,45 @@ class MyWindowE(QtWidgets.QWidget):
 class MyWindowD(MyWindowE):
     def __init__(self,parent=None):
         MyWindowE.__init__(self, parent)
+        self.ask = ''
+        
+        
+    def fon_sign(self):
+        def onInsert():
+            key = self.lv.currentIndex().data()
+            if not self.ask:
+                field = tlcb.currentIndex()
+                if field == 0:
+                    self.lE_key.insert(key)
+                    self.lE_key.setFocus()
+                else:
+                    self.lE_f.insert(key)
+                    self.lE_f.setFocus()
+            else:
+                self.ent.insert(key)
+                self.ent.setFocus()
+            tlf.close()
+            
+        dic = ['Ä', 'ä' , 'Ö', 'ö' , 'Ü', 'ü', 'ß']
+        tlf = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
+        tvbox = QtWidgets.QVBoxLayout()
+        self.listBox(dic, flag=2, place=tvbox)
+        tlfb = QtWidgets.QPushButton('Ok')
+        if not self.ask:
+            tlcb = QtWidgets.QComboBox()
+            tlcb.addItems(['Слово', 'Форма гл.'])
+            tvbox.addWidget(tlcb)
+        tvbox.addWidget(tlfb)
+        tlfb.clicked.connect(onInsert)
+        tlf.setLayout(tvbox)
+        tlf.show()
         
     def onAdd(self, a,new=('','','','','', ''), flag=None):
         def getName():
-            value1 = lE_key.text()
+            value1 = self.lE_key.text()
             value2 = cb_ar.currentText()
             value3 = lE_w.text()
-            value4 = lE_f.text()
+            value4 = self.lE_f.text()
             value5 = cb_pl.currentText()
             value6_1 = cb_pn.currentText()
             value6_2 = cb_pn.currentIndex()
@@ -770,29 +832,7 @@ class MyWindowD(MyWindowE):
                 self.edit_dict()
                 tla.close()
                 
-        def fon_sign():
-            def onInsert():
-                key = self.lv.currentIndex().data()
-                field = tlcb.currentIndex()
-                if field == 0:
-                    lE_key.insert(key)
-                    lE_key.setFocus()
-                else:
-                    lE_f.insert(key)
-                    lE_f.setFocus()
-                tlf.close()
-            dic = ['Ä', 'ä' , 'Ö', 'ö' , 'Ü', 'ü', 'ß']
-            tlf = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-            tvbox = QtWidgets.QVBoxLayout()
-            self.listBox(dic, flag=2, place=tvbox)
-            tlfb = QtWidgets.QPushButton('Ok')
-            tlcb = QtWidgets.QComboBox()
-            tlcb.addItems(['Слово', 'Форма гл.'])
-            tvbox.addWidget(tlcb)
-            tvbox.addWidget(tlfb)
-            tlfb.clicked.connect(onInsert)
-            tlf.setLayout(tvbox)
-            tlf.show()
+        
         
         tla = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tla.setWindowTitle('Добавить')
@@ -800,14 +840,14 @@ class MyWindowD(MyWindowE):
         #tla.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         tlavbox = QtWidgets.QVBoxLayout()
         hbox1 = QtWidgets.QHBoxLayout()
-        lE_key = QtWidgets.QLineEdit()
+        self.lE_key = QtWidgets.QLineEdit()
         cb_ar = QtWidgets.QComboBox()
         cb_ar.addItems(['', 'der', 'die', 'das'])
-        hbox1.addWidget(lE_key)
+        hbox1.addWidget(self.lE_key)
         hbox1.addWidget(cb_ar)
         btn1 = QtWidgets.QPushButton('ä, ö, ü, ß')
         lE_w = QtWidgets.QLineEdit()
-        lE_f = QtWidgets.QLineEdit()
+        self.lE_f = QtWidgets.QLineEdit()
         cb_pl = QtWidgets.QComboBox()
         cb_pl.addItems(['','-¨e', '-e', '-¨er', '-n', '-en', '-¨en', '-¨', '-s' ])
         cb_pn = QtWidgets.QComboBox()
@@ -825,20 +865,54 @@ class MyWindowD(MyWindowE):
             cb_ar.setCurrentText(new[1])
             cb_pl.setCurrentText(new[-2])
         new = new[:1] + new[2:]
-        for n, i  in enumerate([lE_key, lE_w, lE_f]):
+        for n, i  in enumerate([self.lE_key, lE_w, self.lE_f]):
             i.setText(new[n])       
         form.addRow('Иностранное слово:*', hbox1)
         form.addRow('Перевод:*', lE_w)
-        form.addRow('Формы глагола:',lE_f)
+        form.addRow('Формы глагола:',self.lE_f)
         form.addRow('Множественное число:',cb_pl)
         form.addRow('Часть речи:', cb_pn)
         form.addRow('Умляут', btn1)
         form.addRow(hbox2)
-        btn1.clicked.connect(fon_sign)
+        btn1.clicked.connect(self.fon_sign)
         btn2.clicked.connect(getName)
         btn3.clicked.connect(tla.close)
         tla.setLayout(form)
         tla.show()
+        
+    def onRun(self):
+        def onCheck():
+            self.ch = self.ent.text()
+            if self.ch == '':
+                QtWidgets.QMessageBox.warning(None,'Предупреждение','Не получен ответ')
+            elif self.ch == self.ask:
+                self.t_ans_count += 1
+                self.onTrueAnswer()
+            else:
+                self.onFalseAnswer()
+
+        if self.dw_key:
+            self.q_count += 1
+            self.ask = random.choice(self.dw_key)
+            self.dw_key.remove(self.ask)
+            self.quest_word = self.dw[self.ask][2]
+            question = 'Переведите слово: <b>' + self.quest_word + '</b>'
+            self.clear()
+            label_q = QtWidgets.QLabel('<center>'+question+'</center>')
+            self.vtop_t.addWidget(label_q)
+            self.ent = QtWidgets.QLineEdit('', self)
+            self.ent.setFocus()
+            self.vtop_t.addWidget(self.ent)
+            btn_u = QtWidgets.QPushButton('умляут')
+            self.vtop_t.addWidget(btn_u)
+            btn_u.clicked.connect(self.fon_sign)
+            btn = QtWidgets.QPushButton('Ok')
+            self.vtop_t.addWidget(btn)
+            btn.clicked.connect(onCheck)
+            btn.setAutoDefault(True) # Enter
+            self.ent.returnPressed.connect(btn.click) #enter
+        else:
+            self.onResult()
         
 
 if __name__ == '__main__':
