@@ -18,7 +18,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(QtWidgets.QLabel(text_ch))       
         menuBar = self.menuBar()
         myMenu = menuBar.addMenu('&File')
-        action = myMenu.addAction('Test',  self.test)
+        #action = myMenu.addAction('Test',  self.test)
         myLang = menuBar.addMenu('&Language')
         action = myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu))
         action = myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu))
@@ -199,6 +199,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def aboutMe(self):
         QtWidgets.QMessageBox.information(None,'Об авторе', 'Автор: @zmv')
         
+    """    
     def test(self):
         try:
             print('dict_name: ', self.win.dict_name)
@@ -206,6 +207,7 @@ class MainWindow(QtWidgets.QMainWindow):
             print('new: ', self.win.newname[0][0])
         except:
             print("don't exist")
+    """
             
           
     def closeEvent(self, e):
@@ -671,7 +673,6 @@ class MyWindowE(QtWidgets.QWidget):
         hbox.addWidget(btn3)
         form = QtWidgets.QFormLayout()
         k = 0
-        #print('new=', new)
         for i in (lE_key, lE_kf, lE_w, lE_f, lE_pl):
             i.setText(new[k])
             k += 1
@@ -903,7 +904,7 @@ class MyWindowD(MyWindowE):
             self.ent = QtWidgets.QLineEdit('', self)
             self.ent.setFocus()
             self.vtop_t.addWidget(self.ent)
-            btn_u = QtWidgets.QPushButton('умляут')
+            btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
             self.vtop_t.addWidget(btn_u)
             btn_u.clicked.connect(self.fon_sign)
             btn = QtWidgets.QPushButton('Ok')
@@ -918,7 +919,7 @@ class MyWindowD(MyWindowE):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
-    window.setWindowTitle('Language trener')
+    window.setWindowTitle('Vokabelheft')
     window.resize(250,100)
     window.show()
     sys.exit(app.exec_())
