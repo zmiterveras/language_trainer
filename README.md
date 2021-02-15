@@ -1,4 +1,4 @@
-# Language trainer
+# Vokabelheft (new name)
 develop your languages skills
 
 
