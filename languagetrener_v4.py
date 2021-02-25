@@ -9,7 +9,9 @@ import sys,sqlite3, random, os
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
-        ico = QtGui.QIcon('dic.png')
+        self.wp = os.path.dirname(os.path.abspath(__file__))
+        ico_path = os.path.join(self.wp, 'dic.png')
+        ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
         self.win = None
         text_ch = """<center>Программа тренажер</center>\n
@@ -75,10 +77,14 @@ class MainWindow(QtWidgets.QMainWindow):
         
     def create(self):
         s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря')
+        if not ok:
+            print(ok)
+            return
         if ok and not s:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не задано имя словаря')
+            return
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        conn.setDatabaseName(s)
+        conn.setDatabaseName(s+'.sqlite')
         conn.open()
         if 'dic' not in conn.tables():
             query = QtSql.QSqlQuery()
@@ -106,7 +112,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.win.dict_name:
             if not self.check_change(flag=1):
                 return
-        self.win.dict_name, fil_ = QtWidgets.QFileDialog.getOpenFileName(None, caption='Открыть словарь')
+        self.win.dict_name, fil_ = QtWidgets.QFileDialog.getOpenFileName(None, caption='Открыть словарь',
+                                                                         directory=self.wp, filter='DB (*.sqlite)') 
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
         querystr = """select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural,
@@ -921,5 +928,6 @@ if __name__ == '__main__':
     window = MainWindow()
     window.setWindowTitle('Vokabelheft')
     window.resize(250,100)
+    window.move(300, 250)
     window.show()
     sys.exit(app.exec_())
