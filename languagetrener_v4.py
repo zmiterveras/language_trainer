@@ -29,6 +29,7 @@ class MainWindow(QtWidgets.QMainWindow):
         action = myAbout.addAction('About &me', self.aboutMe)
         self.statusBar = self.statusBar()
         self.count = 1
+        self.sort = 1
         
         
     def langChoose(self, x, myMenu):
@@ -47,7 +48,7 @@ class MainWindow(QtWidgets.QMainWindow):
             action = myMenu.addAction('&Create',  self.create)
             action = myMenu.addAction('&Open',  self.openDict)
             action = myMenu.addAction('&Save',  self.win.save_dict)
-            action = myMenu.addAction('&ViewAll',  self.viewAll)
+            action = myMenu.addAction('&ViewAll',  self.sort_all)
             action = myMenu.addAction('&Close',  self.close)
         self.statusBar.addWidget(self.win.status)
         self.statusBar.addPermanentWidget(self.win.label_am)
@@ -144,9 +145,47 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label2 = QtWidgets.QLabel('<center>Загружен словарь: '+last_name+'</center>')
         self.win.vtop_t.addWidget(self.label2)
         
-    def viewAll(self):
+    def sort_all(self):
+        def sort_choose():
+            if radio1.isChecked():
+                self.sort = 1
+                print('radio1')
+            elif radio2.isChecked():
+                self.sort = 0
+                print('radio2')
+            sa.close()
+            self.viewAll()
+            
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
+            return
+        sa = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
+        sa.setWindowTitle('Выбор отображения')
+        sa.resize(250,80)
+        sa.setWindowModality(QtCore.Qt.WindowModal)
+        savbox = QtWidgets.QVBoxLayout()
+        sahbox = QtWidgets.QHBoxLayout()
+        radio1 = QtWidgets.QRadioButton('Alphabet')
+        radio2 = QtWidgets.QRadioButton('Page')
+        radio1.setChecked(True)
+        grbox = QtWidgets.QGroupBox('Сортировать по:')
+        grbox.setAlignment(QtCore.Qt.AlignHCenter)
+        sahbox.addWidget(radio1)
+        sahbox.addWidget(radio2)
+        grbox.setLayout(sahbox)
+        savbox.addWidget(grbox)
+        btn = QtWidgets.QPushButton('Ok')
+        btn.clicked.connect(sort_choose)
+        savbox.addWidget(btn)
+        sa.setLayout(savbox)
+        sa.show()
+        
+        
+        
+        
+    def viewAll(self):
+        if not self.win.dw:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Cловарь пуст')
             return
         tabview = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
@@ -154,7 +193,7 @@ class MainWindow(QtWidgets.QMainWindow):
         conn.open()
         stm = QtSql.QSqlRelationalTableModel(parent=window)
         stm.setTable('dic')
-        stm.setSort(1, QtCore.Qt.AscendingOrder)
+        stm.setSort(self.sort, QtCore.Qt.AscendingOrder)
         stm.setRelation(6,QtSql.QSqlRelation('part', 'partnumber', 'partname'))
         stm.select()
         var_names = ['Фонетика', 'Арт-ль']
@@ -326,10 +365,13 @@ class MyWindowE(QtWidgets.QWidget):
             wb.deleteLater()
         
     def dictView(self, flag=None):
+        if not self.dict_name:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
+            return
         place = self.vtop_t
         self.clear()
         if not self.dw:
-            self.label1 = QtWidgets.QLabel('<center>Словарь незагружен либо пуст</center>')
+            self.label1 = QtWidgets.QLabel('<center>Словарь пуст</center>')
             place.addWidget(self.label1)
         else:
             self.status.setText('Режим: просмотр')
@@ -415,7 +457,7 @@ class MyWindowE(QtWidgets.QWidget):
             self.ch_value = cb_tm.currentIndex()
             if self.ch_value == 3:
                 if self.page_max < 2:
-                    text = 'Не достаточно слов для постаничного режима\nИспользуйте другой режим тренировки!'
+                    text = 'Не достаточно слов для постраничного режима\nИспользуйте другой режим тренировки!'
                     QtWidgets.QMessageBox.warning(None, 'Предупреждение', text)
                     return
                 self.page = sp_box.value()
@@ -432,7 +474,14 @@ class MyWindowE(QtWidgets.QWidget):
             sp_box.setRange(1, self.page_max)
             tmvbox.insertWidget(1, sp_box)
             
-            
+        if not self.dict_name:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
+            return    
+        if not self.dw:
+            self.clear()
+            self.label3 = QtWidgets.QLabel('<center>Словарь пуст</center>')
+            self.vtop_t.addWidget(self.label3)
+            return
         tm = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tm.setWindowTitle('Выбор тренировки')
         tm.resize(250,80)
@@ -473,24 +522,21 @@ class MyWindowE(QtWidgets.QWidget):
                 for item in oldlist[start:start+40]:
                     self.dw_key.append(item[1])
                                
-        if self.dw:
-            self.dw_key = []
-            self.status.setText('Режим: тренировка')
-            self.q_count = 0
-            self.t_ans_count = 0
-            if self.ch_value == 0:
-                self.dw_key = list(self.dw.keys())
-            elif self.ch_value == 1:
-                sort(20)
-            elif self.ch_value == 2:
-                sort(40)
-            else:
-                sort(1, flag=1)
-            self.onRun()
+        
+        self.dw_key = []
+        self.status.setText('Режим: тренировка')
+        self.q_count = 0
+        self.t_ans_count = 0
+        if self.ch_value == 0:
+            self.dw_key = list(self.dw.keys())
+        elif self.ch_value == 1:
+            sort(20)
+        elif self.ch_value == 2:
+            sort(40)
         else:
-            self.clear()
-            self.label3 = QtWidgets.QLabel('<center>Словарь незагружен либо пуст</center>')
-            self.vtop_t.addWidget(self.label3)
+            sort(1, flag=1)
+        self.onRun()
+        
             
     def onRun(self):
         def onCheck():
@@ -711,6 +757,14 @@ class MyWindowE(QtWidgets.QWidget):
         self.search_flag = 0
         
     def onSearch(self):
+        if not self.dict_name:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
+            return
+        if not self.dw:
+            self.clear()
+            self.label3 = QtWidgets.QLabel('<center>Словарь пуст</center>')
+            self.vtop_t.addWidget(self.label3)
+            return
         text = self.status.text()
         self.status.setText('Режим: поиск')
         def onFind():
@@ -842,7 +896,7 @@ class MyWindowD(MyWindowE):
         
         tla = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tla.setWindowTitle('Добавить')
-        tla.setWindowModality(QtCore.Qt.WindowModal)
+        #tla.setWindowModality(QtCore.Qt.WindowModal)
         tla.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         tlavbox = QtWidgets.QVBoxLayout()
         hbox1 = QtWidgets.QHBoxLayout()
@@ -855,7 +909,7 @@ class MyWindowD(MyWindowE):
         lE_w = QtWidgets.QLineEdit()
         self.lE_f = QtWidgets.QLineEdit()
         cb_pl = QtWidgets.QComboBox()
-        cb_pl.addItems(['','-¨e', '-e', '-¨er', '-n', '-en', '-¨en', '-¨', '-s' ])
+        cb_pl.addItems(['','-¨e', '-e', '-¨er', '-n', '-en', '-¨en', '-¨', '-s', '-er' ])
         cb_pn = QtWidgets.QComboBox()
         cb_pn.addItems(self.lst2)
         btn2 = QtWidgets.QPushButton('Добавить')
@@ -889,6 +943,7 @@ class MyWindowD(MyWindowE):
     def onRun(self):
         def onCheck():
             self.ch = self.ent.text()
+            self.on_sign_flag = 0
             if self.ch == '':
                 QtWidgets.QMessageBox.warning(None,'Предупреждение','Не получен ответ')
             elif self.ch == self.ask:
@@ -922,9 +977,15 @@ class MyWindowD(MyWindowE):
             self.onResult()
         
     def onSearch(self):
-        text = self.status.text()
-        self.status.setText('Режим: поиск')
-        self.on_sign_flag = 2
+        if not self.dict_name:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
+            return
+        if not self.dw:
+            self.clear()
+            self.label3 = QtWidgets.QLabel('<center>Словарь пуст</center>')
+            self.vtop_t.addWidget(self.label3)
+            return
+        
         def onFind():
             value = self.se.text()
             if value == '':
@@ -939,8 +1000,12 @@ class MyWindowD(MyWindowE):
                     sr_close()
         def sr_close():
             self.status.setText(text)
+            self.on_sign_flag = 0
             sr.close()
         
+        text = self.status.text()
+        self.status.setText('Режим: поиск')
+        self.on_sign_flag = 2
         sr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         sr.setWindowTitle('Поиск')
         #sr.setWindowModality(QtCore.Qt.WindowModal)
