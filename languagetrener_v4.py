@@ -3,7 +3,7 @@
 #v4
 
 from PyQt5 import QtWidgets, QtCore, QtGui, QtSql
-import sys,sqlite3, random, os
+import sys,sqlite3, random, os, time
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -14,9 +14,9 @@ class MainWindow(QtWidgets.QMainWindow):
         ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
         self.win = None
-        text_ch = """<center>Программа тренажер</center>\n
-        <center>Выберите изучаемый язык</center>\n
-        <center>Используйте меню Language</center>"""
+        text_ch = """<center>Выберите изучаемый язык</center>\n
+        <center>Используйте меню:</center>\n
+        <center><b>"Language"</b></center>"""
         self.setCentralWidget(QtWidgets.QLabel(text_ch))       
         menuBar = self.menuBar()
         myMenu = menuBar.addMenu('&File')
@@ -115,6 +115,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                                          directory=self.wp, filter='DB (*.sqlite)') 
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
+            return
         querystr = """select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural,
             part.partname from dic inner join part on dic.partnumber=part.partnumber
             """
@@ -144,15 +145,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.clear()
         self.label2 = QtWidgets.QLabel('<center>Загружен словарь: '+last_name+'</center>')
         self.win.vtop_t.addWidget(self.label2)
+        self.win.label_am.setText(self.lang)
         
     def sort_all(self):
         def sort_choose():
             if radio1.isChecked():
                 self.sort = 1
-                print('radio1')
             elif radio2.isChecked():
                 self.sort = 0
-                print('radio2')
             sa.close()
             self.viewAll()
             
@@ -285,7 +285,9 @@ class MyWindowE(QtWidgets.QWidget):
         
         
     def makeWidget(self):
-        text = 'Программа тренажер\nОткройте или создайте словарь\n Используйте меню File'
+        text = '''<center>Откройте или создайте словарь</center>\n
+        <center>Используйте меню:</center>\n
+        <center><b>"File"</b></center>'''
         self.vbox = QtWidgets.QVBoxLayout()
         self.vtop = QtWidgets.QVBoxLayout()
         self.vtop_t = QtWidgets.QVBoxLayout()
@@ -485,10 +487,11 @@ class MyWindowE(QtWidgets.QWidget):
         tm = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tm.setWindowTitle('Выбор тренировки')
         tm.resize(250,80)
+        self.mode_tr = ['Случайный выбор','Последние 20','Последние 40', 'Страница']
         tm.setWindowModality(QtCore.Qt.WindowModal)
         tmvbox = QtWidgets.QVBoxLayout()
         cb_tm = QtWidgets.QComboBox()
-        cb_tm.addItems(['Случайный выбор','Последние 20','Последние 40', 'Страница'])
+        cb_tm.addItems(self.mode_tr)
         cb_tm.currentIndexChanged.connect(pagenation)
         sp_box = QtWidgets.QSpinBox()
         btn = QtWidgets.QPushButton('Выбрать')
@@ -590,6 +593,7 @@ class MyWindowE(QtWidgets.QWidget):
             rr = 'Нужно поднажать)'
         label_rr = QtWidgets.QLabel('<center><b>' + rr + '</b></center>')
         self.vtop_t.addWidget(label_rr)
+        self.trening_log()
         
             
     def onTrueAnswer(self):
@@ -635,6 +639,20 @@ class MyWindowE(QtWidgets.QWidget):
         self.htop_b.addWidget(btns)
         text = "Правильных ответов/вопросов: " + str(self.t_ans_count) + "/" + str(self.q_count)
         self.label_am.setText(text)
+        
+    def trening_log(self):
+        self.wp = os.path.dirname(os.path.abspath(__file__))
+        log_path = os.path.join(self.wp, 'vokabelheftlogfile')
+        file = open(log_path, 'a')
+        lang = ' - ' + self.__class__.__name__[-1]
+        page = ''
+        if self.ch_value == 3: page = 'Страница: ' + str(self.page)
+        note = ['***' + time.asctime() + lang + '***', 'Режим: ' + self.mode_tr[self.ch_value], page,
+                'Задано вопросов: ' + str(self.q_count), 'Правильных ответов: ' + str(self.t_ans_count),
+                'Неправильных ответов: ' + str(self.q_count - self.t_ans_count), 34 * '*']
+        for line in note:
+            file.write(line + '\n')
+        file.close()
         
     def edit_dict(self):
         if not self.dict_name:
@@ -785,8 +803,8 @@ class MyWindowE(QtWidgets.QWidget):
         
         sr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         sr.setWindowTitle('Поиск')
-        #sr.setWindowModality(QtCore.Qt.WindowModal)
-        #sr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)    
+        sr.setWindowModality(QtCore.Qt.WindowModal)
+        sr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)    
         srvbox = QtWidgets.QVBoxLayout()
         sl = QtWidgets.QLabel('Введите искомое слово(иност.)')
         se = QtWidgets.QLineEdit()
@@ -839,10 +857,9 @@ class MyWindowD(MyWindowE):
             else:
                 self.se.insert(key)
                 self.se.setFocus()
-            self.on_sign_flag = 0
             tlf.close()
             
-        dic = ['Ä', 'ä' , 'Ö', 'ö' , 'Ü', 'ü', 'ß']
+        dic = ['ä', 'ö', 'ü', 'ß', 'Ä' , 'Ö',  'Ü']
         tlf = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tvbox = QtWidgets.QVBoxLayout()
         self.listBox(dic, flag=2, place=tvbox)
@@ -909,7 +926,7 @@ class MyWindowD(MyWindowE):
         lE_w = QtWidgets.QLineEdit()
         self.lE_f = QtWidgets.QLineEdit()
         cb_pl = QtWidgets.QComboBox()
-        cb_pl.addItems(['','-¨e', '-e', '-¨er', '-n', '-en', '-¨en', '-¨', '-s', '-er' ])
+        cb_pl.addItems(['','-e','-¨e','-en','-n','-¨er','-¨en', '-¨', '-s', '-er' ])
         cb_pn = QtWidgets.QComboBox()
         cb_pn.addItems(self.lst2)
         btn2 = QtWidgets.QPushButton('Добавить')
@@ -1034,7 +1051,9 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.setWindowTitle('Vokabelheft')
-    window.resize(250,100)
-    window.move(300, 250)
+    window.resize(250,150)
+    desktop = QtWidgets.QApplication.desktop()
+    x = (desktop.width() // 2) - window.width() 
+    window.move(x, 250)
     window.show()
     sys.exit(app.exec_())
