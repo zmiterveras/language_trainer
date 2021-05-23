@@ -457,6 +457,7 @@ class MyWindowE(QtWidgets.QWidget):
     def onTrenning_mode(self):
         def onChoice():
             self.ch_value = cb_tm.currentIndex()
+            self.log_flag = checkbtn.checkState() 
             if self.ch_value == 3:
                 if self.page_max < 2:
                     text = 'Не достаточно слов для постраничного режима\nИспользуйте другой режим тренировки!'
@@ -494,9 +495,11 @@ class MyWindowE(QtWidgets.QWidget):
         cb_tm.addItems(self.mode_tr)
         cb_tm.currentIndexChanged.connect(pagenation)
         sp_box = QtWidgets.QSpinBox()
+        checkbtn = QtWidgets.QCheckBox('Записать результаты в логфайл')
         btn = QtWidgets.QPushButton('Выбрать')
         btn.clicked.connect(onChoice)
         tmvbox.addWidget(cb_tm)
+        tmvbox.addWidget(checkbtn)
         tmvbox.addWidget(btn)
         tm.setLayout(tmvbox)
         tm.show()
@@ -593,7 +596,8 @@ class MyWindowE(QtWidgets.QWidget):
             rr = 'Нужно поднажать)'
         label_rr = QtWidgets.QLabel('<center><b>' + rr + '</b></center>')
         self.vtop_t.addWidget(label_rr)
-        self.trening_log()
+        if self.log_flag:
+            self.trening_log()
         
             
     def onTrueAnswer(self):
