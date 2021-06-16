@@ -10,7 +10,7 @@ a foreign language. With exercise mode
 ![languagetrener](https://user-images.githubusercontent.com/70598163/92990800-057eaf80-f4e8-11ea-9e83-ff058ffb881c.gif)
 
 ## Languages
-* wild mix of russian-english
+* russian
 
 ## Learning languages
 * english

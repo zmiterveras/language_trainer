@@ -8,6 +8,7 @@ import sys,sqlite3, random, os, time
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
+        self.version = '''4.8, 2021г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.wp = os.path.dirname(os.path.abspath(__file__))
         ico_path = os.path.join(self.wp, 'dic.png')
@@ -16,21 +17,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win = None
         text_ch = """<center>Выберите изучаемый язык</center>\n
         <center>Используйте меню:</center>\n
-        <center><b>"Language"</b></center>"""
+        <center><b>"Язык"</b></center>"""
         self.setCentralWidget(QtWidgets.QLabel(text_ch))       
         menuBar = self.menuBar()
-        myMenu = menuBar.addMenu('&File')
+        myMenu = menuBar.addMenu('&Файл')
         #action = myMenu.addAction('Test',  self.test)
-        myLang = menuBar.addMenu('&Language')
+        myLang = menuBar.addMenu('&Язык')
         action = myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu))
         action = myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu))
-        myAbout = menuBar.addMenu('&About')
-        action = myAbout.addAction('&About programm', self.aboutProgramm)
-        action = myAbout.addAction('About &me', self.aboutMe)
+        myAbout = menuBar.addMenu('О...')
+        action = myAbout.addAction('О программе', self.aboutProgramm)
+        action = myAbout.addAction('Обо мне', self.aboutMe)
         self.statusBar = self.statusBar()
         self.count = 1
         self.sort = 1
-        
         
     def langChoose(self, x, myMenu):
         if self.count != 1: 
@@ -45,17 +45,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
         if self.count == 1:
-            action = myMenu.addAction('&Create',  self.create)
-            action = myMenu.addAction('&Open',  self.openDict)
-            action = myMenu.addAction('&Save',  self.win.save_dict)
-            action = myMenu.addAction('&ViewAll',  self.sort_all)
-            action = myMenu.addAction('&Close',  self.close)
+            action = myMenu.addAction('&Создать',  self.create)
+            action = myMenu.addAction('&Открыть',  self.openDict)
+            action = myMenu.addAction('Сохранить',  self.win.save_dict)
+            action = myMenu.addAction('&Просмотреть все',  self.sort_all)
+            action = myMenu.addAction('&Закрыть',  self.close)
         self.statusBar.addWidget(self.win.status)
         self.statusBar.addPermanentWidget(self.win.label_am)
-        self.win.label_am.setText('Empty - ' + self.lang)
+        self.win.label_am.setText('Пусто - ' + self.lang)
         self.count += 1
         
-            
     def check_change(self, flag=None): 
         result = QtWidgets.QMessageBox.question(None, 'Предупреждение',
                     'Вы действительно хотите открыть новый словарь?\n' +
@@ -73,9 +72,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.statusBar.removeWidget(self.win.label_am)
             return True
         
-            
-        
-        
     def create(self):
         s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря')
         if not ok: return
@@ -83,7 +79,8 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не задано имя словаря')
             return
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        conn.setDatabaseName(s+'.sqlite')
+        newdic = os.path.join(self.wp, s+'.sqlite')
+        conn.setDatabaseName(newdic)
         conn.open()
         if 'dic' not in conn.tables():
             query = QtSql.QSqlQuery()
@@ -104,7 +101,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.clear()
         self.label_cr = QtWidgets.QLabel('<center>Создан словарь: '+s+'</center>')
         self.win.vtop_t.addWidget(self.label_cr)
-        
         
     def openDict(self):
         open_flag = 0
@@ -165,8 +161,8 @@ class MainWindow(QtWidgets.QMainWindow):
         sa.setWindowModality(QtCore.Qt.WindowModal)
         savbox = QtWidgets.QVBoxLayout()
         sahbox = QtWidgets.QHBoxLayout()
-        radio1 = QtWidgets.QRadioButton('Alphabet')
-        radio2 = QtWidgets.QRadioButton('Page')
+        radio1 = QtWidgets.QRadioButton('По алфавиту')
+        radio2 = QtWidgets.QRadioButton('Постранично')
         radio1.setChecked(True)
         grbox = QtWidgets.QGroupBox('Сортировать по:')
         grbox.setAlignment(QtCore.Qt.AlignHCenter)
@@ -179,9 +175,6 @@ class MainWindow(QtWidgets.QMainWindow):
         savbox.addWidget(btn)
         sa.setLayout(savbox)
         sa.show()
-        
-        
-        
         
     def viewAll(self):
         if not self.win.dw:
@@ -212,7 +205,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i,n in ((1, l_1),(2, l_2),(3,300),(4,l_4),(5,l_5),(6,150)):
             tv.setColumnWidth(i, n)
         vbox.addWidget(tv)
-        btncl = QtWidgets.QPushButton('Close')
+        btncl = QtWidgets.QPushButton('Закрыть')
         btncl.clicked.connect(tabview.close)
         vbox.addWidget(btncl)
         tabview.setLayout(vbox)
@@ -221,7 +214,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
     def aboutProgramm(self):   
         ab = QtWidgets.QWidget(parent=self.win, flags=QtCore.Qt.Window)
-        ab.setWindowTitle('About program')
+        ab.setWindowTitle('О программе')
         ab.setWindowModality(QtCore.Qt.WindowModal)
         ab.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         abbox = QtWidgets.QVBoxLayout()
@@ -230,8 +223,8 @@ class MainWindow(QtWidgets.QMainWindow):
         Главная особеннось которой - словарь\n
         составляется непосредствено пользователем\n
         в процессе его (само-)обучения языку.\n
-        Версия: 3.0, 2020г
-        '''
+        Версия: ''' + self.version
+        
         abl = QtWidgets.QLabel(text)
         abb = QtWidgets.QPushButton('Close')
         abb.clicked.connect(ab.close)
@@ -241,27 +234,18 @@ class MainWindow(QtWidgets.QMainWindow):
         ab.show()
         
     def aboutMe(self):
-        QtWidgets.QMessageBox.information(None,'Об авторе', 'Автор: @zmv')
+        text = '''Автор: @zmv\nОбратная связь: @zmvph79@gmail.com'''
+        QtWidgets.QMessageBox.information(None,'Об авторе', text)
         
-    """    
-    def test(self):
-        try:
-            print('dict_name: ', self.win.dict_name)
-            print('dw: ', list(self.win.dw.keys())[:5])
-            print('new: ', self.win.newname[0][0])
-        except:
-            print("don't exist")
-    """
-            
-          
     def closeEvent(self, e):
-        #print('Goodbye')
         if not self.win: return
         if self.win.dict_name:
             self.win.save_dict()
         e.accept()
-        QtWidgets.QWidget.closeEvent(self, e)       
-###############################################################################              
+        QtWidgets.QWidget.closeEvent(self, e)
+        
+###############################################################################
+
 class MyWindowE(QtWidgets.QWidget):
     def __init__(self,parent=None):
         QtWidgets.QWidget.__init__(self, parent)
@@ -281,13 +265,10 @@ class MyWindowE(QtWidgets.QWidget):
         self.delname = []
         self.changenote = [[],[],[],[],[],[],[]]
         
-        
-        
-        
     def makeWidget(self):
         text = '''<center>Откройте или создайте словарь</center>\n
         <center>Используйте меню:</center>\n
-        <center><b>"File"</b></center>'''
+        <center><b>"Файл"</b></center>'''
         self.vbox = QtWidgets.QVBoxLayout()
         self.vtop = QtWidgets.QVBoxLayout()
         self.vtop_t = QtWidgets.QVBoxLayout()
@@ -298,15 +279,15 @@ class MyWindowE(QtWidgets.QWidget):
         self.vtop.addLayout(self.vtop_t)
         self.vtop.addLayout(self.htop_b)
         self.hbox = QtWidgets.QHBoxLayout()
-        btnnames = [('View', self.dictView),('Trenning', self.onTrenning_mode),
-                    ('Search', self.onSearch),('Edit', self.edit_dict)]
+        btnnames = [('Просмотр', self.dictView),('Тренировка', self.onTrenning_mode),
+                    ('Поиск', self.onSearch),('Редакт.', self.edit_dict)]
         btnlist = []
         for i in btnnames:
             btn = QtWidgets.QPushButton(i[0])
             btn.clicked.connect(i[1])
             self.hbox.addWidget(btn)
             btnlist.append(btn)
-        self.btncl = QtWidgets.QPushButton('Close')
+        self.btncl = QtWidgets.QPushButton('Закрыть')
         self.hbox.addWidget(self.btncl) 
         self.vbox.addLayout(self.vtop)
         self.vbox.addLayout(self.hbox)
@@ -354,7 +335,6 @@ class MyWindowE(QtWidgets.QWidget):
             query.execBatch()
         conn.close()
         self.saveValues()
-        
         
     def clear(self):
         for i in reversed(range(self.vtop_t.count())):
@@ -434,8 +414,8 @@ class MyWindowE(QtWidgets.QWidget):
             lw = QtWidgets.QLabel('<b>Перевод: </b>'+word)
             tlvbox.addWidget(lw)
             tlhbox = QtWidgets.QHBoxLayout()
-            btnc = QtWidgets.QPushButton('Close')
-            btne = QtWidgets.QPushButton('Edit')
+            btnc = QtWidgets.QPushButton('Закрыть')
+            btne = QtWidgets.QPushButton('Редактировать')
             btne.clicked.connect(lambda: edit_run(None, tl))
             btnc.clicked.connect(lambda: tl_close(None, tl)) 
             tlhbox.addWidget(btne)
@@ -528,7 +508,6 @@ class MyWindowE(QtWidgets.QWidget):
                 for item in oldlist[start:start+40]:
                     self.dw_key.append(item[1])
                                
-        
         self.dw_key = []
         self.status.setText('Режим: тренировка')
         self.q_count = 0
@@ -542,8 +521,7 @@ class MyWindowE(QtWidgets.QWidget):
         else:
             sort(1, flag=1)
         self.onRun()
-        
-            
+               
     def onRun(self):
         def onCheck():
             self.ch = ent.text()
@@ -598,8 +576,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.vtop_t.addWidget(label_rr)
         if self.log_flag:
             self.trening_log()
-        
-            
+               
     def onTrueAnswer(self):
         self.clear()
         label_ta = QtWidgets.QLabel('<center><b>True</b></center>')
@@ -633,11 +610,11 @@ class MyWindowE(QtWidgets.QWidget):
             self.vtop_t.addWidget(lp)
         lw = QtWidgets.QLabel('<b>Перевод: </b>'+self.dw[self.ask][2])
         self.vtop_t.addWidget(lw)
-        btnc = QtWidgets.QPushButton('Next', self)
+        btnc = QtWidgets.QPushButton('Продолжить', self)
         btnc.setFocus()
         btnc.clicked.connect(self.onRun)
         btnc.setAutoDefault(True)
-        btns = QtWidgets.QPushButton('Stop', self)
+        btns = QtWidgets.QPushButton('Стоп', self)
         btns.clicked.connect(self.onResult)
         self.htop_b.addWidget(btnc)
         self.htop_b.addWidget(btns)
@@ -701,8 +678,6 @@ class MyWindowE(QtWidgets.QWidget):
                     for j, n in enumerate(dcont):
                         self.newname[j].append(n)
                 QtWidgets.QMessageBox.information(None,'Инфо', txt + value1)
-                #print('newname= ', self.newname)
-                #print('changenote=', self.changenote)
                 self.clear()
                 self.edit_dict()
                 tla.close()
@@ -817,6 +792,8 @@ class MyWindowE(QtWidgets.QWidget):
         btn2 = QtWidgets.QPushButton('Закрыть')
         btn1.clicked.connect(onFind)
         btn2.clicked.connect(sr_close)
+        btn1.setAutoDefault(True) # enter
+        se.returnPressed.connect(btn1.click) #enter
         srhbox.addWidget(btn1)
         srhbox.addWidget(btn2)
         srvbox.addWidget(sl)
@@ -842,7 +819,6 @@ class MyWindowD(MyWindowE):
     def __init__(self,parent=None):
         MyWindowE.__init__(self, parent)
         self.on_sign_flag = 0
-        
         
     def fon_sign(self):
         def onInsert():
@@ -913,8 +889,6 @@ class MyWindowD(MyWindowE):
                 self.edit_dict()
                 tla.close()
                 
-        
-        
         tla = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tla.setWindowTitle('Добавить')
         #tla.setWindowModality(QtCore.Qt.WindowModal)
