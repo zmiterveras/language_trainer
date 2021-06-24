@@ -18,7 +18,8 @@ class MainWindow(QtWidgets.QMainWindow):
         text_ch = """<center>Выберите изучаемый язык</center>\n
         <center>Используйте меню:</center>\n
         <center><b>"Язык"</b></center>"""
-        self.setCentralWidget(QtWidgets.QLabel(text_ch))       
+        ss = self.first_screensaver(self.wp, text_ch)
+        self.setCentralWidget(ss)     
         menuBar = self.menuBar()
         myMenu = menuBar.addMenu('&Файл')
         #action = myMenu.addAction('Test',  self.test)
@@ -31,6 +32,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar = self.statusBar()
         self.count = 1
         self.sort = 1
+        
+    def first_screensaver(self, abs_path, text, flag=None):
+        ss = QtWidgets.QWidget()
+        central_box = QtWidgets.QVBoxLayout()
+        hor_box = QtWidgets.QHBoxLayout()
+        im_l = QtWidgets.QLabel()
+        te_l = QtWidgets.QLabel(text)
+        img_path = os.path.join(abs_path, 'finger48.png')
+        im_l.setPixmap(QtGui.QPixmap(img_path))
+        im_l.setAlignment(QtCore.Qt.AlignLeft)
+        if not flag:
+            hor_box.addWidget(QtWidgets.QLabel(14*' '))
+        hor_box.addWidget(im_l)
+        hor_box.setAlignment(QtCore.Qt.AlignLeft)
+        central_box.addLayout(hor_box)
+        central_box.addWidget(te_l)
+        ss.setLayout(central_box)
+        return ss
         
     def langChoose(self, x, myMenu):
         if self.count != 1: 
@@ -255,6 +274,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.search_key = 0
         self.lst1 = [1,2,3,4,5]
         self.lst2 = ['существительное','глагол','прилагательное','наречие', 'другое']
+        self.wd = os.path.dirname(os.path.abspath(__file__))
         self.label_am = QtWidgets.QLabel()
         self.status = QtWidgets.QLabel()
         self.makeWidget()
@@ -272,9 +292,8 @@ class MyWindowE(QtWidgets.QWidget):
         self.vbox = QtWidgets.QVBoxLayout()
         self.vtop = QtWidgets.QVBoxLayout()
         self.vtop_t = QtWidgets.QVBoxLayout()
-        self.label = QtWidgets.QLabel(text)
-        self.label.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        self.vtop_t.addWidget(self.label)
+        ss = MainWindow().first_screensaver(self.wd, text, flag=1)
+        self.vtop_t.addWidget(ss)
         self.htop_b = QtWidgets.QHBoxLayout()
         self.vtop.addLayout(self.vtop_t)
         self.vtop.addLayout(self.htop_b)
@@ -578,7 +597,6 @@ class MyWindowE(QtWidgets.QWidget):
         label_rr = QtWidgets.QLabel('<center><b>' + rr + '</b></center>')
         self.vtop_t.addWidget(label_rr)
         label_rim = QtWidgets.QLabel()
-        self.wd = os.path.dirname(os.path.abspath(__file__))
         img_path = os.path.join(self.wd, img)
         label_rim.setPixmap(QtGui.QPixmap(img_path))
         label_rim.setAlignment(QtCore.Qt.AlignCenter)
