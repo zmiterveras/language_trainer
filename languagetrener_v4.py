@@ -568,12 +568,21 @@ class MyWindowE(QtWidgets.QWidget):
         self.hLine(self.vtop_t)
         if self.t_ans_count >= 0.8*self.q_count:
             rr ='Хорошая работа!!!'
+            img = 'super148.png'
         elif self.t_ans_count < 0.4*self.q_count:
             rr = 'Это никуда не годится('
+            img = 'worse148.png'
         else:
             rr = 'Нужно поднажать)'
+            img = 'bad148.png'
         label_rr = QtWidgets.QLabel('<center><b>' + rr + '</b></center>')
         self.vtop_t.addWidget(label_rr)
+        label_rim = QtWidgets.QLabel()
+        self.wd = os.path.dirname(os.path.abspath(__file__))
+        img_path = os.path.join(self.wd, img)
+        label_rim.setPixmap(QtGui.QPixmap(img_path))
+        label_rim.setAlignment(QtCore.Qt.AlignCenter)
+        self.vtop_t.addWidget(label_rim)
         if self.log_flag:
             self.trening_log()
                
@@ -1015,6 +1024,8 @@ class MyWindowD(MyWindowE):
         btn1.clicked.connect(onFind)
         btn_u.clicked.connect(self.fon_sign)
         btn2.clicked.connect(sr_close)
+        btn1.setAutoDefault(True) # enter
+        self.se.returnPressed.connect(btn1.click) #enter
         srhbox.addWidget(btn1)
         srhbox.addWidget(btn_u)
         srhbox.addWidget(btn2)
@@ -1029,7 +1040,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.setWindowTitle('Vokabelheft')
-    window.resize(250,150)
+    window.resize(350,200)
     desktop = QtWidgets.QApplication.desktop()
     x = (desktop.width() // 2) - window.width() 
     window.move(x, 250)
