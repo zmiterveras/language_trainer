@@ -58,9 +58,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if x == 1:
             self.win = MyWindowE()
             self.lang = 'eng '
+            flag_path = os.path.join(self.wp, 'gb_16.png')
         else:
             self.win = MyWindowD()
             self.lang = 'de'
+            flag_path = os.path.join(self.wp, 'de_16.png')
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
         if self.count == 1:
@@ -70,8 +72,10 @@ class MainWindow(QtWidgets.QMainWindow):
             action = myMenu.addAction('&Просмотреть все',  self.sort_all)
             action = myMenu.addAction('&Закрыть',  self.close)
         self.statusBar.addWidget(self.win.status)
-        self.statusBar.addPermanentWidget(self.win.label_am)
-        self.win.label_am.setText('Пусто - ' + self.lang)
+        self.statusBar.addPermanentWidget(self.win.st) 
+        self.win.label_am.setText('Пусто')
+        self.win.label_flag.setPixmap(QtGui.QPixmap(flag_path))
+        self.win.label_flag.setAlignment(QtCore.Qt.AlignRight)
         self.count += 1
         
     def check_change(self, flag=None): 
@@ -88,7 +92,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.win.dw = {}
             else:
                 self.statusBar.removeWidget(self.win.status)
-                self.statusBar.removeWidget(self.win.label_am)
+                self.statusBar.removeWidget(self.win.st)
             return True
         
     def create(self):
@@ -275,10 +279,21 @@ class MyWindowE(QtWidgets.QWidget):
         self.lst1 = [1,2,3,4,5]
         self.lst2 = ['существительное','глагол','прилагательное','наречие', 'другое']
         self.wd = os.path.dirname(os.path.abspath(__file__))
-        self.label_am = QtWidgets.QLabel()
+        # self.label_am = QtWidgets.QLabel()
         self.status = QtWidgets.QLabel()
         self.makeWidget()
         self.saveValues()
+        self.status_w()
+        
+    def status_w(self):
+        self.st = QtWidgets.QWidget()
+        stbox = QtWidgets.QHBoxLayout()
+        self.label_am = QtWidgets.QLabel()
+        self.label_flag = QtWidgets.QLabel()
+        stbox.addWidget(self.label_am)
+        stbox.addWidget(self.label_flag)
+        self.st.setLayout(stbox)
+        
         
     def saveValues(self): 
         self.newname = [[],[],[],[],[],[]]
@@ -1058,7 +1073,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.setWindowTitle('Vokabelheft')
-    window.resize(350,200)
+    window.resize(550,200)
     desktop = QtWidgets.QApplication.desktop()
     x = (desktop.width() // 2) - window.width() 
     window.move(x, 250)
