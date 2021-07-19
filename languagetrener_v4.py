@@ -8,7 +8,7 @@ import sys,sqlite3, random, os, time
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
-        self.version = '''4.8, 2021г.'''
+        self.version = '''4.9.2, 2021г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.wp = os.path.dirname(os.path.abspath(__file__))
         ico_path = os.path.join(self.wp, 'dic.png')
@@ -236,16 +236,18 @@ class MainWindow(QtWidgets.QMainWindow):
         tabview.show()
         
     def aboutProgramm(self):   
-        ab = QtWidgets.QWidget(parent=self.win, flags=QtCore.Qt.Window)
+        ab = QtWidgets.QWidget(parent=self, flags=QtCore.Qt.Window)
         ab.setWindowTitle('О программе')
         ab.setWindowModality(QtCore.Qt.WindowModal)
         ab.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         abbox = QtWidgets.QVBoxLayout()
         text = '''
         Это программа языковой тренажер.\n
-        Главная особеннось которой - словарь\n
+        Главная особеннось которой - словарь,\n
         составляется непосредствено пользователем\n
         в процессе его (само-)обучения языку.\n
+        В общем, это аналог вашей словарной тетради,\n
+        с набором удобных и полезных функций)))\n
         Версия: ''' + self.version
         
         abl = QtWidgets.QLabel(text)
