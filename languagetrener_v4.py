@@ -217,7 +217,7 @@ class MainWindow(QtWidgets.QMainWindow):
         grbox.setLayout(sahbox)
         cb_sa = QtWidgets.QComboBox()
         cb_sa.addItems(['', 'Всё', 'Страница'])
-        cb_sa.currentIndexChanged.connect(self.hidden_seits)
+        cb_sa.currentIndexChanged.connect(hidden_seits)
         savbox.addWidget(grbox)
         btn = QtWidgets.QPushButton('Ok')
         btn.clicked.connect(sort_choose)
