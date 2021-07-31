@@ -167,13 +167,36 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.label_am.setText(self.lang)
         
     def sort_all(self):
+        def close_sa():
+            sa.close()
+            self.viewAll()
+            
         def sort_choose():
             if radio1.isChecked():
                 self.sort = 1
+                close_sa()
             elif radio2.isChecked():
                 self.sort = 0
-            sa.close()
-            self.viewAll()
+                grbox.setEnabled(False)
+                for i in range(savbox.count()):
+                    print(savbox.itemAt(i).widget())
+                wt = savbox.itemAt(1).widget()
+                wt.setParent(None)
+                wt.deleteLater()
+                savbox.addWidget(cb_sa)
+            
+            
+        def hidden_seits():
+            index = cb_sa.currentIndex()
+            if index == 1:
+                close_sa()
+            elif index == 2:
+                pass
+                
+            """
+                for st in range(3):
+                tv.hideRow(st)
+            """
             
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
@@ -192,12 +215,17 @@ class MainWindow(QtWidgets.QMainWindow):
         sahbox.addWidget(radio1)
         sahbox.addWidget(radio2)
         grbox.setLayout(sahbox)
+        cb_sa = QtWidgets.QComboBox()
+        cb_sa.addItems(['', 'Всё', 'Страница'])
+        cb_sa.currentIndexChanged.connect(self.hidden_seits)
         savbox.addWidget(grbox)
         btn = QtWidgets.QPushButton('Ok')
         btn.clicked.connect(sort_choose)
         savbox.addWidget(btn)
         sa.setLayout(savbox)
         sa.show()
+        
+    
         
     def viewAll(self):
         if not self.win.dw:
