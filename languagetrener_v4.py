@@ -32,6 +32,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar = self.statusBar()
         self.count = 1
         self.sort = 1
+        self.view_page = False
         
     def first_screensaver(self, abs_path, text, flag=None):
         ss = QtWidgets.QWidget()
@@ -152,6 +153,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                        query.value('plural'), query.value('partname')]
                     query.next()
             conn.close()
+            self.win.page_max = int(len(self.win.dw) / 40)
         else:
             conn = sqlite3.connect(self.win.dict_name)
             curs = conn.cursor()
@@ -166,6 +168,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.vtop_t.addWidget(self.label2)
         self.win.label_am.setText(self.lang)
         
+        
     def sort_all(self):
         def close_sa():
             sa.close()
@@ -178,11 +181,9 @@ class MainWindow(QtWidgets.QMainWindow):
             elif radio2.isChecked():
                 self.sort = 0
                 grbox.setEnabled(False)
-                for i in range(savbox.count()):
-                    print(savbox.itemAt(i).widget())
                 wt = savbox.itemAt(1).widget()
                 wt.setParent(None)
-                wt.deleteLater()
+                #wt.deleteLater()
                 savbox.addWidget(cb_sa)
             
             
@@ -191,12 +192,23 @@ class MainWindow(QtWidgets.QMainWindow):
             if index == 1:
                 close_sa()
             elif index == 2:
-                pass
+                if self.win.page_max < 2:
+                    text = 'Не достаточно слов для постраничного режима\nИспользуйте другой режим просмотра!'
+                    QtWidgets.QMessageBox.warning(None, 'Предупреждение', text)
+                    return
+                cb_sa.setEnabled(False)
+                sp_box.setValue(1)
+                sp_box.setRange(1, self.win.page_max)
+                savbox.addWidget(sp_box)
+                savbox.addWidget(btn)
+                btn.clicked.connect(choose_page)
                 
-            """
-                for st in range(3):
-                tv.hideRow(st)
-            """
+        def choose_page():
+            self.view_page = True
+            page = sp_box.value()
+            self.start_page = (page-1) * 40
+            #self.stop_page = self.start_page + 40
+            close_sa()
             
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
@@ -216,8 +228,9 @@ class MainWindow(QtWidgets.QMainWindow):
         sahbox.addWidget(radio2)
         grbox.setLayout(sahbox)
         cb_sa = QtWidgets.QComboBox()
-        cb_sa.addItems(['', 'Всё', 'Страница'])
+        cb_sa.addItems(['                  --Выбрать--', 'Всё', 'Страница'])
         cb_sa.currentIndexChanged.connect(hidden_seits)
+        sp_box = QtWidgets.QSpinBox()
         savbox.addWidget(grbox)
         btn = QtWidgets.QPushButton('Ok')
         btn.clicked.connect(sort_choose)
@@ -225,7 +238,6 @@ class MainWindow(QtWidgets.QMainWindow):
         sa.setLayout(savbox)
         sa.show()
         
-    
         
     def viewAll(self):
         if not self.win.dw:
@@ -235,11 +247,19 @@ class MainWindow(QtWidgets.QMainWindow):
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
         conn.setDatabaseName(self.win.dict_name)
         conn.open()
-        stm = QtSql.QSqlRelationalTableModel(parent=window)
-        stm.setTable('dic')
-        stm.setSort(self.sort, QtCore.Qt.AscendingOrder)
-        stm.setRelation(6,QtSql.QSqlRelation('part', 'partnumber', 'partname'))
-        stm.select()
+        if not self.view_page:
+            stm = QtSql.QSqlRelationalTableModel(parent=window)
+            stm.setTable('dic')
+            stm.setRelation(6,QtSql.QSqlRelation('part', 'partnumber', 'partname'))
+            stm.setSort(self.sort, QtCore.Qt.AscendingOrder)
+            stm.select()
+        else:
+            stm = QtSql.QSqlQueryModel(parent=window)
+            query = '''select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural, part.partname
+            from dic inner join part on dic.partnumber=part.partnumber limit 40 offset %d''' % self.start_page
+            stm.setQuery(query)
+            stm.sort(self.sort, QtCore.Qt.AscendingOrder)
+            self.view_page = False
         var_names = ['Фонетика', 'Арт-ль']
         if self.lang == 'de':
             var_name = var_names[1]
@@ -262,6 +282,7 @@ class MainWindow(QtWidgets.QMainWindow):
         tabview.setLayout(vbox)
         tabview.resize(915,350)
         tabview.show()
+        
         
     def aboutProgramm(self):   
         ab = QtWidgets.QWidget(parent=self, flags=QtCore.Qt.Window)
@@ -306,6 +327,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.dw = {}
         self.search_flag = 0
         self.search_key = 0
+        self.page_max = 0
         self.lst1 = [1,2,3,4,5]
         self.lst2 = ['существительное','глагол','прилагательное','наречие', 'другое']
         self.wd = os.path.dirname(os.path.abspath(__file__))
@@ -512,7 +534,6 @@ class MyWindowE(QtWidgets.QWidget):
             self.onTrenning()
             
         def pagenation():
-            self.page_max = int(len(self.dw) / 40)
             self.ch_value = cb_tm.currentIndex()
             if self.ch_value != 3 or self.page_max < 2:
                 return
@@ -1109,3 +1130,11 @@ if __name__ == '__main__':
     window.move(x, 250)
     window.show()
     sys.exit(app.exec_())
+    
+    
+    
+    
+"""
+query = 'select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural, part.partname from dic inner join part on dic.partnumber=part.partnumber
+limit 40 offset %s' % start
+"""
