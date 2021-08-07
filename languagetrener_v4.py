@@ -202,6 +202,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 savbox.addWidget(sp_box)
                 savbox.addWidget(btn)
                 btn.clicked.connect(choose_page)
+            elif index == 3:
+                if len(self.win.dw) <=  40:
+                    self.start_page = 0
+                else:
+                    self.start_page = len(self.win.dw) - 40
+                self.view_page = True
+                close_sa()
                 
         def choose_page():
             self.view_page = True
@@ -228,7 +235,7 @@ class MainWindow(QtWidgets.QMainWindow):
         sahbox.addWidget(radio2)
         grbox.setLayout(sahbox)
         cb_sa = QtWidgets.QComboBox()
-        cb_sa.addItems(['                  --Выбрать--', 'Всё', 'Страница'])
+        cb_sa.addItems(['                  --Выбрать--', 'Всё', 'Страница', 'Последние40'])
         cb_sa.currentIndexChanged.connect(hidden_seits)
         sp_box = QtWidgets.QSpinBox()
         savbox.addWidget(grbox)
