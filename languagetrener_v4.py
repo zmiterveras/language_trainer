@@ -175,21 +175,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.viewAll()
             
         def sort_choose():
-            if radio1.isChecked():
+            index = cb_sa.currentIndex()
+            if index == 0:
                 self.sort = 1
                 close_sa()
-            elif radio2.isChecked():
+            elif index == 1:
                 self.sort = 0
-                grbox.setEnabled(False)
-                wt = savbox.itemAt(1).widget()
-                wt.setParent(None)
-                #wt.deleteLater()
-                savbox.addWidget(cb_sa)
-            
-            
-        def hidden_seits():
-            index = cb_sa.currentIndex()
-            if index == 1:
                 close_sa()
             elif index == 2:
                 if self.win.page_max < 2:
@@ -200,7 +191,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 sp_box.setValue(1)
                 sp_box.setRange(1, self.win.page_max)
                 savbox.addWidget(sp_box)
-                savbox.addWidget(btn)
+                #savbox.addWidget(btn)
                 btn.clicked.connect(choose_page)
             elif index == 3:
                 if len(self.win.dw) <=  40:
@@ -209,10 +200,22 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.start_page = len(self.win.dw) - 40
                 self.view_page = True
                 close_sa()
+            # if radio1.isChecked():
+            #     self.sort = 1
+            #     close_sa()
+            # elif radio2.isChecked():
+            #     
+            #     grbox.setEnabled(False)
+            #     wt = savbox.itemAt(1).widget()
+            #     wt.setParent(None)
+                #wt.deleteLater()
+                #savbox.addWidget(cb_sa)
+            
                 
         def choose_page():
             self.view_page = True
             page = sp_box.value()
+            print('page: ',page)
             self.start_page = (page-1) * 40
             #self.stop_page = self.start_page + 40
             close_sa()
@@ -225,20 +228,11 @@ class MainWindow(QtWidgets.QMainWindow):
         sa.resize(250,80)
         sa.setWindowModality(QtCore.Qt.WindowModal)
         savbox = QtWidgets.QVBoxLayout()
-        sahbox = QtWidgets.QHBoxLayout()
-        radio1 = QtWidgets.QRadioButton('По алфавиту')
-        radio2 = QtWidgets.QRadioButton('Постранично')
-        radio1.setChecked(True)
-        grbox = QtWidgets.QGroupBox('Сортировать по:')
-        grbox.setAlignment(QtCore.Qt.AlignHCenter)
-        sahbox.addWidget(radio1)
-        sahbox.addWidget(radio2)
-        grbox.setLayout(sahbox)
+        savbox.addWidget(QtWidgets.QLabel('Выберите режим сортировки и отображения'))
         cb_sa = QtWidgets.QComboBox()
-        cb_sa.addItems(['                  --Выбрать--', 'Всё', 'Страница', 'Последние40'])
-        cb_sa.currentIndexChanged.connect(hidden_seits)
+        cb_sa.addItems(['Всё по алфавиту', 'Всё постранично', 'Страница', 'Последние40'])
         sp_box = QtWidgets.QSpinBox()
-        savbox.addWidget(grbox)
+        savbox.addWidget(cb_sa)
         btn = QtWidgets.QPushButton('Ok')
         btn.clicked.connect(sort_choose)
         savbox.addWidget(btn)
