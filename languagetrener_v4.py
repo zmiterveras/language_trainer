@@ -177,7 +177,6 @@ class MainWindow(QtWidgets.QMainWindow):
         def choose_page():
             self.view_page = True
             page = sp_box.value()
-            print('page: ',page)
             self.start_page = (page-1) * 40
             close_sa()
             
