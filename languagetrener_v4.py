@@ -174,6 +174,13 @@ class MainWindow(QtWidgets.QMainWindow):
             sa.close()
             self.viewAll()
             
+        def choose_page():
+            self.view_page = True
+            page = sp_box.value()
+            print('page: ',page)
+            self.start_page = (page-1) * 40
+            close_sa()
+            
         def sort_choose():
             index = cb_sa.currentIndex()
             if index == 0:
@@ -188,10 +195,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     QtWidgets.QMessageBox.warning(None, 'Предупреждение', text)
                     return
                 cb_sa.setEnabled(False)
-                sp_box.setValue(1)
                 sp_box.setRange(1, self.win.page_max)
-                savbox.addWidget(sp_box)
-                #savbox.addWidget(btn)
+                savbox.insertWidget(2, sp_box)
                 btn.clicked.connect(choose_page)
             elif index == 3:
                 if len(self.win.dw) <=  40:
@@ -200,25 +205,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.start_page = len(self.win.dw) - 40
                 self.view_page = True
                 close_sa()
-            # if radio1.isChecked():
-            #     self.sort = 1
-            #     close_sa()
-            # elif radio2.isChecked():
-            #     
-            #     grbox.setEnabled(False)
-            #     wt = savbox.itemAt(1).widget()
-            #     wt.setParent(None)
-                #wt.deleteLater()
-                #savbox.addWidget(cb_sa)
-            
-                
-        def choose_page():
-            self.view_page = True
-            page = sp_box.value()
-            print('page: ',page)
-            self.start_page = (page-1) * 40
-            #self.stop_page = self.start_page + 40
-            close_sa()
+           
             
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
