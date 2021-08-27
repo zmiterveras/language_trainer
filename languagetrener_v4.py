@@ -60,10 +60,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.win = MyWindowE()
             self.lang = 'eng '
             flag_path = os.path.join(self.wp, 'gb_16.png')
+            self.screen_path = os.path.join(self.wp, 'Dic_eng_148.png')
         else:
             self.win = MyWindowD()
             self.lang = 'de'
             flag_path = os.path.join(self.wp, 'de_16.png')
+            self.screen_path = os.path.join(self.wp, 'Dic_de_148.png')
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
         if self.count == 1:
@@ -166,6 +168,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.clear()
         self.label2 = QtWidgets.QLabel('<center>Загружен словарь: '+last_name+'</center>')
         self.win.vtop_t.addWidget(self.label2)
+        label_screen = QtWidgets.QLabel()
+        label_screen.setPixmap(QtGui.QPixmap(self.screen_path))
+        label_screen.setAlignment(QtCore.Qt.AlignCenter)
+        self.win.vtop_t.addWidget(label_screen)
         self.win.label_am.setText(self.lang)
         
         
