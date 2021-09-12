@@ -10,7 +10,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
         self.version = '''4.9.2, 2021г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
-        self.wp = os.path.dirname(os.path.abspath(__file__))
+        self.app_dir = os.path.dirname(os.path.abspath(__file__))
+        self.wp = os.path.join(self.app_dir, 'images')
         ico_path = os.path.join(self.wp, 'dic.png')
         ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
@@ -134,7 +135,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self.check_change(flag=1):
                 return
         self.win.dict_name, fil_ = QtWidgets.QFileDialog.getOpenFileName(None, caption='Открыть словарь',
-                                                                         directory=self.wp, filter='DB (*.sqlite)') 
+                                                                         directory=self.app_dir, filter='DB (*.sqlite)') 
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
             return
@@ -323,7 +324,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.page_max = 0
         self.lst1 = [1,2,3,4,5]
         self.lst2 = ['существительное','глагол','прилагательное','наречие', 'другое']
-        self.wd = os.path.dirname(os.path.abspath(__file__))
+        self.wd = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'images')
         # self.label_am = QtWidgets.QLabel()
         self.status = QtWidgets.QLabel()
         self.makeWidget()
