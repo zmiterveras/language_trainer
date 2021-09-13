@@ -8,7 +8,7 @@ import sys,sqlite3, random, os, time
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
-        self.version = '''4.9.2, 2021г.'''
+        self.version = '''4.11, 2021г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.wp = os.path.join(self.app_dir, 'images')
