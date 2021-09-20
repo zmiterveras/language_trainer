@@ -302,7 +302,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ab.show()
         
     def aboutMe(self):
-        text = '''Автор: @zmv\nОбратная связь: @zmvph79@gmail.com'''
+        text = '''Автор: @zmv\nОбратная связь: zmvph79@gmail.com'''
         QtWidgets.QMessageBox.information(None,'Об авторе', text)
         
     def closeEvent(self, e):
