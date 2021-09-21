@@ -6,6 +6,14 @@ from PyQt5 import QtWidgets, QtCore, QtGui, QtSql
 import sys,sqlite3, random, os, time
 
 
+class ClickedLabel(QtWidgets.QLabel):
+    clicked = QtCore.pyqtSignal()
+
+    def mouseReleaseEvent(self, e):
+        super().mouseReleaseEvent(e)
+        self.clicked.emit()
+
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
         self.version = '''4.11, 2021г.'''
@@ -74,6 +82,7 @@ class MainWindow(QtWidgets.QMainWindow):
             action = myMenu.addAction('&Открыть',  self.openDict)
             action = myMenu.addAction('Сохранить',  self.win.save_dict)
             action = myMenu.addAction('&Просмотреть все',  self.sort_all)
+            action = myMenu.addAction('Просмотр карточек', self.win.cards_mode)
             action = myMenu.addAction('&Закрыть',  self.close)
         self.statusBar.addWidget(self.win.status)
         self.statusBar.addPermanentWidget(self.win.st) 
@@ -320,6 +329,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.dict_name = ''
         self.dw = {}
         self.search_flag = 0
+        self.cards_flag = 0
         self.search_key = 0
         self.page_max = 0
         self.lst1 = [1,2,3,4,5]
@@ -558,7 +568,8 @@ class MyWindowE(QtWidgets.QWidget):
         btn = QtWidgets.QPushButton('Выбрать')
         btn.clicked.connect(onChoice)
         tmvbox.addWidget(cb_tm)
-        tmvbox.addWidget(checkbtn)
+        if not self.cards_flag:
+            tmvbox.addWidget(checkbtn)
         tmvbox.addWidget(btn)
         tm.setLayout(tmvbox)
         tm.show()
@@ -588,7 +599,6 @@ class MyWindowE(QtWidgets.QWidget):
                     self.dw_key.append(item[1])
                                
         self.dw_key = []
-        self.status.setText('Режим: тренировка')
         self.q_count = 0
         self.t_ans_count = 0
         if self.ch_value == 0:
@@ -599,7 +609,12 @@ class MyWindowE(QtWidgets.QWidget):
             sort(40)
         else:
             sort(1, flag=1)
-        self.onRun()
+        if self.cards_flag:
+            self.status.setText('Режим: карточки')
+            self.cards()
+        else:
+            self.status.setText('Режим: тренировка')
+            self.onRun()
                
     def onRun(self):
         def onCheck():
@@ -721,6 +736,69 @@ class MyWindowE(QtWidgets.QWidget):
         for line in note:
             file.write(line + '\n')
         file.close()
+        
+    def cards_mode(self):
+        self.cards_flag = 1
+        self.onTrenning_mode()
+        
+    def choose_card(self):
+        if self.dw_key:
+            self.f_word = random.choice(self.dw_key)
+            self.dw_key.remove(self.f_word)
+            self.f_f_word = self.dw[self.f_word][1]
+            self.n_word = self.dw[self.f_word][2]
+            self.foregn = "<center><b>%s</b> [%s]</center>" % (self.f_word, self.f_f_word)
+            self.native = "<center><b>%s</b></center>" % self.n_word
+            self.card_toggle = 'f'
+        
+        
+    def cards(self):
+        self.choose_card()
+        self.cards_view()
+        self.cards_flag = 0
+        
+    def cards_view(self):
+        def lab_press():
+            if self.card_toggle == 'f':
+                word_label.setText(self.native)
+                self.card_toggle = 'n'
+            else:
+                word_label.setText(self.foregn)
+                self.card_toggle = 'f'
+                
+        def next_card():
+            self.choose_card()
+            word_label.setText(self.foregn)
+            
+            
+        tl_cr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
+        tl_cr.setWindowTitle('Карточка')
+        tl_cr.setWindowModality(QtCore.Qt.WindowModal)
+        tl_cr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        tl_cr.resize(550,300)
+        tl_crbox = QtWidgets.QVBoxLayout()
+        word_box = QtWidgets.QVBoxLayout()
+        btn_box = QtWidgets.QHBoxLayout()
+        tip_box = QtWidgets.QHBoxLayout()
+        word_label = ClickedLabel(self.foregn)
+        word_label.setStyleSheet("font-size: 24px")
+        word_label.clicked.connect(lab_press)
+        word_box.addWidget(word_label, alignment=QtCore.Qt.AlignCenter)
+        tip = QtWidgets.QLabel("Для поворота карточки кликните по слову")
+        # word_box.addWidget(tip, alignment=QtCore.Qt.AlignHCenter | QtCore.Qt.AlignBottom)
+        btn_next = QtWidgets.QPushButton('Продолжить')
+        btn_stop = QtWidgets.QPushButton('Стоп')
+        btn_stop.clicked.connect(tl_cr.close)
+        btn_next.clicked.connect(next_card)
+        tip_box.addWidget(tip)
+        btn_box.addWidget(btn_next)
+        btn_box.addWidget(btn_stop)
+        tl_crbox.addLayout(word_box, stretch=10)
+        tl_crbox.addLayout(btn_box)
+        tl_crbox.addLayout(tip_box)
+        tl_cr.setLayout(tl_crbox)
+        tl_cr.show()
+        
         
     def edit_dict(self):
         if not self.dict_name:
