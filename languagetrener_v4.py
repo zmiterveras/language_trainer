@@ -33,8 +33,9 @@ class MainWindow(QtWidgets.QMainWindow):
         myMenu = menuBar.addMenu('&Файл')
         #action = myMenu.addAction('Test',  self.test)
         myLang = menuBar.addMenu('&Язык')
-        action = myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu))
-        action = myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu))
+        action = myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu, myView))
+        action = myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu, myView))
+        myView = menuBar.addMenu('Просмотр')
         myAbout = menuBar.addMenu('О...')
         action = myAbout.addAction('О программе', self.aboutProgramm)
         action = myAbout.addAction('Обо мне', self.aboutMe)
@@ -61,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ss.setLayout(central_box)
         return ss
         
-    def langChoose(self, x, myMenu):
+    def langChoose(self, x, myMenu, myView):
         if self.count != 1: 
             if not self.check_change():
                 return
@@ -81,9 +82,11 @@ class MainWindow(QtWidgets.QMainWindow):
             action = myMenu.addAction('&Создать',  self.create)
             action = myMenu.addAction('&Открыть',  self.openDict)
             action = myMenu.addAction('Сохранить',  self.win.save_dict)
-            action = myMenu.addAction('&Просмотреть все',  self.sort_all)
-            action = myMenu.addAction('Просмотр карточек', self.win.cards_mode)
             action = myMenu.addAction('&Закрыть',  self.close)
+            action = myView.addAction('Краткий просмотр',  self.win.dictView)
+            action = myView.addAction('&Просмотреть все',  self.sort_all)
+            action = myView.addAction('Просмотр карточек', self.win.cards_mode)
+            
         self.statusBar.addWidget(self.win.status)
         self.statusBar.addPermanentWidget(self.win.st) 
         self.win.label_am.setText('Пусто')
@@ -746,10 +749,25 @@ class MyWindowE(QtWidgets.QWidget):
             self.f_word = random.choice(self.dw_key)
             self.dw_key.remove(self.f_word)
             self.f_f_word = self.dw[self.f_word][1]
-            self.n_word = self.dw[self.f_word][2]
+            self.n_word = self.parse_word(self.dw[self.f_word][2])
             self.foregn = "<center><b>%s</b> [%s]</center>" % (self.f_word, self.f_f_word)
             self.native = "<center><b>%s</b></center>" % self.n_word
             self.card_toggle = 'f'
+            
+    def parse_word(self, words):
+        if len(words) > 26:
+            if words[26] not in [',', ';', ':', '.']:
+                part_string = words[:26]
+                splitter = []
+                for i in [' ', ',', ';', ':', '.']:
+                    ind = part_string.rfind(i)
+                    splitter.append(ind)
+                max_in = max(splitter)
+            else:
+                max_in = 27
+            return words[:max_in] + '<br>' + self.parse_word(words[max_in:].strip())
+        else:
+            return words
         
         
     def cards(self):
@@ -758,34 +776,79 @@ class MyWindowE(QtWidgets.QWidget):
         self.cards_flag = 0
         
     def cards_view(self):
+        def effect_animation(start=1.0, stop=0.0):
+            effect = QtWidgets.QGraphicsOpacityEffect()
+            self.word_label.setGraphicsEffect(effect)
+            effect.setOpacity(start)
+            an = QtCore.QPropertyAnimation(effect, b"opacity")
+            an.setDuration(1250)
+            an.setLoopCount(1)
+            an.setStartValue(start)
+            an.setEndValue(stop)
+            return an
+      
         def lab_press():
+            if not self.an_proc:
+                self.an_proc = True
+                self.dap = effect_animation()
+                start_animation(self.dap)
+            '''
             if self.card_toggle == 'f':
                 word_label.setText(self.native)
                 self.card_toggle = 'n'
             else:
                 word_label.setText(self.foregn)
                 self.card_toggle = 'f'
-                
+            '''
+        def appear():
+            self.ap = effect_animation(start=0.0, stop=1.0)
+            start_animation(self.ap)
+            
+        def start_animation(ef):
+            ef.start()
+            ef.finished.connect(new_label)
+            
+        def new_label():
+            if self.toggle == 0:
+                if self.card_toggle == 'f':
+                    text = self.native
+                    self.card_toggle = 'n'
+                else:
+                    text = self.foregn
+                    self.card_toggle = 'f'
+                self.word_label.setText(text)
+                #time.sleep(2)
+                self.toggle += 1
+                appear()
+            elif self.toggle == 1:
+                self.toggle -= 1
+                self.an_proc = False
+        
         def next_card():
             self.choose_card()
-            word_label.setText(self.foregn)
+            self.word_label.setText(self.foregn)
             
-            
+        
         tl_cr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tl_cr.setWindowTitle('Карточка')
+        frame = QtWidgets.QFrame()
+        frame.setFrameStyle(QtWidgets.QFrame.Box | QtWidgets.QFrame.Raised)
         tl_cr.setWindowModality(QtCore.Qt.WindowModal)
         tl_cr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        tl_cr.resize(550,300)
+        tl_cr.setFixedSize(0.2*desktop.width(), 0.2*desktop.height())
+        self.toggle = 0
+        self.an_proc = False
         tl_crbox = QtWidgets.QVBoxLayout()
+        tl_crbox.addWidget(frame, stretch=10)
         word_box = QtWidgets.QVBoxLayout()
+        frame.setLayout(word_box)
         btn_box = QtWidgets.QHBoxLayout()
         tip_box = QtWidgets.QHBoxLayout()
-        word_label = ClickedLabel(self.foregn)
-        word_label.setStyleSheet("font-size: 24px")
-        word_label.clicked.connect(lab_press)
-        word_box.addWidget(word_label, alignment=QtCore.Qt.AlignCenter)
+        self.word_label = ClickedLabel(self.foregn)
+        self.word_label.setStyleSheet("font-size: 32px")
+        self.word_label.clicked.connect(lab_press)
+        word_box.addWidget(self.word_label, alignment=QtCore.Qt.AlignCenter)
         tip = QtWidgets.QLabel("Для поворота карточки кликните по слову")
-        # word_box.addWidget(tip, alignment=QtCore.Qt.AlignHCenter | QtCore.Qt.AlignBottom)
         btn_next = QtWidgets.QPushButton('Продолжить')
         btn_stop = QtWidgets.QPushButton('Стоп')
         btn_stop.clicked.connect(tl_cr.close)
@@ -793,7 +856,7 @@ class MyWindowE(QtWidgets.QWidget):
         tip_box.addWidget(tip)
         btn_box.addWidget(btn_next)
         btn_box.addWidget(btn_stop)
-        tl_crbox.addLayout(word_box, stretch=10)
+        ####tl_crbox.addLayout(word_box, stretch=10)
         tl_crbox.addLayout(btn_box)
         tl_crbox.addLayout(tip_box)
         tl_cr.setLayout(tl_crbox)
