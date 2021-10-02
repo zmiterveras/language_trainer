@@ -754,23 +754,33 @@ class MyWindowE(QtWidgets.QWidget):
             self.native = "<center><b>%s</b></center>" % self.n_word
             self.card_toggle = 'f'
             
+    def setScreenValues(self):
+        width_s = desktop.width()
+        k_sc = width_s/2560
+        font_it = int(k_sc*32)
+        self.str_len = int(k_sc*26)
+        self.font_s = "font-size: %dpx" % font_it
+            
     def parse_word(self, words):
-        if len(words) > 26:
-            if words[26] not in [',', ';', ':', '.']:
-                part_string = words[:26]
+        if len(words) > self.str_len:
+            if words[self.str_len] not in [',', ';', ':', '.']:
+                part_string = words[:self.str_len]
                 splitter = []
                 for i in [' ', ',', ';', ':', '.']:
                     ind = part_string.rfind(i)
                     splitter.append(ind)
                 max_in = max(splitter)
             else:
-                max_in = 27
+                max_in = self.str_len + 1
             return words[:max_in] + '<br>' + self.parse_word(words[max_in:].strip())
         else:
             return words
         
         
     def cards(self):
+        self.word_label = ClickedLabel()
+        self.setScreenValues()
+        self.word_label.setStyleSheet(self.font_s)
         self.choose_card()
         self.cards_view()
         self.cards_flag = 0
@@ -844,8 +854,7 @@ class MyWindowE(QtWidgets.QWidget):
         frame.setLayout(word_box)
         btn_box = QtWidgets.QHBoxLayout()
         tip_box = QtWidgets.QHBoxLayout()
-        self.word_label = ClickedLabel(self.foregn)
-        self.word_label.setStyleSheet("font-size: 32px")
+        self.word_label.setText(self.foregn) 
         self.word_label.clicked.connect(lab_press)
         word_box.addWidget(self.word_label, alignment=QtCore.Qt.AlignCenter)
         tip = QtWidgets.QLabel("Для поворота карточки кликните по слову")
