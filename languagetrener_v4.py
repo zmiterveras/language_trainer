@@ -791,7 +791,7 @@ class MyWindowE(QtWidgets.QWidget):
             self.word_label.setGraphicsEffect(effect)
             effect.setOpacity(start)
             an = QtCore.QPropertyAnimation(effect, b"opacity")
-            an.setDuration(1250)
+            an.setDuration(1000)
             an.setLoopCount(1)
             an.setStartValue(start)
             an.setEndValue(stop)
