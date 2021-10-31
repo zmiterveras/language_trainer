@@ -743,17 +743,30 @@ class MyWindowE(QtWidgets.QWidget):
     def cards_mode(self):
         self.cards_flag = 1
         self.onTrenning_mode()
+        self.keys = []
         
     def choose_card(self):
         if self.dw_key:
             self.f_word = random.choice(self.dw_key)
+            self.keys.append(self.f_word)
             self.dw_key.remove(self.f_word)
             self.f_f_word = self.dw[self.f_word][1]
             self.n_word = self.parse_word(self.dw[self.f_word][2])
             self.foregn = "<center><b>%s</b> [%s]</center>" % (self.f_word, self.f_f_word)
             self.native = "<center><b>%s</b></center>" % self.n_word
             self.card_toggle = 'f'
-            
+        else:
+            result = QtWidgets.QMessageBox.question(None, 'Предупреждение',
+                    'Карточки закончены. Хотите повторить?',
+                    buttons=QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                    defaultButton=QtWidgets.QMessageBox.No)
+            if result == 16384:
+                self.dw_key = self.keys
+                self.keys = []
+                return
+            else:
+                self.tl_cr.close()
+       
     def setScreenValues(self):
         width_s = desktop.width()
         k_sc = width_s/2560
@@ -791,7 +804,11 @@ class MyWindowE(QtWidgets.QWidget):
             self.word_label.setGraphicsEffect(effect)
             effect.setOpacity(start)
             an = QtCore.QPropertyAnimation(effect, b"opacity")
-            an.setDuration(1000)
+<<<<<<< HEAD
+            an.setDuration(750)
+=======
+            an.setDuration(750)
+>>>>>>> debugcards
             an.setLoopCount(1)
             an.setStartValue(start)
             an.setEndValue(stop)
@@ -839,13 +856,13 @@ class MyWindowE(QtWidgets.QWidget):
             self.word_label.setText(self.foregn)
             
         
-        tl_cr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-        tl_cr.setWindowTitle('Карточка')
+        self.tl_cr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
+        self.tl_cr.setWindowTitle('Карточка')
         frame = QtWidgets.QFrame()
         frame.setFrameStyle(QtWidgets.QFrame.Box | QtWidgets.QFrame.Raised)
-        tl_cr.setWindowModality(QtCore.Qt.WindowModal)
-        tl_cr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        tl_cr.setFixedSize(0.2*desktop.width(), 0.2*desktop.height())
+        self.tl_cr.setWindowModality(QtCore.Qt.WindowModal)
+        self.tl_cr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        self.tl_cr.setFixedSize(0.2*desktop.width(), 0.2*desktop.height())
         self.toggle = 0
         self.an_proc = False
         tl_crbox = QtWidgets.QVBoxLayout()
@@ -857,19 +874,26 @@ class MyWindowE(QtWidgets.QWidget):
         self.word_label.setText(self.foregn) 
         self.word_label.clicked.connect(lab_press)
         word_box.addWidget(self.word_label, alignment=QtCore.Qt.AlignCenter)
-        tip = QtWidgets.QLabel("Для поворота карточки кликните по слову")
+        #tip_widget = QtWidgets.QWidget()
+        tip = QtWidgets.QLabel("Для поворота карточки кликните по слову:")
+        tip_label_img = QtWidgets.QLabel()
+        img_path = os.path.join(self.wd, 'word_arrow24.png')
+        tip_label_img.setPixmap(QtGui.QPixmap(img_path))
+        tip_box.addWidget(tip)
+        tip_box.addWidget(tip_label_img)
+        #tip_widget.setLayout(tipbox)
         btn_next = QtWidgets.QPushButton('Продолжить')
         btn_stop = QtWidgets.QPushButton('Стоп')
-        btn_stop.clicked.connect(tl_cr.close)
+        btn_stop.clicked.connect(self.tl_cr.close)
         btn_next.clicked.connect(next_card)
-        tip_box.addWidget(tip)
+        #tip_box.addWidget(tip)
         btn_box.addWidget(btn_next)
         btn_box.addWidget(btn_stop)
         ####tl_crbox.addLayout(word_box, stretch=10)
         tl_crbox.addLayout(btn_box)
         tl_crbox.addLayout(tip_box)
-        tl_cr.setLayout(tl_crbox)
-        tl_cr.show()
+        self.tl_cr.setLayout(tl_crbox)
+        self.tl_cr.show()
         
         
     def edit_dict(self):
