@@ -16,7 +16,7 @@ class ClickedLabel(QtWidgets.QLabel):
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
-        self.version = '''4.15.1, 2022г.'''
+        self.version = '''4.16, 2022г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.wp = os.path.join(self.app_dir, 'images')
@@ -78,15 +78,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self.screen_path = os.path.join(self.wp, 'Dic_de_148.png')
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
-        if self.count == 1:
-            action = myMenu.addAction('&Создать',  self.create)
-            action = myMenu.addAction('&Открыть',  self.openDict)
-            action = myMenu.addAction('Сохранить',  self.win.save_dict)
-            action = myMenu.addAction('&Закрыть',  self.close)
-            action = myView.addAction('Краткий просмотр',  self.win.dictView)
-            action = myView.addAction('&Просмотреть все',  self.sort_all)
-            action = myView.addAction('Просмотр карточек', self.win.cards_mode)
-            
+        myView.clear()
+        myMenu.clear()
+        action = myMenu.addAction('&Создать',  self.create)
+        action = myMenu.addAction('&Открыть',  self.openDict)
+        action = myMenu.addAction('Сохранить',  self.win.save_dict)
+        action = myMenu.addAction('&Закрыть',  self.close)
+        action = myView.addAction('Краткий просмотр',  self.win.dictView)
+        action = myView.addAction('&Просмотреть все',  self.sort_all)
+        action = myView.addAction('Просмотр карточек', self.win.cards_mode)
         self.statusBar.addWidget(self.win.status)
         self.statusBar.addPermanentWidget(self.win.st) 
         self.win.label_am.setText('Пусто')
