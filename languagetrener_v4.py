@@ -16,7 +16,7 @@ class ClickedLabel(QtWidgets.QLabel):
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
-        self.version = '''4.16, 2022г.'''
+        self.version = '''4.17, 2022г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.wp = os.path.join(self.app_dir, 'images')
@@ -36,6 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
         action = myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu, myView))
         action = myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu, myView))
         myView = menuBar.addMenu('Просмотр')
+        action = myView.addAction('Просмотр логфайла', self.viewLogfile)
         myAbout = menuBar.addMenu('О...')
         action = myAbout.addAction('О программе', self.aboutProgramm)
         action = myAbout.addAction('Обо мне', self.aboutMe)
@@ -87,6 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
         action = myView.addAction('Краткий просмотр',  self.win.dictView)
         action = myView.addAction('&Просмотреть все',  self.sort_all)
         action = myView.addAction('Просмотр карточек', self.win.cards_mode)
+        action = myView.addAction('Просмотр логфайла', self.viewLogfile)
         self.statusBar.addWidget(self.win.status)
         self.statusBar.addPermanentWidget(self.win.st) 
         self.win.label_am.setText('Пусто')
@@ -288,6 +290,32 @@ class MainWindow(QtWidgets.QMainWindow):
         tabview.setLayout(vbox)
         tabview.resize(915,350)
         tabview.show()
+        
+    
+    def viewLogfile(self):
+        fp = os.path.join(self.app_dir, 'vokabelheftlogfile')
+        if not os.path.exists(fp):
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Лог файл не существует')
+            return
+        logfile = open(fp)
+        lines = logfile.readlines()
+        logfile.close()
+        lv = QtWidgets.QListView()
+        slm = QtCore.QStringListModel(lines)
+        lv.setModel(slm)
+        lt = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
+        lt.setWindowTitle('Logfile')
+        lt.resize(500, 600)
+        lt.setWindowModality(QtCore.Qt.WindowModal)
+        lt.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        ltbox = QtWidgets.QVBoxLayout()
+        ltbox.addWidget(lv)
+        btnc = QtWidgets.QPushButton('Закрыть')
+        ltbox.addWidget(btnc)
+        btnc.clicked.connect(lt.close)
+        lt.setLayout(ltbox)
+        lt.show()
+        
         
         
     def aboutProgramm(self):   
