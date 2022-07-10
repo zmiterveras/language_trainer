@@ -83,11 +83,11 @@ class MainWindow(QtWidgets.QMainWindow):
         myMenu.clear()
         action = myMenu.addAction('&Создать',  self.createDict)
         action = myMenu.addAction('&Открыть',  self.openDict)
-        action = myMenu.addAction('Сохранить',  self.win.save_dict)
+        action = myMenu.addAction('Сохранить',  self.win.saveDict)
         action = myMenu.addAction('&Закрыть',  self.close)
         action = myView.addAction('Краткий просмотр',  self.win.dictView)
         action = myView.addAction('&Просмотреть все',  self.sortAll)
-        action = myView.addAction('Просмотр карточек', self.win.cards_mode)
+        action = myView.addAction('Просмотр карточек', self.win.cardsMode)
         action = myView.addAction('Просмотр логфайла', self.viewLogfile)
         self.statusBar.addWidget(self.win.status)
         self.statusBar.addPermanentWidget(self.win.st) 
@@ -191,7 +191,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
     def sortAll(self):
-        def close_sa():
+        def saClose():
             sa.close()
             self.viewAll()
             
@@ -199,16 +199,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.view_page = True
             page = sp_box.value()
             self.start_page = (page-1) * 40
-            close_sa()
+            saClose()
             
         def sortChoose():
             index = cb_sa.currentIndex()
             if index == 0:
                 self.sort = 1
-                close_sa()
+                saClose()
             elif index == 1:
                 self.sort = 0
-                close_sa()
+                saClose()
             elif index == 2:
                 if self.win.page_max < 2:
                     text = 'Не достаточно слов для постраничного режима\nИспользуйте другой режим просмотра!'
@@ -224,7 +224,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     self.start_page = len(self.win.dw) - 40
                 self.view_page = True
-                close_sa()
+                saClose()
            
             
         if not self.win.dict_name:
@@ -348,7 +348,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, e):
         if not self.win: return
         if self.win.dict_name:
-            self.win.save_dict()
+            self.win.saveDict()
         e.accept()
         QtWidgets.QWidget.closeEvent(self, e)
         
@@ -370,9 +370,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.status = QtWidgets.QLabel()
         self.makeWidget()
         self.saveValues()
-        self.status_w()
+        self.statusW()
         
-    def status_w(self):
+    def statusW(self):
         self.st = QtWidgets.QWidget()
         stbox = QtWidgets.QHBoxLayout()
         self.label_am = QtWidgets.QLabel()
@@ -398,9 +398,9 @@ class MyWindowE(QtWidgets.QWidget):
         self.status = QtWidgets.QLabel()
         self.makeWidget()
         self.saveValues()
-        self.status_w()
+        self.statusW()
         
-    def status_w(self):
+    def statusW(self):
         self.st = QtWidgets.QWidget()
         stbox = QtWidgets.QHBoxLayout()
         self.label_am = QtWidgets.QLabel()
@@ -428,8 +428,8 @@ class MyWindowE(QtWidgets.QWidget):
         self.vtop.addLayout(self.vtop_t)
         self.vtop.addLayout(self.htop_b)
         self.hbox = QtWidgets.QHBoxLayout()
-        btnnames = [('Просмотр', self.dictView),('Тренировка', self.onTrenning_mode),
-                    ('Поиск', self.onSearch),('Редакт.', self.edit_dict)]
+        btnnames = [('Просмотр', self.dictView),('Тренировка', self.onTrenningMode),
+                    ('Поиск', self.onSearch),('Редакт.', self.editDict)]
         btnlist = []
         for i in btnnames:
             btn = QtWidgets.QPushButton(i[0])
@@ -442,7 +442,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.vbox.addLayout(self.hbox)
         self.setLayout(self.vbox)
         
-    def save_dict(self):
+    def saveDict(self):
         if not self.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')#######
             return
@@ -518,14 +518,14 @@ class MyWindowE(QtWidgets.QWidget):
         text = '<center>Слов в словаре: <b>' + amount + '</b></center>'
         if flag != 2: self.label_am.setText(text)
         if not flag: 
-            self.lv.doubleClicked.connect(self.viewword)
+            self.lv.doubleClicked.connect(self.viewWord)
         elif flag == 1:
             self.lv.doubleClicked.connect(self.onEdItemRun)
         else:
             pass
         
-    def viewword(self, index):
-        self.displayword()
+    def viewWord(self, index):
+        self.displayWord()
         
     def onEdItemRun(self, event):
         self.onEdItem()
@@ -535,11 +535,11 @@ class MyWindowE(QtWidgets.QWidget):
         fr.setFrameShape(QtWidgets.QFrame.HLine)
         box.addWidget(fr)      
         
-    def displayword(self):
-        def edit_run(a,win):
-            tl_close(None, win, flag=1)
+    def displayWord(self):
+        def editRun(a,win):
+            tlClose(None, win, flag=1)
             self.onEdItem()    
-        def tl_close(a, win, flag=None):
+        def tlClose(a, win, flag=None):
             if not flag:
                 self.search_flag =0
             win.close()   
@@ -565,8 +565,8 @@ class MyWindowE(QtWidgets.QWidget):
             tlhbox = QtWidgets.QHBoxLayout()
             btnc = QtWidgets.QPushButton('Закрыть')
             btne = QtWidgets.QPushButton('Редактировать')
-            btne.clicked.connect(lambda: edit_run(None, tl))
-            btnc.clicked.connect(lambda: tl_close(None, tl)) 
+            btne.clicked.connect(lambda: editRun(None, tl))
+            btnc.clicked.connect(lambda: tlClose(None, tl)) 
             tlhbox.addWidget(btne)
             tlhbox.addWidget(btnc)
             tlvbox.addLayout(tlhbox)
@@ -583,7 +583,7 @@ class MyWindowE(QtWidgets.QWidget):
         partname = self.dw[key][5]
         view()
         
-    def onTrenning_mode(self):
+    def onTrenningMode(self):
         def onChoice():
             self.ch_value = cb_tm.currentIndex()
             self.log_flag = checkbtn.checkState() 
@@ -736,7 +736,7 @@ class MyWindowE(QtWidgets.QWidget):
         label_rim.setAlignment(QtCore.Qt.AlignCenter)
         self.vtop_t.addWidget(label_rim)
         if self.log_flag:
-            self.trening_log()
+            self.treningLog()
                
     def onTrueAnswer(self):
         self.clear()
@@ -782,7 +782,7 @@ class MyWindowE(QtWidgets.QWidget):
         text = "Правильных ответов/вопросов: " + str(self.t_ans_count) + "/" + str(self.q_count)
         self.label_am.setText(text)
         
-    def trening_log(self):
+    def treningLog(self):
         self.wp = os.path.dirname(os.path.abspath(__file__))
         log_path = os.path.join(self.wp, 'vokabelheftlogfile')
         file = open(log_path, 'a')
@@ -796,18 +796,18 @@ class MyWindowE(QtWidgets.QWidget):
             file.write(line + '\n')
         file.close()
         
-    def cards_mode(self):
+    def cardsMode(self):
         self.cards_flag = 1
-        self.onTrenning_mode()
+        self.onTrenningMode()
         self.keys = []
         
-    def choose_card(self):
+    def chooseCard(self):
         if self.dw_key:
             self.f_word = random.choice(self.dw_key)
             self.keys.append(self.f_word)
             self.dw_key.remove(self.f_word)
             self.f_f_word = self.dw[self.f_word][1]
-            self.n_word = self.parse_word(self.dw[self.f_word][2])
+            self.n_word = self.parseWord(self.dw[self.f_word][2])
             self.foregn = "<center><b>%s</b> [%s]</center>" % (self.f_word, self.f_f_word)
             self.native = "<center><b>%s</b></center>" % self.n_word
             self.card_toggle = 'f'
@@ -830,7 +830,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.str_len = int(k_sc*26)
         self.font_s = "font-size: %dpx" % font_it
             
-    def parse_word(self, words):
+    def parseWord(self, words):
         if len(words) > self.str_len:
             if words[self.str_len] not in [',', ';', ':', '.']:
                 part_string = words[:self.str_len]
@@ -841,7 +841,7 @@ class MyWindowE(QtWidgets.QWidget):
                 max_in = max(splitter)
             else:
                 max_in = self.str_len + 1
-            return words[:max_in] + '<br>' + self.parse_word(words[max_in:].strip())
+            return words[:max_in] + '<br>' + self.parseWord(words[max_in:].strip())
         else:
             return words
         
@@ -850,12 +850,12 @@ class MyWindowE(QtWidgets.QWidget):
         self.word_label = ClickedLabel()
         self.setScreenValues()
         self.word_label.setStyleSheet(self.font_s)
-        self.choose_card()
-        self.cards_view()
+        self.chooseCard()
+        self.cardsView()
         self.cards_flag = 0
         
-    def cards_view(self):
-        def effect_animation(start=1.0, stop=0.0):
+    def cardsView(self):
+        def effectAnimation(start=1.0, stop=0.0):
             effect = QtWidgets.QGraphicsOpacityEffect()
             self.word_label.setGraphicsEffect(effect)
             effect.setOpacity(start)
@@ -866,11 +866,11 @@ class MyWindowE(QtWidgets.QWidget):
             an.setEndValue(stop)
             return an
       
-        def lab_press():
+        def labPress():
             if not self.an_proc:
                 self.an_proc = True
-                self.dap = effect_animation()
-                start_animation(self.dap)
+                self.dap = effectAnimation()
+                startAnimation(self.dap)
             '''
             if self.card_toggle == 'f':
                 word_label.setText(self.native)
@@ -880,14 +880,14 @@ class MyWindowE(QtWidgets.QWidget):
                 self.card_toggle = 'f'
             '''
         def appear():
-            self.ap = effect_animation(start=0.0, stop=1.0)
-            start_animation(self.ap)
+            self.ap = effectAnimation(start=0.0, stop=1.0)
+            startAnimation(self.ap)
             
-        def start_animation(ef):
+        def startAnimation(ef):
             ef.start()
-            ef.finished.connect(new_label)
+            ef.finished.connect(newLabel)
             
-        def new_label():
+        def newLabel():
             if self.toggle == 0:
                 if self.card_toggle == 'f':
                     text = self.native
@@ -903,8 +903,8 @@ class MyWindowE(QtWidgets.QWidget):
                 self.toggle -= 1
                 self.an_proc = False
         
-        def next_card():
-            self.choose_card()
+        def nextCard():
+            self.chooseCard()
             self.word_label.setText(self.foregn)
             
         
@@ -924,7 +924,7 @@ class MyWindowE(QtWidgets.QWidget):
         btn_box = QtWidgets.QHBoxLayout()
         tip_box = QtWidgets.QHBoxLayout()
         self.word_label.setText(self.foregn) 
-        self.word_label.clicked.connect(lab_press)
+        self.word_label.clicked.connect(labPress)
         word_box.addWidget(self.word_label, alignment=QtCore.Qt.AlignCenter)
         #tip_widget = QtWidgets.QWidget()
         tip = QtWidgets.QLabel("Для поворота карточки кликните по слову:")
@@ -937,7 +937,7 @@ class MyWindowE(QtWidgets.QWidget):
         btn_next = QtWidgets.QPushButton('Продолжить')
         btn_stop = QtWidgets.QPushButton('Стоп')
         btn_stop.clicked.connect(self.tl_cr.close)
-        btn_next.clicked.connect(next_card)
+        btn_next.clicked.connect(nextCard)
         #tip_box.addWidget(tip)
         btn_box.addWidget(btn_next)
         btn_box.addWidget(btn_stop)
@@ -948,7 +948,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.tl_cr.show()
         
         
-    def edit_dict(self):
+    def editDict(self):
         if not self.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
             return
@@ -992,10 +992,10 @@ class MyWindowE(QtWidgets.QWidget):
                         self.newname[j].append(n)
                 QtWidgets.QMessageBox.information(None,'Инфо', txt + value1)
                 self.clear()
-                self.edit_dict()
+                self.editDict()
                 tla.close()
                 
-        def fon_sign():
+        def fonSign():
             def onInsert():
                 key = self.lv.currentIndex().data()
                 lE_kf.insert(key)
@@ -1046,7 +1046,7 @@ class MyWindowE(QtWidgets.QWidget):
         form.addRow('Множественное число:',lE_pl)
         form.addRow('Часть речи:', cb_pn)
         form.addRow(hbox)
-        btn1.clicked.connect(fon_sign)
+        btn1.clicked.connect(fonSign)
         btn2.clicked.connect(getName)
         btn3.clicked.connect(tla.close)
         tla.setLayout(form)
@@ -1087,9 +1087,9 @@ class MyWindowE(QtWidgets.QWidget):
                 else:
                     self.search_flag = 1
                     self.search_key = value
-                    self.displayword()
-                    sr_close()
-        def sr_close():
+                    self.displayWord()
+                    srClose()
+        def srClose():
             self.status.setText(text)
             sr.close()
         
@@ -1104,7 +1104,7 @@ class MyWindowE(QtWidgets.QWidget):
         btn1 = QtWidgets.QPushButton('Найти')
         btn2 = QtWidgets.QPushButton('Закрыть')
         btn1.clicked.connect(onFind)
-        btn2.clicked.connect(sr_close)
+        btn2.clicked.connect(srClose)
         btn1.setAutoDefault(True) # enter
         se.returnPressed.connect(btn1.click) #enter
         srhbox.addWidget(btn1)
@@ -1121,11 +1121,10 @@ class MyWindowE(QtWidgets.QWidget):
             QtWidgets.QMessageBox.warning(None,'Предупреждение','Не выбрана запись для удаления')
             return
         self.delname.append(self.dw[key][0])
-        #print('delname', self.delname)
         self.dw.pop(key)
         QtWidgets.QMessageBox.information(None,'Инфо', 'Удалена запись: '+key)
         self.clear()
-        self.edit_dict()
+        self.editDict()
         
 ###################################################Deutsch        
 class MyWindowD(MyWindowE):
@@ -1133,7 +1132,7 @@ class MyWindowD(MyWindowE):
         MyWindowE.__init__(self, parent)
         self.on_sign_flag = 0
         
-    def fon_sign(self):
+    def fonSign(self):
         def onInsert():
             key = self.lv.currentIndex().data() # from ListBox
             if not self.on_sign_flag:
@@ -1199,7 +1198,7 @@ class MyWindowD(MyWindowE):
                         self.newname[j].append(n)
                 QtWidgets.QMessageBox.information(None,'Инфо', txt + value1)
                 self.clear()
-                self.edit_dict()
+                self.editDict()
                 tla.close()
                 
         tla = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
@@ -1242,7 +1241,7 @@ class MyWindowD(MyWindowE):
         form.addRow('Часть речи:', cb_pn)
         form.addRow('Умляут', btn1)
         form.addRow(hbox2)
-        btn1.clicked.connect(self.fon_sign)
+        btn1.clicked.connect(self.fonSign)
         btn2.clicked.connect(getName)
         btn3.clicked.connect(tla.close)
         tla.setLayout(form)
@@ -1275,7 +1274,7 @@ class MyWindowD(MyWindowE):
             self.vtop_t.addWidget(self.ent)
             btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
             self.vtop_t.addWidget(btn_u)
-            btn_u.clicked.connect(self.fon_sign)
+            btn_u.clicked.connect(self.fonSign)
             btn = QtWidgets.QPushButton('Ok')
             self.vtop_t.addWidget(btn)
             btn.clicked.connect(onCheck)
@@ -1304,9 +1303,9 @@ class MyWindowD(MyWindowE):
                 else:
                     self.search_flag = 1
                     self.search_key = value
-                    self.displayword()
-                    sr_close()
-        def sr_close():
+                    self.displayWord()
+                    srClose()
+        def srClose():
             self.status.setText(text)
             self.on_sign_flag = 0
             sr.close()
@@ -1326,8 +1325,8 @@ class MyWindowD(MyWindowE):
         btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
         btn2 = QtWidgets.QPushButton('Закрыть')
         btn1.clicked.connect(onFind)
-        btn_u.clicked.connect(self.fon_sign)
-        btn2.clicked.connect(sr_close)
+        btn_u.clicked.connect(self.fonSign)
+        btn2.clicked.connect(srClose)
         btn1.setAutoDefault(True) # enter
         self.se.returnPressed.connect(btn1.click) #enter
         srhbox.addWidget(btn1)
