@@ -27,7 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
         text_ch = """<center>Выберите изучаемый язык</center>\n
         <center>Используйте меню:</center>\n
         <center><b>"Язык"</b></center>"""
-        ss = self.first_screensaver(self.wp, text_ch)
+        ss = self.firstScreensaver(self.wp, text_ch)
         self.setCentralWidget(ss)     
         menuBar = self.menuBar()
         myMenu = menuBar.addMenu('&Файл')
@@ -45,7 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sort = 1
         self.view_page = False
         
-    def first_screensaver(self, abs_path, text, flag=None):
+    def firstScreensaver(self, abs_path, text, flag=None):
         ss = QtWidgets.QWidget()
         central_box = QtWidgets.QVBoxLayout()
         hor_box = QtWidgets.QHBoxLayout()
@@ -65,7 +65,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
     def langChoose(self, x, myMenu, myView):
         if self.count != 1: 
-            if not self.check_change():
+            if not self.checkChange():
                 return
         if x == 1:
             self.win = MyWindowE()
@@ -81,12 +81,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.btncl.clicked.connect(self.close)
         myView.clear()
         myMenu.clear()
-        action = myMenu.addAction('&Создать',  self.create)
+        action = myMenu.addAction('&Создать',  self.createDict)
         action = myMenu.addAction('&Открыть',  self.openDict)
         action = myMenu.addAction('Сохранить',  self.win.save_dict)
         action = myMenu.addAction('&Закрыть',  self.close)
         action = myView.addAction('Краткий просмотр',  self.win.dictView)
-        action = myView.addAction('&Просмотреть все',  self.sort_all)
+        action = myView.addAction('&Просмотреть все',  self.sortAll)
         action = myView.addAction('Просмотр карточек', self.win.cards_mode)
         action = myView.addAction('Просмотр логфайла', self.viewLogfile)
         self.statusBar.addWidget(self.win.status)
@@ -96,7 +96,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.label_flag.setAlignment(QtCore.Qt.AlignRight)
         self.count += 1
         
-    def check_change(self, flag=None): 
+    def checkChange(self, flag=None): 
         result = QtWidgets.QMessageBox.question(None, 'Предупреждение',
                     'Вы действительно хотите открыть новый словарь?\n' +
                     'Все несохранненые данные при этом будут потеряны.',
@@ -113,7 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.statusBar.removeWidget(self.win.st)
             return True
         
-    def create(self):
+    def createDict(self):
         s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря')
         if not ok: return
         if ok and not s:
@@ -146,7 +146,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def openDict(self):
         open_flag = 0
         if self.win.dict_name:
-            if not self.check_change(flag=1):
+            if not self.checkChange(flag=1):
                 return
         self.win.dict_name, fil_ = QtWidgets.QFileDialog.getOpenFileName(None, caption='Открыть словарь',
                                                                          directory=self.app_dir, filter='DB (*.sqlite)') 
@@ -190,18 +190,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.label_am.setText(self.lang)
         
         
-    def sort_all(self):
+    def sortAll(self):
         def close_sa():
             sa.close()
             self.viewAll()
             
-        def choose_page():
+        def choosePage():
             self.view_page = True
             page = sp_box.value()
             self.start_page = (page-1) * 40
             close_sa()
             
-        def sort_choose():
+        def sortChoose():
             index = cb_sa.currentIndex()
             if index == 0:
                 self.sort = 1
@@ -217,7 +217,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 cb_sa.setEnabled(False)
                 sp_box.setRange(1, self.win.page_max)
                 savbox.insertWidget(2, sp_box)
-                btn.clicked.connect(choose_page)
+                btn.clicked.connect(choosePage)
             elif index == 3:
                 if len(self.win.dw) <=  40:
                     self.start_page = 0
@@ -241,7 +241,7 @@ class MainWindow(QtWidgets.QMainWindow):
         sp_box = QtWidgets.QSpinBox()
         savbox.addWidget(cb_sa)
         btn = QtWidgets.QPushButton('Ok')
-        btn.clicked.connect(sort_choose)
+        btn.clicked.connect(sortChoose)
         savbox.addWidget(btn)
         sa.setLayout(savbox)
         sa.show()
@@ -354,6 +354,34 @@ class MainWindow(QtWidgets.QMainWindow):
         
 ###############################################################################
 
+
+class MyWindowLanguage(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        QtWidgets.QWidget.__init__(self, parent)
+        self.dict_name = ''
+        self.dw = {}
+        self.search_flag = 0
+        self.cards_flag = 0
+        self.search_key = 0
+        self.page_max = 0
+        self.lst1 = [1,2,3,4,5]
+        self.lst2 = ['существительное','глагол','прилагательное','наречие', 'другое']
+        self.wd = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'images')
+        self.status = QtWidgets.QLabel()
+        self.makeWidget()
+        self.saveValues()
+        self.status_w()
+        
+    def status_w(self):
+        self.st = QtWidgets.QWidget()
+        stbox = QtWidgets.QHBoxLayout()
+        self.label_am = QtWidgets.QLabel()
+        self.label_flag = QtWidgets.QLabel()
+        stbox.addWidget(self.label_am)
+        stbox.addWidget(self.label_flag)
+        self.st.setLayout(stbox)
+        
+
 class MyWindowE(QtWidgets.QWidget):
     def __init__(self,parent=None):
         QtWidgets.QWidget.__init__(self, parent)
@@ -394,7 +422,7 @@ class MyWindowE(QtWidgets.QWidget):
         self.vbox = QtWidgets.QVBoxLayout()
         self.vtop = QtWidgets.QVBoxLayout()
         self.vtop_t = QtWidgets.QVBoxLayout()
-        ss = MainWindow().first_screensaver(self.wd, text, flag=1)
+        ss = MainWindow().firstScreensaver(self.wd, text, flag=1)
         self.vtop_t.addWidget(ss)
         self.htop_b = QtWidgets.QHBoxLayout()
         self.vtop.addLayout(self.vtop_t)
