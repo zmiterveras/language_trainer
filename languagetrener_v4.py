@@ -912,6 +912,58 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.onAdd(None,new, flag=1)
         self.search_flag = 0
         
+    def onSearch(self):
+        if not self.dict_name:
+            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
+            return
+        if not self.dw:
+            self.clear()
+            self.label3 = QtWidgets.QLabel('<center>Словарь пуст</center>')
+            self.vtop_t.addWidget(self.label3)
+            return
+        
+        def onFind():
+            value = self.se.text()
+            if value == '':
+                QtWidgets.QMessageBox.warning(None,'Предупреждение', 'Не введены значения')
+            else:
+                if value not in list(self.dw.keys()):
+                    QtWidgets.QMessageBox.warning(None,'Предупреждение','Данного слова нет в словаре')
+                else:
+                    self.search_flag = 1
+                    self.search_key = value
+                    self.displayWord()
+                    srClose()
+                    
+        def srClose():
+            self.status.setText(text)
+            sr.close()
+        
+        text = self.status.text()
+        self.status.setText('Режим: поиск')
+        sr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
+        sr.setWindowTitle('Поиск')
+        sr.setWindowModality(QtCore.Qt.WindowModal)
+        sr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)    
+        srvbox = QtWidgets.QVBoxLayout()
+        sl = QtWidgets.QLabel('Введите искомое слово(иност.)')
+        self.se = QtWidgets.QLineEdit()
+        srhbox = QtWidgets.QHBoxLayout()
+        btn1 = QtWidgets.QPushButton('Найти')
+        btn2 = QtWidgets.QPushButton('Закрыть')
+        btn1.clicked.connect(onFind)
+        btn2.clicked.connect(srClose)
+        btn1.setAutoDefault(True) # enter
+        self.se.returnPressed.connect(btn1.click) #enter
+        srhbox.addWidget(btn1)
+        srhbox.addWidget(btn2)
+        srvbox.addWidget(sl)
+        srvbox.addWidget(self.se)
+        srvbox.addLayout(srhbox)
+        sr.setLayout(srvbox)
+        #sr.show()
+        return sr, srhbox
+        
     def onDelete(self):
         key = self.lv.currentIndex().data()
         if not key:
@@ -1055,58 +1107,14 @@ class MyWindowE(MyWindowLanguage):
         tla.show()
         
     def onSearch(self):
-        if not self.dict_name:
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
-            return
-        if not self.dw:
-            self.clear()
-            self.label3 = QtWidgets.QLabel('<center>Словарь пуст</center>')
-            self.vtop_t.addWidget(self.label3)
-            return
-        text = self.status.text()
-        self.status.setText('Режим: поиск')
-        def onFind():
-            value = se.text()
-            if value == '':
-                QtWidgets.QMessageBox.warning(None,'Предупреждение', 'Не введены значения')
-            else:
-                if value not in list(self.dw.keys()):
-                    QtWidgets.QMessageBox.warning(None,'Предупреждение','Данного слова нет в словаре')
-                else:
-                    self.search_flag = 1
-                    self.search_key = value
-                    self.displayWord()
-                    srClose()
-        def srClose():
-            self.status.setText(text)
-            sr.close()
-        
-        sr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-        sr.setWindowTitle('Поиск')
-        sr.setWindowModality(QtCore.Qt.WindowModal)
-        sr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)    
-        srvbox = QtWidgets.QVBoxLayout()
-        sl = QtWidgets.QLabel('Введите искомое слово(иност.)')
-        se = QtWidgets.QLineEdit()
-        srhbox = QtWidgets.QHBoxLayout()
-        btn1 = QtWidgets.QPushButton('Найти')
-        btn2 = QtWidgets.QPushButton('Закрыть')
-        btn1.clicked.connect(onFind)
-        btn2.clicked.connect(srClose)
-        btn1.setAutoDefault(True) # enter
-        se.returnPressed.connect(btn1.click) #enter
-        srhbox.addWidget(btn1)
-        srhbox.addWidget(btn2)
-        srvbox.addWidget(sl)
-        srvbox.addWidget(se)
-        srvbox.addLayout(srhbox)
-        sr.setLayout(srvbox)
+        sr, srhbox = MyWindowLanguage.onSearch(self)
         sr.show()
+        
         
 ###################################################Deutsch        
 class MyWindowD(MyWindowLanguage):
     def __init__(self,parent=None):
-        MyWindowE.__init__(self, parent)
+        MyWindowLanguage.__init__(self, parent)
         self.on_sign_flag = 0
         
     def fonSign(self):
@@ -1261,6 +1269,17 @@ class MyWindowD(MyWindowLanguage):
             self.onResult()
         
     def onSearch(self):
+        self.on_sign_flag = 2
+        print("on_sign_flag: ", self.on_sign_flag)
+        sr, srhbox =  MyWindowLanguage.onSearch(self)
+        btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
+        btn_u.clicked.connect(self.fonSign)
+        srhbox.insertWidget(1, btn_u)
+        sr.show()
+        #self.on_sign_flag = 0
+        print("on_sign_flag: ", self.on_sign_flag)
+        
+        '''
         if not self.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
             return
@@ -1292,7 +1311,7 @@ class MyWindowD(MyWindowLanguage):
         self.on_sign_flag = 2
         sr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         sr.setWindowTitle('Поиск')
-        #sr.setWindowModality(QtCore.Qt.WindowModal)
+        sr.setWindowModality(QtCore.Qt.WindowModal)
         sr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)    
         srvbox = QtWidgets.QVBoxLayout()
         sl = QtWidgets.QLabel('Введите искомое слово(иност.)')
@@ -1314,6 +1333,7 @@ class MyWindowD(MyWindowLanguage):
         srvbox.addLayout(srhbox)
         sr.setLayout(srvbox)
         sr.show()
+        '''
         
 
 if __name__ == '__main__':
