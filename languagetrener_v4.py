@@ -1299,63 +1299,6 @@ class MyWindowD(MyWindowLanguage):
         btn_u.clicked.connect(self.fonSign)
         srhbox.insertWidget(1, btn_u)
         sr.show()
-     
-        
-        '''
-        if not self.dict_name:
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
-            return
-        if not self.dw:
-            self.clear()
-            self.label3 = QtWidgets.QLabel('<center>Словарь пуст</center>')
-            self.vtop_t.addWidget(self.label3)
-            return
-        
-        def onFind():
-            value = self.se.text()
-            if value == '':
-                QtWidgets.QMessageBox.warning(None,'Предупреждение', 'Не введены значения')
-            else:
-                if value not in list(self.dw.keys()):
-                    QtWidgets.QMessageBox.warning(None,'Предупреждение','Данного слова нет в словаре')
-                else:
-                    self.search_flag = 1
-                    self.search_key = value
-                    self.displayWord()
-                    srClose()
-        def srClose():
-            self.status.setText(text)
-            self.on_sign_flag = 0
-            sr.close()
-        
-        text = self.status.text()
-        self.status.setText('Режим: поиск')
-        self.on_sign_flag = 2
-        sr = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-        sr.setWindowTitle('Поиск')
-        sr.setWindowModality(QtCore.Qt.WindowModal)
-        sr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)    
-        srvbox = QtWidgets.QVBoxLayout()
-        sl = QtWidgets.QLabel('Введите искомое слово(иност.)')
-        self.se = QtWidgets.QLineEdit()
-        srhbox = QtWidgets.QHBoxLayout()
-        btn1 = QtWidgets.QPushButton('Найти')
-        btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
-        btn2 = QtWidgets.QPushButton('Закрыть')
-        btn1.clicked.connect(onFind)
-        btn_u.clicked.connect(self.fonSign)
-        btn2.clicked.connect(srClose)
-        btn1.setAutoDefault(True) # enter
-        self.se.returnPressed.connect(btn1.click) #enter
-        srhbox.addWidget(btn1)
-        srhbox.addWidget(btn_u)
-        srhbox.addWidget(btn2)
-        srvbox.addWidget(sl)
-        srvbox.addWidget(self.se)
-        srvbox.addLayout(srhbox)
-        sr.setLayout(srvbox)
-        sr.show()
-        '''
         
 
 if __name__ == '__main__':
