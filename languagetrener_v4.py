@@ -1055,6 +1055,12 @@ class MyWindowE(MyWindowLanguage):
                 lE_kf.insert(key)
                 lE_kf.setFocus()
                 tlf.close()
+                
+            def closeEvent(e):
+                print('closing tlf')
+                e.accept()
+                QtWidgets.QWidget.closeEvent(e)
+            
             dic = ['ə','əʊ','ɔ','ʌ','ʘ','ɶ','ʊ','ʃ','ɚ','ɳ','ʧ','ʤ','ʒ','ɜ']
             tlf = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
             tvbox = QtWidgets.QVBoxLayout()
@@ -1064,12 +1070,12 @@ class MyWindowE(MyWindowLanguage):
             tlfb.clicked.connect(onInsert)
             tlf.setLayout(tvbox)
             tlf.show()
+            
         
         tla = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tla.setWindowTitle('Добавить')
         #tla.setWindowModality(QtCore.Qt.WindowModal)
         #tla.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        tlavbox = QtWidgets.QVBoxLayout()
         lE_key = QtWidgets.QLineEdit()
         lE_kf = QtWidgets.QLineEdit()
         lE_w = QtWidgets.QLineEdit()
@@ -1116,6 +1122,8 @@ class MyWindowD(MyWindowLanguage):
     def __init__(self,parent=None):
         MyWindowLanguage.__init__(self, parent)
         self.on_sign_flag = 0
+        #self.lv = None
+        #self.time_lv = None
         
     def fonSign(self):
         def onInsert():
@@ -1134,19 +1142,35 @@ class MyWindowD(MyWindowLanguage):
             else:
                 self.se.insert(key)
                 self.se.setFocus()
-            tlf.close()
+            onClose()
             
+        def onClose():
+            if hasattr(self, 'time_lv'):
+                self.lv = self.time_lv
+            tlf.close()
+               
         dic = ['ä', 'ö', 'ü', 'ß', 'Ä' , 'Ö',  'Ü']
-        tlf = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
+        tlf = QtWidgets.QWidget(parent=window) #, flags=QtCore.Qt.Window)
+        tlf.setWindowFlags(self.windowFlags()
+                            & ~QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.Window)
+        tlf.setWindowModality(QtCore.Qt.WindowModal)
+        tlf.setAttribute(QtCore.Qt.WA_DeleteOnClose, True) 
         tvbox = QtWidgets.QVBoxLayout()
+        buttonBox = QtWidgets.QHBoxLayout()
+        if hasattr(self, 'lv'):
+            self.time_lv = self.lv
         self.listBox(dic, flag=2, place=tvbox)
-        tlfb = QtWidgets.QPushButton('Ok')
+        tlfb_ok = QtWidgets.QPushButton('Ok')
+        tlfb_close = QtWidgets.QPushButton('Close')
+        buttonBox.addWidget(tlfb_ok)
+        buttonBox.addWidget(tlfb_close)
         if not self.on_sign_flag:
             tlcb = QtWidgets.QComboBox()
             tlcb.addItems(['Слово', 'Форма гл.'])
             tvbox.addWidget(tlcb)
-        tvbox.addWidget(tlfb)
-        tlfb.clicked.connect(onInsert)
+        tvbox.addLayout(buttonBox)
+        tlfb_ok.clicked.connect(onInsert)
+        tlfb_close.clicked.connect(onClose)
         tlf.setLayout(tvbox)
         tlf.show()
         
@@ -1188,9 +1212,8 @@ class MyWindowD(MyWindowLanguage):
                 
         tla = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         tla.setWindowTitle('Добавить')
-        #tla.setWindowModality(QtCore.Qt.WindowModal)
+        tla.setWindowModality(QtCore.Qt.WindowModal)
         tla.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        tlavbox = QtWidgets.QVBoxLayout()
         hbox1 = QtWidgets.QHBoxLayout()
         self.lE_key = QtWidgets.QLineEdit()
         cb_ar = QtWidgets.QComboBox()
@@ -1276,8 +1299,7 @@ class MyWindowD(MyWindowLanguage):
         btn_u.clicked.connect(self.fonSign)
         srhbox.insertWidget(1, btn_u)
         sr.show()
-        #self.on_sign_flag = 0
-        print("on_sign_flag: ", self.on_sign_flag)
+     
         
         '''
         if not self.dict_name:
