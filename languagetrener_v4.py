@@ -1122,8 +1122,6 @@ class MyWindowD(MyWindowLanguage):
     def __init__(self,parent=None):
         MyWindowLanguage.__init__(self, parent)
         self.on_sign_flag = 0
-        #self.lv = None
-        #self.time_lv = None
         
     def fonSign(self):
         def onInsert():
