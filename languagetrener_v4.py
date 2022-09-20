@@ -644,9 +644,17 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.cards()
         else:
             self.status.setText('Режим: тренировка')
+            self.start_trenning = time.time()
             self.onRun()
+            
     def onResult(self):
         self.clear()
+        self.stop_trenning = time.time()
+        str_trenning_time = self.trenning_time(self.start_trenning, self.stop_trenning)
+        print(str_trenning_time)
+        label_time = QtWidgets.QLabel('<center><b>Время тренировки составило:</b></center>')
+        label_time_t = QtWidgets.QLabel('<center>' + str_trenning_time + '</center>')
+        label_time_t.setStyleSheet("color:darkBlue")
         label_rq = QtWidgets.QLabel('<center><b>Задано вопросов:</b></center>')
         label_rqq = QtWidgets.QLabel('<center>' + str(self.q_count) + '</center>')
         label_rta = QtWidgets.QLabel('<center><b>Получено правильных ответов:</b></center>')
@@ -655,7 +663,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         label_rfa = QtWidgets.QLabel('<center><b>Получено неправильных ответов:</b></center>')
         label_rfaa = QtWidgets.QLabel('<center>' + str(self.q_count - self.t_ans_count) + '</center>')
         label_rfaa.setStyleSheet("color:red")
-        for i in (label_rq, label_rqq, label_rta, label_rtaa, label_rfa, label_rfaa):
+        for i in (label_time, label_time_t, label_rq, label_rqq, label_rta, label_rtaa, label_rfa, label_rfaa):
             self.vtop_t.addWidget(i)
         self.hLine(self.vtop_t)
         if self.t_ans_count >= 0.8*self.q_count:
@@ -676,6 +684,18 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.vtop_t.addWidget(label_rim)
         if self.log_flag:
             self.treningLog()
+            
+    def trenning_time(self, start, stop):
+        seconds = int(stop -start)
+        minutes = '0'
+        if seconds > 60:
+            minutes = seconds//60
+            seconds = seconds%60
+        return "%s %s %s %s" % (minutes, 'минут', seconds, 'секунд')
+            
+        
+        
+        
                
     def onTrueAnswer(self):
         self.clear()
