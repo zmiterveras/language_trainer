@@ -16,7 +16,7 @@ class ClickedLabel(QtWidgets.QLabel):
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self,parent=None):
-        self.version = '''4.17, 2022г.'''
+        self.version = '''4.18, 2022г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.wp = os.path.join(self.app_dir, 'images')
@@ -693,10 +693,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
             seconds = seconds%60
         return "%s %s %s %s" % (minutes, 'минут', seconds, 'секунд')
             
-        
-        
-        
-               
     def onTrueAnswer(self):
         self.clear()
         label_ta = QtWidgets.QLabel('<center><b>True</b></center>')
