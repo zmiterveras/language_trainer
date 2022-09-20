@@ -20,6 +20,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.wp = os.path.join(self.app_dir, 'images')
+        self.bases = os.path.join(self.app_dir, 'bases')
         ico_path = os.path.join(self.wp, 'dic.png')
         ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
@@ -120,7 +121,8 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не задано имя словаря')
             return
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        newdic = os.path.join(self.wp, s+'.sqlite')
+        newdic = os.path.join(self.bases, s+'.sqlite')
+        print(newdic)
         conn.setDatabaseName(newdic)
         conn.open()
         if 'dic' not in conn.tables():
@@ -149,7 +151,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self.checkChange(flag=1):
                 return
         self.win.dict_name, fil_ = QtWidgets.QFileDialog.getOpenFileName(None, caption='Открыть словарь',
-                                                                         directory=self.app_dir, filter='DB (*.sqlite)') 
+                                                                         directory=self.bases, filter='DB (*.sqlite)') 
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
             return
