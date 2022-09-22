@@ -12,18 +12,19 @@ from utils.utils import ClickedLabel
 
 
 class MyWindowLanguage(QtWidgets.QWidget):
-    def __init__(self, desktop, images_path, parent=None):
+    def __init__(self, desktop, root_dir, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.dict_name = ''
         self.dw = {}
         self.desktop = desktop
+        self.root_dir = root_dir
         self.search_flag = 0
         self.cards_flag = 0
         self.search_key = 0
         self.page_max = 0
         self.lst1 = [1, 2, 3, 4, 5]
         self.lst2 = ['существительное', 'глагол', 'прилагательное', 'наречие', 'другое']
-        self.wd = images_path
+        self.wd = os.path.join(self.root_dir, 'images')
         self.status = QtWidgets.QLabel()
         self.makeWidget()
         self.saveValues()
@@ -397,8 +398,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.label_am.setText(text)
 
     def treningLog(self):
-        self.wp = os.path.dirname(os.path.abspath(__file__))
-        log_path = os.path.join(self.wp, 'vokabelheftlogfile')
+        log_path = os.path.join(self.root_dir, 'vokabelheftlogfile')
         file = open(log_path, 'a')
         lang = ' - ' + self.__class__.__name__[-1]
         page = ''

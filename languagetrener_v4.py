@@ -48,12 +48,12 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self.checkChange():
                 return
         if variant == 1:
-            self.win = MyWindowE(desktop, self.wp)
+            self.win = MyWindowE(desktop, self.app_dir)
             self.lang = 'eng '
             flag_path = os.path.join(self.wp, 'gb_16.png')
             self.screen_path = os.path.join(self.wp, 'Dic_eng_148.png')
         else:
-            self.win = MyWindowD(desktop, self.wp)
+            self.win = MyWindowD(desktop, self.app_dir)
             self.lang = 'de'
             flag_path = os.path.join(self.wp, 'de_16.png')
             self.screen_path = os.path.join(self.wp, 'Dic_de_148.png')
