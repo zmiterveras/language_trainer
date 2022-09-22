@@ -66,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
         myMenu.addAction('Сохранить', self.win.saveDict)
         myMenu.addAction('&Закрыть', self.close)
         myView.addAction('Краткий просмотр', self.win.dictView)
-        myView.addAction('&Просмотреть все', self.sortAll)
+        myView.addAction('&Полный просмотр', self.sortAll)
         myView.addAction('Просмотр карточек', self.win.cardsMode)
         myView.addAction('Просмотр логфайла', self.viewLogfile)
         self.statusBar.addWidget(self.win.status)
