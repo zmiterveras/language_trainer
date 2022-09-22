@@ -219,22 +219,22 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.ch_value = cb_tm.currentIndex()
             self.log_flag = checkbtn.checkState()
             if self.ch_value == 3:
-                if self.page_max < 2:
-                    text = 'Не достаточно слов для постраничного режима\nИспользуйте другой режим тренировки!'
-                    QtWidgets.QMessageBox.warning(None, 'Предупреждение', text)
-                    return
                 self.page = sp_box.value()
             tm.close()
             self.onTrenning()
 
         def pagenation():
             self.ch_value = cb_tm.currentIndex()
-            if self.ch_value != 3 or self.page_max < 2:
-                return
-            cb_tm.setEnabled(False)
-            sp_box.setValue(1)
-            sp_box.setRange(1, self.page_max)
-            tmvbox.insertWidget(1, sp_box)
+            if self.ch_value == 3:
+                if self.page_max < 2:
+                    text = 'Не достаточно слов для постраничного режима\nИспользуйте другой режим тренировки!'
+                    QtWidgets.QMessageBox.warning(None, 'Предупреждение', text)
+                    cb_tm.setCurrentIndex(0)
+                    return
+                cb_tm.setEnabled(False)
+                sp_box.setValue(1)
+                sp_box.setRange(1, self.page_max)
+                tmvbox.insertWidget(1, sp_box)
 
         if not self.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
