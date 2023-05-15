@@ -24,9 +24,15 @@ def firstScreensaver(abs_path, text, flag=None):
     return widget
 
 
+def simpleView():
+    pass
+
+
 class ClickedLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
 
     def mouseReleaseEvent(self, e):
         super().mouseReleaseEvent(e)
         self.clicked.emit()
+        
+        

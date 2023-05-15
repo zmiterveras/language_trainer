@@ -311,7 +311,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.clear()
         self.stop_trenning = time.time()
         str_trenning_time = self.trenning_time(self.start_trenning, self.stop_trenning)
-        print(str_trenning_time)
         label_time = QtWidgets.QLabel('<center><b>Время тренировки составило:</b></center>')
         label_time_t = QtWidgets.QLabel('<center>' + str_trenning_time + '</center>')
         label_time_t.setStyleSheet("color:darkBlue")
@@ -516,7 +515,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         frame.setFrameStyle(QtWidgets.QFrame.Box | QtWidgets.QFrame.Raised)
         self.tl_cr.setWindowModality(QtCore.Qt.WindowModal)
         self.tl_cr.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        self.tl_cr.setMinimumSize(0.2*self.desktop.width(), 0.2*self.desktop.height())
+        self.tl_cr.setMinimumSize(int(0.2*self.desktop.width()), int(0.2*self.desktop.height()))
         self.toggle = 0
         self.an_proc = False
         tl_crbox = QtWidgets.QVBoxLayout()
@@ -576,12 +575,12 @@ class MyWindowLanguage(QtWidgets.QWidget):
     def onSearch(self):
         if not self.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
-            return
+            return None
         if not self.dw:
             self.clear()
             self.label3 = QtWidgets.QLabel('<center>Словарь пуст</center>')
             self.vtop_t.addWidget(self.label3)
-            return
+            return None
 
         def onFind():
             value = self.se.text()

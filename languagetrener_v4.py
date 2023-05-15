@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #v4
-# pylint: disable=C0115, C0103, C0116, C0321, C0301
+# pylint: disable=C0115, C0103, C0116, C0321, C0301, C0410
 # pylint: disable=W0201
+# pylint: disable=R0201, R0914, R0902
 
-import sys,sqlite3, random, os, time
+import sys,sqlite3, os
 from PyQt5 import QtWidgets, QtCore, QtGui, QtSql
 from languages.eng_language import MyWindowE
 from languages.de_language import MyWindowD
