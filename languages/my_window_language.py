@@ -9,6 +9,7 @@ import time
 from PyQt5 import QtWidgets, QtCore, QtSql, QtGui
 from utils.utils import firstScreensaver
 from utils.utils import ClickedLabel
+from utils.utils import simpleView
 
 
 class MyWindowLanguage(QtWidgets.QWidget):
@@ -135,7 +136,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
             place.addWidget(self.label1)
         else:
             self.status.setText('Режим: просмотр')
-            dic = list(self.dw.keys())
+            # dic = list(self.dw.keys())
+            dic = simpleView(self.dw)
             self.listBox(dic, flag, place)
 
     def listBox(self, dic, flag, place):
@@ -207,6 +209,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             key = self.search_key
         else:
             key = self.lv.currentIndex().data()
+            key = key.split("\n")[0]
         keyfon = self.dw[key][1]
         word = self.dw[key][2]
         form = self.dw[key][3]
@@ -564,6 +567,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             key = self.search_key
         else:
             key = self.lv.currentIndex().data()
+            key = key.split("\n")[0]
         try:
             new = (key,) + (self.dw[key][1],) + (self.dw[key][2],) + (self.dw[key][3],) + (self.dw[key][4],) + (self.dw[key][5],)
         except KeyError:

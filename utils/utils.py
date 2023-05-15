@@ -24,8 +24,17 @@ def firstScreensaver(abs_path, text, flag=None):
     return widget
 
 
-def simpleView():
-    pass
+def simpleView(dictionary):
+    keys = dictionary.keys()
+    dic = []
+    for key in keys:
+        word_full = dictionary[key][2]
+        if len(word_full) > 15:
+            word = "\n"  + word_full[:15] + "..."
+        else:
+            word = "\n"  + word_full
+        dic.append(key + word + "\n")
+    return dic
 
 
 class ClickedLabel(QtWidgets.QLabel):
