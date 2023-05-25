@@ -64,9 +64,9 @@ class MyWindowD(MyWindowLanguage):
 
     def onAdd(self, void, new=('', '', '', '', '', ''), flag=None):
         def getName():
-            value1 = self.lE_key.text()
+            value1 = self.lE_key.text().strip()
             value2 = cb_ar.currentText()
-            value3 = lE_w.text()
+            value3 = lE_w.text().strip()
             value4 = self.lE_f.text()
             value5 = cb_pl.currentText()
             value6_1 = cb_pn.currentText()

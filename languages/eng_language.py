@@ -42,9 +42,9 @@ class MyWindowE(MyWindowLanguage):
 
     def onAdd(self, void, new=('', '', '', '', '', ''), flag=None):
         def getName():
-            value1 = lE_key.text()
+            value1 = lE_key.text().strip()
             value2 = lE_kf.text()
-            value3 = lE_w.text()
+            value3 = lE_w.text().strip()
             value4 = lE_f.text()
             value5 = lE_pl.text()
             value6_1 = cb_pn.currentText()
