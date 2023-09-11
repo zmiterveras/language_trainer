@@ -6,6 +6,7 @@
 import random
 from PyQt5 import QtWidgets, QtCore
 from languages.my_window_language import MyWindowLanguage
+from utils.parser import parser_controller
 
 
 class MyWindowD(MyWindowLanguage):
@@ -160,7 +161,9 @@ class MyWindowD(MyWindowLanguage):
             self.on_sign_flag = 0
             if self.ch == '':
                 QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не получен ответ')
-            elif self.ch == self.ask:
+                return
+            self.ch = parser_controller(self.ch, self.ask)
+            if self.ch == self.ask:
                 self.t_ans_count += 1
                 self.onTrueAnswer()
             else:
