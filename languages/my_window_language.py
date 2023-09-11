@@ -22,6 +22,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.search_flag = 0
         self.cards_flag = 0
         self.search_key = 0
+        self.on_sign_flag = 0 # для немецкого для умляутов
         self.page_max = 0
         self.lst1 = [1, 2, 3, 4, 5]
         self.lst2 = ['существительное', 'глагол', 'прилагательное', 'наречие', 'другое']
@@ -473,7 +474,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.word_label.setGraphicsEffect(effect)
             effect.setOpacity(start)
             an = QtCore.QPropertyAnimation(effect, b"opacity")
-            an.setDuration(750)
+            an.setDuration(550)
             an.setLoopCount(1)
             an.setStartValue(start)
             an.setEndValue(stop)
@@ -577,6 +578,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.search_flag = 0
 
     def onSearch(self):
+        self.on_sign_flag = 2
         if not self.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Словарь не загружен')
             return None
@@ -601,6 +603,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
 
         def srClose():
             self.status.setText(text)
+            self.on_sign_flag = 0
             sr.close()
 
         text = self.status.text()

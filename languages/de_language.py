@@ -11,7 +11,14 @@ from languages.my_window_language import MyWindowLanguage
 class MyWindowD(MyWindowLanguage):
     def __init__(self, desktop, images_path, parent=None):
         MyWindowLanguage.__init__(self, desktop, images_path, parent)
-        self.on_sign_flag = 0
+
+
+    def onSearch(self):
+        sr, srhbox = MyWindowLanguage.onSearch(self)
+        btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
+        btn_u.clicked.connect(self.fonSign)
+        srhbox.insertWidget(1, btn_u)
+        sr.show()
 
     def fonSign(self):
         def onInsert():
@@ -28,8 +35,12 @@ class MyWindowD(MyWindowLanguage):
                 self.ent.insert(key)
                 self.ent.setFocus()
             else:
-                self.se.insert(key)
-                self.se.setFocus()
+                try:
+                    self.se.insert(key)
+                    self.se.setFocus()
+                except RuntimeError:
+                    QtWidgets.QMessageBox.warning(None, 'Предупреждение',
+                                                  'Возникло непредвиденное затруднение. Попробуйте еще раз')
             onClose()
 
         def onClose():
@@ -41,8 +52,8 @@ class MyWindowD(MyWindowLanguage):
         tlf = QtWidgets.QWidget(parent=None) #, flags=QtCore.Qt.Window)
         tlf.setWindowFlags(self.windowFlags()
                            & ~QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.Window)
-        tlf.setWindowModality(QtCore.Qt.WindowModal)
-        tlf.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        # tlf.setWindowModality(QtCore.Qt.WindowModal)
+        # tlf.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         tvbox = QtWidgets.QVBoxLayout()
         buttonBox = QtWidgets.QHBoxLayout()
         if hasattr(self, 'lv'):
@@ -179,12 +190,5 @@ class MyWindowD(MyWindowLanguage):
         else:
             self.onResult()
 
-    def onSearch(self):
-        self.on_sign_flag = 2
-        print("on_sign_flag: ", self.on_sign_flag)
-        sr, srhbox = MyWindowLanguage.onSearch(self)
-        btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
-        btn_u.clicked.connect(self.fonSign)
-        srhbox.insertWidget(1, btn_u)
-        sr.show()
+
         

@@ -134,5 +134,6 @@ class MyWindowE(MyWindowLanguage):
         tla.show()
 
     def onSearch(self):
-        sr, srhbox = MyWindowLanguage.onSearch(self)
+        sr, _ = MyWindowLanguage.onSearch(self)
         sr.show()
+        
