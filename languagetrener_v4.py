@@ -14,7 +14,7 @@ from utils.utils import firstScreensaver
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        self.version = '''4.18, 2022г.'''
+        self.version = '''4.20, 2023г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.wp = os.path.join(self.app_dir, 'images')
@@ -50,7 +50,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
         if variant == 1:
             self.win = MyWindowE(desktop, self.app_dir)
-            self.lang = 'eng '
+            self.lang = 'eng'
             flag_path = os.path.join(self.wp, 'gb_16.png')
             self.screen_path = os.path.join(self.wp, 'Dic_eng_148.png')
         else:
@@ -96,7 +96,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return False
 
     def createDict(self):
-        s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря')
+        s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря', text=self.lang + '_')
         if not ok: return
         if ok and not s:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не задано имя словаря')
