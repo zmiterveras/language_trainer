@@ -22,8 +22,7 @@ class MyWindowE(MyWindowLanguage):
 
         if self.dw_key:
             self.q_count += 1
-            self.ask = random.choice(self.dw_key)
-            self.dw_key.remove(self.ask)
+            self.ask = self.dw_key.pop(0)
             self.quest_word = self.dw[self.ask][2]
             question = 'Переведите слово: <b>' + self.quest_word + '</b>'
             self.clear()
@@ -35,6 +34,9 @@ class MyWindowE(MyWindowLanguage):
             btn = QtWidgets.QPushButton('Ok')
             self.vtop_t.addWidget(btn)
             btn.clicked.connect(onCheck)
+            btn_skip = QtWidgets.QPushButton('Skip')
+            self.vtop_t.addWidget(btn_skip)
+            btn_skip.clicked.connect(lambda: self.skip_word(self.ask))
             btn.setAutoDefault(True) # Enter
             ent.returnPressed.connect(btn.click) #enter
         else:

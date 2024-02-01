@@ -309,6 +309,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         else:
             self.status.setText('Режим: тренировка')
             self.start_trenning = time.time()
+            random.shuffle(self.dw_key) # перемешать ключи
             self.onRun()
 
     def onResult(self):
@@ -355,6 +356,11 @@ class MyWindowLanguage(QtWidgets.QWidget):
             minutes = seconds//60
             seconds = seconds%60
         return "%s %s %s %s" % (minutes, 'минут', seconds, 'секунд')
+
+    def skip_word(self, word):
+        self.dw_key.append(word)
+        self.q_count -= 1
+        self.onRun()
 
     def onTrueAnswer(self):
         self.clear()
