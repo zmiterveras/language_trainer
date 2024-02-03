@@ -32,10 +32,10 @@ class MyWindowE(MyWindowLanguage):
             ent.setFocus()
             self.vtop_t.addWidget(ent)
             btn = QtWidgets.QPushButton('Ok')
-            self.vtop_t.addWidget(btn)
+            self.htop_b.addWidget(btn)
             btn.clicked.connect(onCheck)
             btn_skip = QtWidgets.QPushButton('Skip')
-            self.vtop_t.addWidget(btn_skip)
+            self.htop_b.addWidget(btn_skip)
             btn_skip.clicked.connect(lambda: self.skip_word(self.ask))
             btn.setAutoDefault(True) # Enter
             ent.returnPressed.connect(btn.click) #enter

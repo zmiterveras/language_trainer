@@ -14,7 +14,7 @@ from utils.utils import firstScreensaver
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        self.version = '''4.21, 2024г.'''
+        self.version = '''4.21.1, 2024г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.wp = os.path.join(self.app_dir, 'images')

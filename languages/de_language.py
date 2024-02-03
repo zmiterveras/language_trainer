@@ -182,13 +182,13 @@ class MyWindowD(MyWindowLanguage):
             self.ent.setFocus()
             self.vtop_t.addWidget(self.ent)
             btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
-            self.vtop_t.addWidget(btn_u)
             btn_u.clicked.connect(self.fonSign)
             btn = QtWidgets.QPushButton('Ok')
-            self.vtop_t.addWidget(btn)
             btn.clicked.connect(onCheck)
             btn_skip = QtWidgets.QPushButton('Skip')
-            self.vtop_t.addWidget(btn_skip)
+            self.htop_b.addWidget(btn)
+            self.htop_b.addWidget(btn_u)
+            self.htop_b.addWidget(btn_skip)
             btn_skip.clicked.connect(lambda: self.skip_word(self.ask))
             btn.setAutoDefault(True) # Enter
             self.ent.returnPressed.connect(btn.click) #enter
