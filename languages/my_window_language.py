@@ -13,12 +13,13 @@ from utils.utils import simpleView
 
 
 class MyWindowLanguage(QtWidgets.QWidget):
-    def __init__(self, desktop, root_dir, parent=None):
+    def __init__(self, desktop, root_dir, language, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.dict_name = ''
         self.dw = {}
         self.desktop = desktop
         self.root_dir = root_dir
+        self.interface_lang = language
         self.search_flag = 0
         self.cards_flag = 0
         self.search_key = 0
@@ -47,9 +48,10 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.changenote = [[], [], [], [], [], [], []]
 
     def makeWidget(self):
-        text = '''<center>Откройте или создайте словарь</center>\n
-        <center>Используйте меню:</center>\n
-        <center><b>"Файл"</b></center>'''
+        # text = '''<center>Откройте или создайте словарь</center>\n
+        # <center>Используйте меню:</center>\n
+        # <center><b>"Файл"</b></center>'''
+        text = self.interface_lang['open_dict_text']
         self.vbox = QtWidgets.QVBoxLayout()
         self.vtop = QtWidgets.QVBoxLayout()
         self.vtop_t = QtWidgets.QVBoxLayout()
@@ -59,7 +61,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.vtop.addLayout(self.vtop_t)
         self.vtop.addLayout(self.htop_b)
         self.hbox = QtWidgets.QHBoxLayout()
-        btnnames = [('Просмотр', self.dictView), ('Тренировка', self.onTrenningMode),
+        btnnames = [(self.interface_lang['viewing'],self.dictView),
+                    ('Тренировка', self.onTrenningMode),
                     ('Поиск', self.onSearch), ('Редакт.', self.editDict)]
         btnlist = []
         for i in btnnames:

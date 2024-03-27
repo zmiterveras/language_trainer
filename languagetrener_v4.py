@@ -9,7 +9,16 @@ import sys,sqlite3, os
 from PyQt5 import QtWidgets, QtCore, QtGui, QtSql
 from languages.eng_language import MyWindowE
 from languages.de_language import MyWindowD
+from menulanguages import MenuLanguages
 from utils.utils import firstScreensaver
+
+
+settings = QtCore.QSettings("@zmv", "Vokabelheft")
+if settings.contains("Language"):
+    menu_language = settings.value("Language")
+else:
+    menu_language = 'en'
+    settings.setValue("Language", menu_language)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -22,60 +31,101 @@ class MainWindow(QtWidgets.QMainWindow):
         ico_path = os.path.join(self.wp, 'dic.png')
         ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
-        self.win = None
-        text_ch = """<center>Выберите изучаемый язык</center>\n
-        <center>Используйте меню:</center>\n
-        <center><b>"Язык"</b></center>"""
-        ss = firstScreensaver(self.wp, text_ch) #self.firstScreensaver(self.wp, text_ch)
-        self.setCentralWidget(ss)
-        menuBar = self.menuBar()
-        myMenu = menuBar.addMenu('&Файл')
-        #action = myMenu.addAction('Test',  self.test)
-        myLang = menuBar.addMenu('&Язык')
-        myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu, myView))
-        myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu, myView))
-        myView = menuBar.addMenu('Просмотр')
-        myView.addAction('Просмотр логфайла', self.viewLogfile)
-        myAbout = menuBar.addMenu('О...')
-        myAbout.addAction('О программе', self.aboutProgramm)
-        myAbout.addAction('Обо мне', self.aboutMe)
-        self.statusBar = self.statusBar()
+        self.setInterfaceLanguage(menu_language)
         self.count = 1
         self.sort = 1
         self.view_page = False
+        # text_ch = """<center>Выберите изучаемый язык</center>\n
+        # <center>Используйте меню:</center>\n
+        # <center><b>"Язык"</b></center>"""
+        # text_ch = self.interface_lang["set_lang"]
+        # self.win = firstScreensaver(self.wp, text_ch) #self.firstScreensaver(self.wp, text_ch)
+        # self.setCentralWidget(self.win)
+        self.setScreenSaver(self.interface_lang["set_lang"])
+        menuBar = self.menuBar()
+        self.makeMenu(menuBar)
+        # myMenu = menuBar.addMenu('&Файл')
+        # #action = myMenu.addAction('Test',  self.test)
+        # myLang = menuBar.addMenu('&Язык')
+        # myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu, myView))
+        # myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu, myView))
+        # myView = menuBar.addMenu('Просмотр')
+        # myView.addAction('Просмотр логфайла', self.viewLogfile)
+        # myAbout = menuBar.addMenu('О...')
+        # myAbout.addAction('О программе', self.aboutProgramm)
+        # myAbout.addAction('Обо мне', self.aboutMe)
+        self.statusBar = self.statusBar()
+
+    def setScreenSaver(self, text):
+        self.win = firstScreensaver(self.wp, text) #self.firstScreensaver(self.wp, text_ch)
+        self.setCentralWidget(self.win)
+
+    def makeMenu(self, menuBar):
+        myMenu = menuBar.addMenu('&' + self.interface_lang['file'])
+        self.makeMyMenu(myMenu)
+        #action = myMenu.addAction('Test',  self.test)
+        myLang = menuBar.addMenu('&' + self.interface_lang['language'])
+        myLang.addAction('English', lambda lang='en': self.langChoose(lang, myMenu, myView))
+        myLang.addAction('Deutsch', lambda lang='de': self.langChoose(lang, myMenu, myView))
+        myView = menuBar.addMenu(self.interface_lang['viewing'])
+        self.makeMyView(myView)
+        mySettings = menuBar.addMenu(self.interface_lang['settings'])
+        mySettings.addSection('Menu language')
+        mySettings.addAction(self.icon_eng, 'english', lambda ln='en': self.changeInterfaceLanguage(ln, menuBar, myMenu, myView))
+        mySettings.addAction(self.icon_ru, 'русский', lambda ln='ru': self.changeInterfaceLanguage(ln, menuBar, myMenu, myView))
+        mySettings.addSeparator()
+        myAbout = menuBar.addMenu(self.interface_lang['about'])
+        myAbout.addAction('О программе', self.aboutProgramm)
+        myAbout.addAction('Обо мне', self.aboutMe)
+
+    def makeMyMenu(self, myMenu):
+        if self.count != 1:
+            myMenu.clear()
+            myMenu.addAction('&Создать', self.createDict)
+            myMenu.addAction('&Открыть', self.openDict)
+            myMenu.addAction('Сохранить', self.win.saveDict)
+        myMenu.addAction('&Закрыть', self.close)
+
+    def makeMyView(self, myView):
+        if self.count != 1:
+            myView.clear()
+            myView.addAction('Краткий просмотр', self.win.dictView)
+            myView.addAction('&Полный просмотр', self.sortAll)
+            myView.addAction('Просмотр карточек', self.win.cardsMode)
+        myView.addAction('Просмотр логфайла', self.viewLogfile)
 
     def langChoose(self, variant, myMenu, myView):
         if self.count != 1:
             if not self.checkChange():
                 return
-        if variant == 1:
-            self.win = MyWindowE(desktop, self.app_dir)
-            self.lang = 'eng'
+        if variant == 'en':
+            self.win = MyWindowE(desktop, self.app_dir, self.interface_lang)
+            self.lang = variant
             flag_path = os.path.join(self.wp, 'gb_16.png')
             self.screen_path = os.path.join(self.wp, 'Dic_eng_148.png')
         else:
-            self.win = MyWindowD(desktop, self.app_dir)
-            self.lang = 'de'
+            self.win = MyWindowD(desktop, self.app_dir, self.interface_lang)
+            self.lang = variant
             flag_path = os.path.join(self.wp, 'de_16.png')
             self.screen_path = os.path.join(self.wp, 'Dic_de_148.png')
+        self.count += 1
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
-        myView.clear()
-        myMenu.clear()
-        myMenu.addAction('&Создать', self.createDict)
-        myMenu.addAction('&Открыть', self.openDict)
-        myMenu.addAction('Сохранить', self.win.saveDict)
-        myMenu.addAction('&Закрыть', self.close)
-        myView.addAction('Краткий просмотр', self.win.dictView)
-        myView.addAction('&Полный просмотр', self.sortAll)
-        myView.addAction('Просмотр карточек', self.win.cardsMode)
-        myView.addAction('Просмотр логфайла', self.viewLogfile)
+        self.makeMyMenu(myMenu)
+        self.makeMyView(myView)
+        # myMenu.addAction('&Создать', self.createDict)
+        # myMenu.addAction('&Открыть', self.openDict)
+        # myMenu.addAction('Сохранить', self.win.saveDict)
+        # myMenu.addAction('&Закрыть', self.close)
+        # myView.addAction('Краткий просмотр', self.win.dictView)
+        # myView.addAction('&Полный просмотр', self.sortAll)
+        # myView.addAction('Просмотр карточек', self.win.cardsMode)
+        # myView.addAction('Просмотр логфайла', self.viewLogfile)
         self.statusBar.addWidget(self.win.status)
         self.statusBar.addPermanentWidget(self.win.st)
         self.win.label_am.setText('Пусто')
         self.win.label_flag.setPixmap(QtGui.QPixmap(flag_path))
         self.win.label_flag.setAlignment(QtCore.Qt.AlignRight)
-        self.count += 1
 
     def checkChange(self, flag=None):
         result = QtWidgets.QMessageBox.question(None, 'Предупреждение',
@@ -94,6 +144,53 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.statusBar.removeWidget(self.win.st)
             return True
         return False
+
+    def setInterfaceLanguage(self, language):
+        self.setIcon(language)
+        if language == 'en':
+            self.interface_lang = MenuLanguages.eng
+        else:
+            self.interface_lang = MenuLanguages.rus
+        settings.setValue("Language", language)
+
+    def setIcon(self, language):
+        icon_checkmark = QtGui.QIcon(os.path.join(self.wp,'galochka_16.png'))
+        icon_minus = QtGui.QIcon(os.path.join(self.wp, 'minus_16.png'))
+        if language == 'en':
+            self.icon_eng = icon_checkmark
+            self.icon_ru = icon_minus
+        elif language == 'ru':
+            self.icon_eng = icon_minus
+            self.icon_ru = icon_checkmark
+
+    def saveInstanceState(self):
+        self.win.saveDict()
+        name = self.win.dict_name
+        return name
+
+    def restoreInstanceState(self):
+        name = self.saveInstanceState()
+        match self.lang:
+            case 'en':
+                self.win = MyWindowE(desktop, self.app_dir, self.interface_lang)
+            case 'de':
+                self.win = MyWindowD(desktop, self.app_dir, self.interface_lang)
+        self.win.dict_name = name
+        self.openDictBackground()
+        self.win.dictView()
+        self.setCentralWidget(self.win)
+        self.win.btncl.clicked.connect(self.close)
+
+    def changeInterfaceLanguage(self, language, menuBar, myMenu, myView):
+        self.setInterfaceLanguage(language)
+        menuBar.clear()
+        self.makeMenu(menuBar)
+        if self.count > 1:
+            self.makeMyMenu(myMenu)
+            self.makeMyView(myView)
+            self.restoreInstanceState()
+        else:
+            self.setScreenSaver(self.interface_lang["set_lang"])
 
     def createDict(self):
         s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря', text=self.lang + '_')
@@ -126,6 +223,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_cr = QtWidgets.QLabel('<center>Создан словарь: '+s+'</center>')
         self.win.vtop_t.addWidget(self.label_cr)
 
+    def openDictBackground(self):
+        conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
+        conn.setDatabaseName(self.win.dict_name)
+        conn.open()
+        query = QtSql.QSqlQuery()
+        query.exec(self.querystr)
+        if query.isActive():
+            query.first()
+            while query.isValid():
+                self.win.dw[query.value('key')] = [query.value('id'), query.value('keyfon'),
+                                                    query.value('word'), query.value('form'),
+                                                    query.value('plural'), query.value('partname')]
+                query.next()
+        conn.close()
+        self.win.page_max = int(len(self.win.dw) / 40)
+
     def openDict(self):
         open_flag = 0
         if self.win.dict_name:
@@ -136,28 +249,29 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
             return
-        querystr = """select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural,
+        self.querystr = """select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural,
             part.partname from dic inner join part on dic.partnumber=part.partnumber
             """
         if open_flag == 0:
-            conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-            conn.setDatabaseName(self.win.dict_name)
-            conn.open()
-            query = QtSql.QSqlQuery()
-            query.exec(querystr)
-            if query.isActive():
-                query.first()
-                while query.isValid():
-                    self.win.dw[query.value('key')] = [query.value('id'), query.value('keyfon'),
-                                                       query.value('word'), query.value('form'),
-                                                       query.value('plural'), query.value('partname')]
-                    query.next()
-            conn.close()
-            self.win.page_max = int(len(self.win.dw) / 40)
+            self.openDictBackground()
+            # conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
+            # conn.setDatabaseName(self.win.dict_name)
+            # conn.open()
+            # query = QtSql.QSqlQuery()
+            # query.exec(querystr)
+            # if query.isActive():
+            #     query.first()
+            #     while query.isValid():
+            #         self.win.dw[query.value('key')] = [query.value('id'), query.value('keyfon'),
+            #                                            query.value('word'), query.value('form'),
+            #                                            query.value('plural'), query.value('partname')]
+            #         query.next()
+            # conn.close()
+            # self.win.page_max = int(len(self.win.dw) / 40)
         else:
             conn = sqlite3.connect(self.win.dict_name)
             curs = conn.cursor()
-            curs.execute(querystr)
+            curs.execute(self.querystr)
             for row in curs.fetchall():
                 self.win.dw[row[1]] = [row[0], row[2], row[3], row[4], row[5], row[6]]
             conn.close()
@@ -323,7 +437,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(None, 'Об авторе', text)
 
     def closeEvent(self, e):
-        if not self.win: return
+        if not hasattr(self.win, 'dict_name'): return
         if self.win.dict_name:
             self.win.saveDict()
         e.accept()

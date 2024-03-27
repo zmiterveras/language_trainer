@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# pylint: disable=C0115, C0103, C0116, C0321, C0301
+# pylint: disable=C0114, C0115, C0103, C0116, C0321, C0301
 # pylint: disable=W0201
 import os
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -43,5 +43,4 @@ class ClickedLabel(QtWidgets.QLabel):
     def mouseReleaseEvent(self, e):
         super().mouseReleaseEvent(e)
         self.clicked.emit()
-        
-        
+

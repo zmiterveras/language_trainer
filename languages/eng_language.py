@@ -37,6 +37,7 @@ class MyWindowE(MyWindowLanguage):
             btn_skip = QtWidgets.QPushButton('Skip')
             self.htop_b.addWidget(btn_skip)
             btn_skip.clicked.connect(lambda: self.skip_word(self.ask))
+            btn_stop = QtWidgets.QPushButton('Stop')
             btn.setAutoDefault(True) # Enter
             ent.returnPressed.connect(btn.click) #enter
         else:
