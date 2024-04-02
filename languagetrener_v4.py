@@ -23,7 +23,7 @@ else:
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        self.version = '''4.21.1, 2024г.'''
+        self.version = '''5, 2024г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.wp = os.path.join(self.app_dir, 'images')
@@ -35,25 +35,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.count = 1
         self.sort = 1
         self.view_page = False
-        # text_ch = """<center>Выберите изучаемый язык</center>\n
-        # <center>Используйте меню:</center>\n
-        # <center><b>"Язык"</b></center>"""
-        # text_ch = self.interface_lang["set_lang"]
-        # self.win = firstScreensaver(self.wp, text_ch) #self.firstScreensaver(self.wp, text_ch)
-        # self.setCentralWidget(self.win)
         self.setScreenSaver(self.interface_lang["set_lang"])
         menuBar = self.menuBar()
         self.makeMenu(menuBar)
-        # myMenu = menuBar.addMenu('&Файл')
-        # #action = myMenu.addAction('Test',  self.test)
-        # myLang = menuBar.addMenu('&Язык')
-        # myLang.addAction('English', lambda x=1: self.langChoose(x, myMenu, myView))
-        # myLang.addAction('Deutsch', lambda x=2: self.langChoose(x, myMenu, myView))
-        # myView = menuBar.addMenu('Просмотр')
-        # myView.addAction('Просмотр логфайла', self.viewLogfile)
-        # myAbout = menuBar.addMenu('О...')
-        # myAbout.addAction('О программе', self.aboutProgramm)
-        # myAbout.addAction('Обо мне', self.aboutMe)
         self.statusBar = self.statusBar()
 
     def setScreenSaver(self, text):
@@ -75,24 +59,24 @@ class MainWindow(QtWidgets.QMainWindow):
         mySettings.addAction(self.icon_ru, 'русский', lambda ln='ru': self.changeInterfaceLanguage(ln, menuBar, myMenu, myView))
         mySettings.addSeparator()
         myAbout = menuBar.addMenu(self.interface_lang['about'])
-        myAbout.addAction('О программе', self.aboutProgramm)
-        myAbout.addAction('Обо мне', self.aboutMe)
+        myAbout.addAction(self.interface_lang['about_prog'], self.aboutProgramm)
+        myAbout.addAction(self.interface_lang['about_me'], self.aboutMe)
 
     def makeMyMenu(self, myMenu):
         if self.count != 1:
             myMenu.clear()
-            myMenu.addAction('&Создать', self.createDict)
-            myMenu.addAction('&Открыть', self.openDict)
-            myMenu.addAction('Сохранить', self.win.saveDict)
-        myMenu.addAction('&Закрыть', self.close)
+            myMenu.addAction('&' + self.interface_lang['create'], self.createDict)
+            myMenu.addAction('&' + self.interface_lang['open'], self.openDict)
+            myMenu.addAction(self.interface_lang['save'], self.win.saveDict)
+        myMenu.addAction('&' + self.interface_lang['close'], self.close)
 
     def makeMyView(self, myView):
         if self.count != 1:
             myView.clear()
-            myView.addAction('Краткий просмотр', self.win.dictView)
-            myView.addAction('&Полный просмотр', self.sortAll)
-            myView.addAction('Просмотр карточек', self.win.cardsMode)
-        myView.addAction('Просмотр логфайла', self.viewLogfile)
+            myView.addAction(self.interface_lang['short_view'], self.win.dictView)
+            myView.addAction('&' + self.interface_lang['full_view'], self.sortAll)
+            myView.addAction(self.interface_lang['view_cards'], self.win.cardsMode)
+        myView.addAction(self.interface_lang['view_log'], self.viewLogfile)
 
     def langChoose(self, variant, myMenu, myView):
         if self.count != 1:
@@ -113,24 +97,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.btncl.clicked.connect(self.close)
         self.makeMyMenu(myMenu)
         self.makeMyView(myView)
-        # myMenu.addAction('&Создать', self.createDict)
-        # myMenu.addAction('&Открыть', self.openDict)
-        # myMenu.addAction('Сохранить', self.win.saveDict)
-        # myMenu.addAction('&Закрыть', self.close)
-        # myView.addAction('Краткий просмотр', self.win.dictView)
-        # myView.addAction('&Полный просмотр', self.sortAll)
-        # myView.addAction('Просмотр карточек', self.win.cardsMode)
-        # myView.addAction('Просмотр логфайла', self.viewLogfile)
-        self.statusBar.addWidget(self.win.status)
-        self.statusBar.addPermanentWidget(self.win.st)
+        self.setStatusBar()
         self.win.label_am.setText('Пусто')
         self.win.label_flag.setPixmap(QtGui.QPixmap(flag_path))
         self.win.label_flag.setAlignment(QtCore.Qt.AlignRight)
 
     def checkChange(self, flag=None):
-        result = QtWidgets.QMessageBox.question(None, 'Предупреждение',
-                                                'Вы действительно хотите открыть новый словарь?\n' +
-                                                'Все несохранненые данные при этом будут потеряны.',
+        result = QtWidgets.QMessageBox.question(None, self.interface_lang['warning'],
+                                                self.interface_lang['warn_open_new_dict'],
                                                 buttons=QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                 defaultButton=QtWidgets.QMessageBox.No)
         if result == 16384:
@@ -140,8 +114,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.win.saveValues()
                 self.win.dw = {}
             else:
-                self.statusBar.removeWidget(self.win.status)
-                self.statusBar.removeWidget(self.win.st)
+                self.clearStatusBar()
             return True
         return False
 
@@ -168,8 +141,17 @@ class MainWindow(QtWidgets.QMainWindow):
         name = self.win.dict_name
         return name
 
+    def setStatusBar(self):
+        self.statusBar.addWidget(self.win.status)
+        self.statusBar.addPermanentWidget(self.win.st)
+
+    def clearStatusBar(self):
+        self.statusBar.removeWidget(self.win.status)
+        self.statusBar.removeWidget(self.win.st)
+
     def restoreInstanceState(self):
         name = self.saveInstanceState()
+        self.clearStatusBar()
         match self.lang:
             case 'en':
                 self.win = MyWindowE(desktop, self.app_dir, self.interface_lang)
@@ -177,6 +159,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.win = MyWindowD(desktop, self.app_dir, self.interface_lang)
         self.win.dict_name = name
         self.openDictBackground()
+        self.setStatusBar()
         self.win.dictView()
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
@@ -193,13 +176,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setScreenSaver(self.interface_lang["set_lang"])
 
     def createDict(self):
-        s, ok = QtWidgets.QInputDialog.getText(None, 'Имя словаря', 'Введите имя словаря', text=self.lang + '_')
+        name, ok = QtWidgets.QInputDialog.getText(None, self.interface_lang['dict_name'],
+                                               self.interface_lang['enter_dict_name'],
+                                               text=self.lang + '_')
         if not ok: return
-        if ok and not s:
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не задано имя словаря')
+        if ok and not name:
+            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                          self.interface_lang['warn_not_set_dict_name'])
             return
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        newdic = os.path.join(self.bases, s+'.sqlite')
+        newdic = os.path.join(self.bases, name + '.sqlite')
         print(newdic)
         conn.setDatabaseName(newdic)
         conn.open()
@@ -220,7 +206,7 @@ class MainWindow(QtWidgets.QMainWindow):
             query.execBatch()
         conn.close()
         self.win.clear()
-        self.label_cr = QtWidgets.QLabel('<center>Создан словарь: '+s+'</center>')
+        self.label_cr = QtWidgets.QLabel('<center>' + self.interface_lang['created_dict'] + name +'</center>')
         self.win.vtop_t.addWidget(self.label_cr)
 
     def openDictBackground(self):
@@ -239,46 +225,38 @@ class MainWindow(QtWidgets.QMainWindow):
         conn.close()
         self.win.page_max = int(len(self.win.dw) / 40)
 
+    def openDictDebug(self):
+        conn = sqlite3.connect(self.win.dict_name)
+        curs = conn.cursor()
+        curs.execute(self.querystr)
+        for row in curs.fetchall():
+            self.win.dw[row[1]] = [row[0], row[2], row[3], row[4], row[5], row[6]]
+        conn.close()
+
     def openDict(self):
-        open_flag = 0
+        open_flag = 0 # 1 - debug mode
         if self.win.dict_name:
             if not self.checkChange(flag=1):
                 return
-        self.win.dict_name, void = QtWidgets.QFileDialog.getOpenFileName(None, caption='Открыть словарь',
-                                                                         directory=self.bases, filter='DB (*.sqlite)')
+        self.win.dict_name, _ = QtWidgets.QFileDialog.getOpenFileName(None,
+                                              caption=self.interface_lang['open_dict'],
+                                              directory=self.bases,
+                                              filter='DB (*.sqlite)')
         if not self.win.dict_name:
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
+            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                          self.interface_lang['warn_not_selected_dict'])
             return
         self.querystr = """select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural,
             part.partname from dic inner join part on dic.partnumber=part.partnumber
             """
         if open_flag == 0:
             self.openDictBackground()
-            # conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-            # conn.setDatabaseName(self.win.dict_name)
-            # conn.open()
-            # query = QtSql.QSqlQuery()
-            # query.exec(querystr)
-            # if query.isActive():
-            #     query.first()
-            #     while query.isValid():
-            #         self.win.dw[query.value('key')] = [query.value('id'), query.value('keyfon'),
-            #                                            query.value('word'), query.value('form'),
-            #                                            query.value('plural'), query.value('partname')]
-            #         query.next()
-            # conn.close()
-            # self.win.page_max = int(len(self.win.dw) / 40)
         else:
-            conn = sqlite3.connect(self.win.dict_name)
-            curs = conn.cursor()
-            curs.execute(self.querystr)
-            for row in curs.fetchall():
-                self.win.dw[row[1]] = [row[0], row[2], row[3], row[4], row[5], row[6]]
-            conn.close()
+            self.openDictDebug()
 
         last_name = os.path.basename(self.win.dict_name)
         self.win.clear()
-        self.label2 = QtWidgets.QLabel('<center>Загружен словарь: '+last_name+'</center>')
+        self.label2 = QtWidgets.QLabel('<center>' + self.interface_lang['loaded_dict'] + last_name+'</center>')
         self.win.vtop_t.addWidget(self.label2)
         label_screen = QtWidgets.QLabel()
         label_screen.setPixmap(QtGui.QPixmap(self.screen_path))
@@ -307,8 +285,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 saClose()
             elif index == 2:
                 if self.win.page_max < 2:
-                    text = 'Не достаточно слов для постраничного режима\nИспользуйте другой режим просмотра!'
-                    QtWidgets.QMessageBox.warning(None, 'Предупреждение', text)
+                    text = self.interface_lang['warn_not_enough_word_view']
+                    QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'], text)
                     return
                 cb_sa.setEnabled(False)
                 sp_box.setRange(1, self.win.page_max)
@@ -323,16 +301,20 @@ class MainWindow(QtWidgets.QMainWindow):
                 saClose()
 
         if not self.win.dict_name:
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не выбран словарь')
+            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                          self.interface_lang['warn_not_selected_dict'])
             return
         sa = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-        sa.setWindowTitle('Выбор отображения')
+        sa.setWindowTitle(self.interface_lang['select_display'])
         sa.resize(250, 80)
         sa.setWindowModality(QtCore.Qt.WindowModal)
         savbox = QtWidgets.QVBoxLayout()
-        savbox.addWidget(QtWidgets.QLabel('Выберите режим сортировки и отображения'))
+        savbox.addWidget(QtWidgets.QLabel(self.interface_lang['select_mode_sort']))
         cb_sa = QtWidgets.QComboBox()
-        cb_sa.addItems(['Всё по алфавиту', 'Всё постранично', 'Страница', 'Последние40'])
+        cb_sa.addItems([self.interface_lang['mode_alphabet'],
+                        self.interface_lang['mode_page_by_page'],
+                        self.interface_lang['mode_page'],
+                        self.interface_lang['mode_last_40']])
         sp_box = QtWidgets.QSpinBox()
         savbox.addWidget(cb_sa)
         btn = QtWidgets.QPushButton('Ok')
@@ -343,7 +325,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def viewAll(self):
         if not self.win.dw:
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Cловарь пуст')
+            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                          self.interface_lang['dict_empty'])
             return
         tabview = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
@@ -362,14 +345,20 @@ class MainWindow(QtWidgets.QMainWindow):
             stm.setQuery(query)
             stm.sort(self.sort, QtCore.Qt.AscendingOrder)
             self.view_page = False
-        var_names = ['Фонетика', 'Арт-ль']
+        var_names = [self.interface_lang['phonetics'],
+                     self.interface_lang['article']]
         if self.lang == 'de':
             var_name = var_names[1]
             l_1, l_2, l_4, l_5 = 160, 50, 180, 45
         else:
             var_name = var_names[0]
             l_1, l_2, l_4, l_5 = 100, 100, 150, 75
-        for i, n in ((1, 'Слово'), (2, var_name), (3, 'Перевод'), (4, 'Формы глагола'), (5, 'Мн.ч-ло'), (6, 'Часть речи')):
+        for i, n in ((1, self.interface_lang['word']),
+                    (2, var_name),
+                    (3, self.interface_lang['translation']),
+                    (4, self.interface_lang['verb_forms']),
+                    (5, self.interface_lang['plural']),
+                    (6, self.interface_lang['part_of_speech'])):
             stm.setHeaderData(i, QtCore.Qt.Horizontal, n)
         vbox = QtWidgets.QVBoxLayout()
         tv = QtWidgets.QTableView()
@@ -378,7 +367,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i, n in ((1, l_1), (2, l_2), (3, 300), (4, l_4), (5, l_5), (6, 150)):
             tv.setColumnWidth(i, n)
         vbox.addWidget(tv)
-        btncl = QtWidgets.QPushButton('Закрыть')
+        btncl = QtWidgets.QPushButton(self.interface_lang['close'])
         btncl.clicked.connect(tabview.close)
         vbox.addWidget(btncl)
         tabview.setLayout(vbox)
@@ -388,7 +377,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def viewLogfile(self):
         fp = os.path.join(self.app_dir, 'vokabelheftlogfile')
         if not os.path.exists(fp):
-            QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Лог файл не существует')
+            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                          self.interface_lang['warn_log_not_exist'])
             return
         logfile = open(fp)
         lines = logfile.readlines()
@@ -397,13 +387,13 @@ class MainWindow(QtWidgets.QMainWindow):
         slm = QtCore.QStringListModel(lines)
         lv.setModel(slm)
         lt = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-        lt.setWindowTitle('Logfile')
+        lt.setWindowTitle(self.interface_lang['log'])
         lt.resize(500, 600)
         lt.setWindowModality(QtCore.Qt.WindowModal)
         lt.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         ltbox = QtWidgets.QVBoxLayout()
         ltbox.addWidget(lv)
-        btnc = QtWidgets.QPushButton('Закрыть')
+        btnc = QtWidgets.QPushButton(self.interface_lang['close'])
         ltbox.addWidget(btnc)
         btnc.clicked.connect(lt.close)
         lt.setLayout(ltbox)
@@ -411,21 +401,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def aboutProgramm(self):
         ab = QtWidgets.QWidget(parent=self, flags=QtCore.Qt.Window)
-        ab.setWindowTitle('О программе')
+        ab.setWindowTitle(self.interface_lang['about_prog'])
         ab.setWindowModality(QtCore.Qt.WindowModal)
         ab.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         abbox = QtWidgets.QVBoxLayout()
-        text = '''
-        Это программа языковой тренажер.\n
-        Главная особеннось которой - словарь,\n
-        составляется непосредствено пользователем\n
-        в процессе его (само-)обучения языку.\n
-        В общем, это аналог вашей словарной тетради,\n
-        с набором удобных и полезных функций)))\n
-        Версия: ''' + self.version
-
+        text = self.interface_lang['about_prog_text'] + self.version
         abl = QtWidgets.QLabel(text)
-        abb = QtWidgets.QPushButton('Close')
+        abb = QtWidgets.QPushButton(self.interface_lang['close'])
         abb.clicked.connect(ab.close)
         abbox.addWidget(abl)
         abbox.addWidget(abb)
@@ -433,8 +415,8 @@ class MainWindow(QtWidgets.QMainWindow):
         ab.show()
 
     def aboutMe(self):
-        text = '''Автор: @zmv\nОбратная связь: zmvph79@gmail.com'''
-        QtWidgets.QMessageBox.information(None, 'Об авторе', text)
+        text = self.interface_lang['about_me_text']
+        QtWidgets.QMessageBox.information(None, self.interface_lang['about_me'], text)
 
     def closeEvent(self, e):
         if not hasattr(self.win, 'dict_name'): return

@@ -13,7 +13,8 @@ class MyWindowE(MyWindowLanguage):
         def onCheck():
             self.ch = ent.text()
             if self.ch == '':
-                QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не получен ответ')
+                QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                              self.interface_lang['warn_no_response'])
             elif self.ch == self.ask:
                 self.t_ans_count += 1
                 self.onTrueAnswer()
@@ -24,7 +25,7 @@ class MyWindowE(MyWindowLanguage):
             self.q_count += 1
             self.ask = self.dw_key.pop(0)
             self.quest_word = self.dw[self.ask][2]
-            question = 'Переведите слово: <b>' + self.quest_word + '</b>'
+            question = self.interface_lang['translate_word'] + ' <b>' + self.quest_word + '</b>'
             self.clear()
             label_q = QtWidgets.QLabel('<center>'+question+'</center>')
             self.vtop_t.addWidget(label_q)
@@ -34,10 +35,9 @@ class MyWindowE(MyWindowLanguage):
             btn = QtWidgets.QPushButton('Ok')
             self.htop_b.addWidget(btn)
             btn.clicked.connect(onCheck)
-            btn_skip = QtWidgets.QPushButton('Skip')
+            btn_skip = QtWidgets.QPushButton(self.interface_lang['skip'])
             self.htop_b.addWidget(btn_skip)
             btn_skip.clicked.connect(lambda: self.skip_word(self.ask))
-            btn_stop = QtWidgets.QPushButton('Stop')
             btn.setAutoDefault(True) # Enter
             ent.returnPressed.connect(btn.click) #enter
         else:
@@ -53,10 +53,12 @@ class MyWindowE(MyWindowLanguage):
             value6_1 = cb_pn.currentText()
             value6_2 = cb_pn.currentIndex()
             if (value1 and value3) == '':
-                QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Не введены значения')
+                QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                              self.interface_lang['warn_values_not_entered'])
             else:
                 if value1 in list(self.dw.keys()) and not flag:
-                    QtWidgets.QMessageBox.warning(None, 'Предупреждение', 'Данное слово уже есть в словаре')
+                    QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                                  self.interface_lang['warn_word_in_dict'])
                     return
                 dcont = [value1, value2, value3, value4, value5, value6_2+1]
                 if flag == 1:
@@ -66,15 +68,15 @@ class MyWindowE(MyWindowLanguage):
                     else:
                         val_id = self.dw[value1][0]
                     self.dw[value1] = [val_id] + dcont[1:5] + [value6_1]
-                    txt = 'Изменено слово: '
+                    txt = self.interface_lang['changed_word']
                     for i, name in enumerate([val_id] + dcont):
                         self.changenote[i].append(name)
                 else:
-                    txt = 'Добавлено слово: '
+                    txt = self.interface_lang['added_word']
                     self.dw[value1] = [None] + dcont[1:5] + [value6_1]
                     for j, n in enumerate(dcont):
                         self.newname[j].append(n)
-                QtWidgets.QMessageBox.information(None, 'Инфо', txt + value1)
+                QtWidgets.QMessageBox.information(None, self.interface_lang['info'], txt + value1)
                 self.clear()
                 self.editDict()
                 tla.close()
@@ -97,7 +99,7 @@ class MyWindowE(MyWindowLanguage):
             tlf.show()
 
         tla = QtWidgets.QWidget(parent=None, flags=QtCore.Qt.Window)
-        tla.setWindowTitle('Добавить')
+        tla.setWindowTitle(self.interface_lang['add'])
         #tla.setWindowModality(QtCore.Qt.WindowModal)
         #tla.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         lE_key = QtWidgets.QLineEdit()
@@ -108,8 +110,8 @@ class MyWindowE(MyWindowLanguage):
         cb_pn = QtWidgets.QComboBox()
         cb_pn.addItems(self.lst2)
         btn1 = QtWidgets.QPushButton('ʧ, ʊ, ʌ, ɳ, ʤ')
-        btn2 = QtWidgets.QPushButton('Добавить')
-        btn3 = QtWidgets.QPushButton('Закрыть')
+        btn2 = QtWidgets.QPushButton(self.interface_lang['add'])
+        btn3 = QtWidgets.QPushButton(self.interface_lang['close'])
         hbox = QtWidgets.QHBoxLayout()
         hbox.addWidget(btn2)
         hbox.addWidget(btn3)
@@ -119,16 +121,16 @@ class MyWindowE(MyWindowLanguage):
             i.setText(new[k])
             k += 1
         if flag == 1:
-            tla.setWindowTitle('Изменить')
+            tla.setWindowTitle(self.interface_lang['change'])
             cb_pn.setCurrentText(new[k])
             value_k_old = new[0]
-        form.addRow('Иностранное слово:*', lE_key)
-        form.addRow('Фонетический вид слова:', lE_kf)
-        form.addRow('Фонетический знак', btn1)
-        form.addRow('Перевод:*', lE_w)
-        form.addRow('Формы глагола:', lE_f)
-        form.addRow('Множественное число:', lE_pl)
-        form.addRow('Часть речи:', cb_pn)
+        form.addRow(self.interface_lang['foreign_word'], lE_key)
+        form.addRow(self.interface_lang['phonetic_form_of_word'], lE_kf)
+        form.addRow(self.interface_lang['phonetic_sign'], btn1)
+        form.addRow(self.interface_lang['translation'] + ':*', lE_w)
+        form.addRow(self.interface_lang['verb_forms'] + ':', lE_f)
+        form.addRow(self.interface_lang['plural'] + ':', lE_pl)
+        form.addRow(self.interface_lang['part_of_speech'] + ':', cb_pn)
         form.addRow(hbox)
         btn1.clicked.connect(fonSign)
         btn2.clicked.connect(getName)
@@ -138,5 +140,6 @@ class MyWindowE(MyWindowLanguage):
 
     def onSearch(self):
         sr, _ = MyWindowLanguage.onSearch(self)
+        if sr is None: return
         sr.show()
         
