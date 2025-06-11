@@ -84,8 +84,12 @@ class MyWindowE(MyWindowLanguage):
         def fonSign():
             def onInsert():
                 key = self.lv.currentIndex().data()
-                lE_kf.insert(key)
-                lE_kf.setFocus()
+                try:
+                    lE_kf.insert(key)
+                    lE_kf.setFocus()
+                except RuntimeError:
+                    QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                                  self.interface_lang['unexpected_difficulty'])
                 tlf.close()
 
             dic = ['ə', 'əʊ', 'ɔ', 'ʌ', 'ʘ', 'ɶ', 'ʊ', 'ʃ', 'ɚ', 'ɳ', 'ʧ', 'ʤ', 'ʒ', 'ɜ']
