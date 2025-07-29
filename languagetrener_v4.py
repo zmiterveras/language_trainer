@@ -31,56 +31,55 @@ class MainWindow(QtWidgets.QMainWindow):
         ico_path = os.path.join(self.images_path, 'dic.png')
         ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
-        self.setInterfaceLanguage(menu_language)
+        self.set_interface_language(menu_language)
         self.count = 1
         self.sort = 1
         self.view_page = False
-        self.setScreenSaver(self.interface_lang["set_lang"])
-        menuBar = self.menuBar()
-        self.makeMenu(menuBar)
-        self.statusBar = self.statusBar()
+        self.set_screen_saver(self.interface_lang["set_lang"])
+        menu_bar = self.menuBar()
+        self.make_menu(menu_bar)
+        self.status_bar = self.statusBar()
 
-    def setScreenSaver(self, text: str):
+    def set_screen_saver(self, text: str):
         self.win = firstScreensaver(self.images_path, text) #self.firstScreensaver(self.images_path, text_ch)
         self.setCentralWidget(self.win)
 
-    def makeMenu(self, menuBar):
-        myMenu = menuBar.addMenu('&' + self.interface_lang['file'])
-        self.makeMyMenu(myMenu)
-        #action = myMenu.addAction('Test',  self.test)
-        myLang = menuBar.addMenu('&' + self.interface_lang['language'])
-        myLang.addAction('English', lambda lang='en': self.langChoose(lang, myMenu, myView))
-        myLang.addAction('Deutsch', lambda lang='de': self.langChoose(lang, myMenu, myView))
-        myView = menuBar.addMenu(self.interface_lang['viewing'])
-        self.makeMyView(myView)
-        mySettings = menuBar.addMenu(self.interface_lang['settings'])
-        mySettings.addSection('Menu language')
-        mySettings.addAction(self.icon_eng, 'english', lambda ln='en': self.changeInterfaceLanguage(ln, menuBar, myMenu, myView))
-        mySettings.addAction(self.icon_ru, 'русский', lambda ln='ru': self.changeInterfaceLanguage(ln, menuBar, myMenu, myView))
-        mySettings.addSeparator()
-        myAbout = menuBar.addMenu(self.interface_lang['about'])
-        myAbout.addAction(self.interface_lang['about_prog'], self.aboutProgramm)
-        myAbout.addAction(self.interface_lang['about_me'], self.aboutMe)
+    def make_menu(self, menu_bar):
+        my_menu = menu_bar.addMenu('&' + self.interface_lang['file'])
+        self.make_my_menu(my_menu)
+        my_lang = menu_bar.addMenu('&' + self.interface_lang['language'])
+        my_lang.addAction('English', lambda lang='en': self.lang_choose(lang, my_menu, my_view))
+        my_lang.addAction('Deutsch', lambda lang='de': self.lang_choose(lang, my_menu, my_view))
+        my_view = menu_bar.addMenu(self.interface_lang['viewing'])
+        self.make_my_view(my_view)
+        my_settings = menu_bar.addMenu(self.interface_lang['settings'])
+        my_settings.addSection('Menu language')
+        my_settings.addAction(self.icon_eng, 'english', lambda ln='en': self.change_interface_language(ln, menu_bar, my_menu, my_view))
+        my_settings.addAction(self.icon_ru, 'русский', lambda ln='ru': self.change_interface_language(ln, menu_bar, my_menu, my_view))
+        my_settings.addSeparator()
+        my_about = menu_bar.addMenu(self.interface_lang['about'])
+        my_about.addAction(self.interface_lang['about_prog'], self.about_program)
+        my_about.addAction(self.interface_lang['about_me'], self.about_me)
 
-    def makeMyMenu(self, myMenu):
+    def make_my_menu(self, my_menu):
         if self.count != 1:
-            myMenu.clear()
-            myMenu.addAction('&' + self.interface_lang['create'], self.createDict)
-            myMenu.addAction('&' + self.interface_lang['open'], self.openDict)
-            myMenu.addAction(self.interface_lang['save'], self.win.saveDict)
-        myMenu.addAction('&' + self.interface_lang['close'], self.close)
+            my_menu.clear()
+            my_menu.addAction('&' + self.interface_lang['create'], self.create_dict)
+            my_menu.addAction('&' + self.interface_lang['open'], self.open_dict)
+            my_menu.addAction(self.interface_lang['save'], self.win.saveDict)
+        my_menu.addAction('&' + self.interface_lang['close'], self.close)
 
-    def makeMyView(self, myView):
+    def make_my_view(self, my_view):
         if self.count != 1:
-            myView.clear()
-            myView.addAction(self.interface_lang['short_view'], self.win.dictView)
-            myView.addAction('&' + self.interface_lang['full_view'], self.sortAll)
-            myView.addAction(self.interface_lang['view_cards'], self.win.cardsMode)
-        myView.addAction(self.interface_lang['view_log'], self.viewLogfile)
+            my_view.clear()
+            my_view.addAction(self.interface_lang['short_view'], self.win.dictView)
+            my_view.addAction('&' + self.interface_lang['full_view'], self.sort_all)
+            my_view.addAction(self.interface_lang['view_cards'], self.win.cardsMode)
+        my_view.addAction(self.interface_lang['view_log'], self.view_logfile)
 
-    def langChoose(self, variant, myMenu, myView):
+    def lang_choose(self, variant, my_menu, my_view):
         if self.count != 1:
-            if not self.checkChange():
+            if not self.check_change():
                 return
         if variant == 'en':
             self.win = MyWindowE(desktop, self.app_dir, self.interface_lang)
@@ -95,14 +94,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.count += 1
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
-        self.makeMyMenu(myMenu)
-        self.makeMyView(myView)
-        self.setStatusBar()
+        self.make_my_menu(my_menu)
+        self.make_my_view(my_view)
+        self.set_status_bar()
         self.win.label_am.setText('Пусто')
         self.win.label_flag.setPixmap(QtGui.QPixmap(flag_path))
         self.win.label_flag.setAlignment(QtCore.Qt.AlignRight)
 
-    def checkChange(self, flag=None):
+    def check_change(self, flag=None):
         result = QtWidgets.QMessageBox.question(None, self.interface_lang['warning'],
                                                 self.interface_lang['warn_open_new_dict'],
                                                 buttons=QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
@@ -114,19 +113,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.win.saveValues()
                 self.win.dw = {}
             else:
-                self.clearStatusBar()
+                self.clear_status_bar()
             return True
         return False
 
-    def setInterfaceLanguage(self, language):
-        self.setIcon(language)
+    def set_interface_language(self, language):
+        self.set_icon(language)
         if language == 'en':
             self.interface_lang = MenuLanguages.eng
         else:
             self.interface_lang = MenuLanguages.rus
         settings.setValue("Language", language)
 
-    def setIcon(self, language):
+    def set_icon(self, language):
         icon_checkmark = QtGui.QIcon(os.path.join(self.images_path,'galochka_16.png'))
         icon_minus = QtGui.QIcon(os.path.join(self.images_path, 'minus_16.png'))
         if language == 'en':
@@ -136,46 +135,46 @@ class MainWindow(QtWidgets.QMainWindow):
             self.icon_eng = icon_minus
             self.icon_ru = icon_checkmark
 
-    def saveInstanceState(self):
+    def save_instance_state(self):
         self.win.saveDict()
         name = self.win.dict_name
         return name
 
-    def setStatusBar(self):
-        self.statusBar.addWidget(self.win.status)
-        self.statusBar.addPermanentWidget(self.win.st)
+    def set_status_bar(self):
+        self.status_bar.addWidget(self.win.status)
+        self.status_bar.addPermanentWidget(self.win.st)
 
-    def clearStatusBar(self):
-        self.statusBar.removeWidget(self.win.status)
-        self.statusBar.removeWidget(self.win.st)
+    def clear_status_bar(self):
+        self.status_bar.removeWidget(self.win.status)
+        self.status_bar.removeWidget(self.win.st)
 
-    def restoreInstanceState(self):
-        name = self.saveInstanceState()
-        self.clearStatusBar()
+    def restore_instance_state(self):
+        name = self.save_instance_state()
+        self.clear_status_bar()
         match self.lang:
             case 'en':
                 self.win = MyWindowE(desktop, self.app_dir, self.interface_lang)
             case 'de':
                 self.win = MyWindowD(desktop, self.app_dir, self.interface_lang)
         self.win.dict_name = name
-        self.openDictBackground()
-        self.setStatusBar()
+        self.open_dict_background()
+        self.set_status_bar()
         self.win.dictView()
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
 
-    def changeInterfaceLanguage(self, language, menuBar, myMenu, myView):
-        self.setInterfaceLanguage(language)
-        menuBar.clear()
-        self.makeMenu(menuBar)
+    def change_interface_language(self, language, menu_bar, my_menu, my_view):
+        self.set_interface_language(language)
+        menu_bar.clear()
+        self.make_menu(menu_bar)
         if self.count > 1:
-            self.makeMyMenu(myMenu)
-            self.makeMyView(myView)
-            self.restoreInstanceState()
+            self.make_my_menu(my_menu)
+            self.make_my_view(my_view)
+            self.restore_instance_state()
         else:
-            self.setScreenSaver(self.interface_lang["set_lang"])
+            self.set_screen_saver(self.interface_lang["set_lang"])
 
-    def createDict(self):
+    def create_dict(self):
         name, ok = QtWidgets.QInputDialog.getText(None, self.interface_lang['dict_name'],
                                                self.interface_lang['enter_dict_name'],
                                                text=self.lang + '_')
@@ -185,9 +184,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                           self.interface_lang['warn_not_set_dict_name'])
             return
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        newdic = os.path.join(self.bases, name + '.sqlite')
-        print(newdic)
-        conn.setDatabaseName(newdic)
+        new_dic = os.path.join(self.bases, name + '.sqlite')
+        conn.setDatabaseName(new_dic)
         conn.open()
         if 'dic' not in conn.tables():
             query = QtSql.QSqlQuery()
@@ -209,7 +207,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_cr = QtWidgets.QLabel('<center>' + self.interface_lang['created_dict'] + name +'</center>')
         self.win.vtop_t.addWidget(self.label_cr)
 
-    def openDictBackground(self):
+    def open_dict_background(self):
         conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
         conn.setDatabaseName(self.win.dict_name)
         conn.open()
@@ -225,7 +223,7 @@ class MainWindow(QtWidgets.QMainWindow):
         conn.close()
         self.win.page_max = int(len(self.win.dw) / 40)
 
-    def openDictDebug(self):
+    def open_dict_debug(self):
         conn = sqlite3.connect(self.win.dict_name)
         curs = conn.cursor()
         curs.execute(self.query_str)
@@ -233,10 +231,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.win.dw[row[1]] = [row[0], row[2], row[3], row[4], row[5], row[6]]
         conn.close()
 
-    def openDict(self):
+    def open_dict(self):
         open_flag = 0 # 1 - debug mode
         if self.win.dict_name:
-            if not self.checkChange(flag=1):
+            if not self.check_change(flag=1):
                 return
         self.win.dict_name, _ = QtWidgets.QFileDialog.getOpenFileName(None,
                                               caption=self.interface_lang['open_dict'],
@@ -250,9 +248,9 @@ class MainWindow(QtWidgets.QMainWindow):
             part.partname from dic inner join part on dic.partnumber=part.partnumber
             """
         if open_flag == 0:
-            self.openDictBackground()
+            self.open_dict_background()
         else:
-            self.openDictDebug()
+            self.open_dict_debug()
 
         last_name = os.path.basename(self.win.dict_name)
         self.win.clear()
@@ -264,25 +262,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.vtop_t.addWidget(label_screen)
         self.win.label_am.setText(self.lang)
 
-    def sortAll(self):
-        def saClose():
+    def sort_all(self):
+        def sa_close():
             sort_widget.close()
-            self.viewAll()
+            self.view_all()
 
-        def choosePage():
+        def choose_page():
             self.view_page = True
             page = sp_box.value()
             self.start_page = (page-1) * 40
-            saClose()
+            sa_close()
 
-        def sortChoose():
+        def sort_choose():
             index = cb_sa.currentIndex()
             if index == 0:
                 self.sort = 1
-                saClose()
+                sa_close()
             elif index == 1:
                 self.sort = 0
-                saClose()
+                sa_close()
             elif index == 2:
                 if self.win.page_max < 2:
                     text = self.interface_lang['warn_not_enough_word_view']
@@ -291,14 +289,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 cb_sa.setEnabled(False)
                 sp_box.setRange(1, self.win.page_max)
                 sort_widget_vbox.insertWidget(2, sp_box)
-                btn.clicked.connect(choosePage)
+                btn.clicked.connect(choose_page)
             elif index == 3:
                 if len(self.win.dw) <= 40:
                     self.start_page = 0
                 else:
                     self.start_page = len(self.win.dw) - 40
                 self.view_page = True
-                saClose()
+                sa_close()
 
         if not self.win.dict_name:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
@@ -318,12 +316,12 @@ class MainWindow(QtWidgets.QMainWindow):
         sp_box = QtWidgets.QSpinBox()
         sort_widget_vbox.addWidget(cb_sa)
         btn = QtWidgets.QPushButton('Ok')
-        btn.clicked.connect(sortChoose)
+        btn.clicked.connect(sort_choose)
         sort_widget_vbox.addWidget(btn)
         sort_widget.setLayout(sort_widget_vbox)
         sort_widget.show()
 
-    def viewAll(self):
+    def view_all(self):
         if not self.win.dw:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['dict_empty'])
@@ -367,14 +365,14 @@ class MainWindow(QtWidgets.QMainWindow):
         for i, n in ((1, l_1), (2, l_2), (3, 300), (4, l_4), (5, l_5), (6, 150)):
             tv.setColumnWidth(i, n)
         vbox.addWidget(tv)
-        btncl = QtWidgets.QPushButton(self.interface_lang['close'])
-        btncl.clicked.connect(tabview.close)
-        vbox.addWidget(btncl)
+        btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
+        btn_close.clicked.connect(tabview.close)
+        vbox.addWidget(btn_close)
         tabview.setLayout(vbox)
         tabview.resize(915, 350)
         tabview.show()
 
-    def viewLogfile(self):
+    def view_logfile(self):
         fp = os.path.join(self.app_dir, 'vokabelheftlogfile')
         if not os.path.exists(fp):
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
@@ -391,15 +389,15 @@ class MainWindow(QtWidgets.QMainWindow):
         lt.resize(500, 600)
         lt.setWindowModality(QtCore.Qt.WindowModal)
         lt.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        ltbox = QtWidgets.QVBoxLayout()
-        ltbox.addWidget(lv)
-        btnc = QtWidgets.QPushButton(self.interface_lang['close'])
-        ltbox.addWidget(btnc)
-        btnc.clicked.connect(lt.close)
-        lt.setLayout(ltbox)
+        lt_box = QtWidgets.QVBoxLayout()
+        lt_box.addWidget(lv)
+        btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
+        lt_box.addWidget(btn_close)
+        btn_close.clicked.connect(lt.close)
+        lt.setLayout(lt_box)
         lt.show()
 
-    def aboutProgramm(self):
+    def about_program(self):
         about_widget = QtWidgets.QWidget(parent=self, flags=QtCore.Qt.Window)
         about_widget.setWindowTitle(self.interface_lang['about_prog'])
         about_widget.setWindowModality(QtCore.Qt.WindowModal)
@@ -414,7 +412,7 @@ class MainWindow(QtWidgets.QMainWindow):
         about_widget.setLayout(about_widget_box)
         about_widget.show()
 
-    def aboutMe(self):
+    def about_me(self):
         text = self.interface_lang['about_me_text']
         QtWidgets.QMessageBox.information(None, self.interface_lang['about_me'], text)
 
