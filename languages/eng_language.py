@@ -9,13 +9,13 @@ from languages.my_window_language import MyWindowLanguage
 
 
 class MyWindowE(MyWindowLanguage):
-    def onRun(self):
-        def onCheck():
-            self.ch = ent.text()
-            if self.ch == '':
+    def on_run(self):
+        def on_check():
+            self.answer = ent.text()
+            if self.answer == '':
                 QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                               self.interface_lang['warn_no_response'])
-            elif self.ch == self.ask:
+            elif self.answer == self.ask:
                 self.t_ans_count += 1
                 self.on_true_answer()
             else:
@@ -27,14 +27,14 @@ class MyWindowE(MyWindowLanguage):
             self.quest_word = self.dw[self.ask][2]
             question = self.interface_lang['translate_word'] + ' <b>' + self.quest_word + '</b>'
             self.clear()
-            label_q = QtWidgets.QLabel('<center>'+question+'</center>')
-            self.vtop_t.addWidget(label_q)
+            label_question = QtWidgets.QLabel('<center>'+question+'</center>')
+            self.vtop_t.addWidget(label_question)
             ent = QtWidgets.QLineEdit('', self)
             ent.setFocus()
             self.vtop_t.addWidget(ent)
             btn = QtWidgets.QPushButton('Ok')
             self.htop_b.addWidget(btn)
-            btn.clicked.connect(onCheck)
+            btn.clicked.connect(on_check)
             btn_skip = QtWidgets.QPushButton(self.interface_lang['skip'])
             self.htop_b.addWidget(btn_skip)
             btn_skip.clicked.connect(lambda: self.skip_word(self.ask))
@@ -43,46 +43,46 @@ class MyWindowE(MyWindowLanguage):
         else:
             self.on_result()
 
-    def onAdd(self, void, new=('', '', '', '', '', ''), flag=None):
-        def getName():
-            value1 = lE_key.text().strip()
-            value2 = lE_kf.text()
-            value3 = lE_w.text().strip()
-            value4 = lE_f.text()
-            value5 = lE_pl.text()
-            value6_1 = cb_pn.currentText()
-            value6_2 = cb_pn.currentIndex()
-            if (value1 and value3) == '':
+    def on_add(self, void, new=('', '', '', '', '', ''), flag=None):
+        def get_name():
+            word = lE_key.text().strip()
+            phonetic = lE_kf.text()
+            translation = lE_w.text().strip()
+            veb_forms = lE_f.text()
+            plural = lE_pl.text()
+            part_of_speech = cb_pn.currentText()
+            part_of_speech_index = cb_pn.currentIndex()
+            if (word and translation) == '':
                 QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                               self.interface_lang['warn_values_not_entered'])
             else:
-                if value1 in list(self.dw.keys()) and not flag:
+                if word in list(self.dw.keys()) and not flag:
                     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                                   self.interface_lang['warn_word_in_dict'])
                     return
-                dcont = [value1, value2, value3, value4, value5, value6_2+1]
+                dcont = [word, phonetic, translation, veb_forms, plural, part_of_speech_index+1]
                 if flag == 1:
-                    if value1 != value_k_old:
+                    if word != value_k_old:
                         val_id = self.dw[value_k_old][0]
                         del self.dw[value_k_old]
                     else:
-                        val_id = self.dw[value1][0]
-                    self.dw[value1] = [val_id] + dcont[1:5] + [value6_1]
+                        val_id = self.dw[word][0]
+                    self.dw[word] = [val_id] + dcont[1:5] + [part_of_speech]
                     txt = self.interface_lang['changed_word']
                     for i, name in enumerate([val_id] + dcont):
                         self.change_note[i].append(name)
                 else:
                     txt = self.interface_lang['added_word']
-                    self.dw[value1] = [None] + dcont[1:5] + [value6_1]
+                    self.dw[word] = [None] + dcont[1:5] + [part_of_speech]
                     for j, n in enumerate(dcont):
                         self.new_name[j].append(n)
-                QtWidgets.QMessageBox.information(None, self.interface_lang['info'], txt + value1)
+                QtWidgets.QMessageBox.information(None, self.interface_lang['info'], txt + word)
                 self.clear()
                 self.edit_dict()
                 tla.close()
 
-        def fonSign():
-            def onInsert():
+        def fon_sign():
+            def on_insert():
                 key = self.lv.currentIndex().data()
                 try:
                     lE_kf.insert(key)
@@ -95,10 +95,10 @@ class MyWindowE(MyWindowLanguage):
             dic = ['ə', 'əʊ', 'ɔ', 'ʌ', 'ʘ', 'ɶ', 'ʊ', 'ʃ', 'ɚ', 'ɳ', 'ʧ', 'ʤ', 'ʒ', 'ɜ']
             tlf = QtWidgets.QWidget(parent=None, flags=QtCore.Qt.Window)
             tvbox = QtWidgets.QVBoxLayout()
-            self.listBox(dic, flag=2, place=tvbox)
-            tlfb = QtWidgets.QPushButton('Ok')
-            tvbox.addWidget(tlfb)
-            tlfb.clicked.connect(onInsert)
+            self.list_box(dic, flag=2, place=tvbox)
+            tlf_btn = QtWidgets.QPushButton('Ok')
+            tvbox.addWidget(tlf_btn)
+            tlf_btn.clicked.connect(on_insert)
             tlf.setLayout(tvbox)
             tlf.show()
 
@@ -136,8 +136,8 @@ class MyWindowE(MyWindowLanguage):
         form.addRow(self.interface_lang['plural'] + ':', lE_pl)
         form.addRow(self.interface_lang['part_of_speech'] + ':', cb_pn)
         form.addRow(hbox)
-        btn1.clicked.connect(fonSign)
-        btn2.clicked.connect(getName)
+        btn1.clicked.connect(fon_sign)
+        btn2.clicked.connect(get_name)
         btn3.clicked.connect(tla.close)
         tla.setLayout(form)
         tla.show()

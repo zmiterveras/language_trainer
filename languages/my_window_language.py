@@ -320,7 +320,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.status.setText(self.interface_lang['mode_training'])
             self.start_training = time.time()
             random.shuffle(self.dw_key) # перемешать ключи
-            self.onRun()
+            self.on_run()
 
     def on_result(self):
         self.clear()
@@ -372,23 +372,23 @@ class MyWindowLanguage(QtWidgets.QWidget):
     def skip_word(self, word):
         self.dw_key.append(word)
         self.q_count -= 1
-        self.onRun()
+        self.on_run()
 
     def on_true_answer(self):
         self.clear()
-        label_ta = QtWidgets.QLabel('<center><b>True</b></center>')
-        label_ta.setStyleSheet("color:green")
-        self.vtop_t.addWidget(label_ta)
+        label_true = QtWidgets.QLabel('<center><b>True</b></center>')
+        label_true.setStyleSheet("color:green")
+        self.vtop_t.addWidget(label_true)
         self.on_answer()
 
     def on_false_answer(self):
         self.clear()
-        label_fa = QtWidgets.QLabel('<center><b>False</b></center>')
-        label_fa.setStyleSheet("color:red")
-        label_faa = QtWidgets.QLabel('<center>' + self.ch + '</center>')
-        label_faa.setStyleSheet("text-decoration:line-through")
-        self.vtop_t.addWidget(label_fa)
-        self.vtop_t.addWidget(label_faa)
+        label_false = QtWidgets.QLabel('<center><b>False</b></center>')
+        label_false.setStyleSheet("color:red")
+        label_false_answer = QtWidgets.QLabel('<center>' + self.answer + '</center>')
+        label_false_answer.setStyleSheet("text-decoration:line-through")
+        self.vtop_t.addWidget(label_false)
+        self.vtop_t.addWidget(label_false_answer)
         self.on_answer()
 
     def on_answer(self):
@@ -409,7 +409,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.vtop_t.addWidget(lw)
         btn_next = QtWidgets.QPushButton(self.interface_lang['next'], self)
         btn_next.setFocus()
-        btn_next.clicked.connect(self.onRun)
+        btn_next.clicked.connect(self.on_run)
         btn_next.setAutoDefault(True)
         btn_stop = QtWidgets.QPushButton(self.interface_lang['stop'], self)
         btn_stop.clicked.connect(self.on_result)
@@ -579,7 +579,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             return
         self.dict_view(flag=1)
         self.status.setText(self.interface_lang['mode_edit'])
-        for i in ((self.interface_lang['add'], self.onAdd),
+        for i in ((self.interface_lang['add'], self.on_add),
                 (self.interface_lang['change'], self.on_edit),
                 (self.interface_lang['delete'], self.on_delete)):
             btn = QtWidgets.QPushButton(i[0])
@@ -598,7 +598,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['warn_not_selected_word'])
             return
-        self.onAdd(None, new, flag=1)
+        self.on_add(None, new, flag=1)
         self.search_flag = 0
 
     def on_search(self):
