@@ -48,7 +48,7 @@ class MyWindowE(MyWindowLanguage):
             word = lE_key.text().strip()
             phonetic = lE_kf.text()
             translation = lE_w.text().strip()
-            veb_forms = lE_f.text()
+            verb_forms = lE_f.text()
             plural = lE_pl.text()
             part_of_speech = cb_pn.currentText()
             part_of_speech_index = cb_pn.currentIndex()
@@ -60,7 +60,7 @@ class MyWindowE(MyWindowLanguage):
                     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                                   self.interface_lang['warn_word_in_dict'])
                     return
-                dcont = [word, phonetic, translation, veb_forms, plural, part_of_speech_index+1]
+                dcont = [word, phonetic, translation, verb_forms, plural, part_of_speech_index+1]
                 if flag == 1:
                     if word != value_k_old:
                         val_id = self.dw[value_k_old][0]

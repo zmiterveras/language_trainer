@@ -591,7 +591,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
             key = self.search_key
         else:
             key = self.lv.currentIndex().data()
-            key = key.split("\n")[0]
+            if isinstance(key, str):
+                key = key.split("\n")[0]
         try:
             new = (key,) + (self.dw[key][1],) + (self.dw[key][2],) + (self.dw[key][3],) + (self.dw[key][4],) + (self.dw[key][5],)
         except KeyError:
