@@ -66,15 +66,15 @@ class MainWindow(QtWidgets.QMainWindow):
             my_menu.clear()
             my_menu.addAction('&' + self.interface_lang['create'], self.create_dict)
             my_menu.addAction('&' + self.interface_lang['open'], self.open_dict)
-            my_menu.addAction(self.interface_lang['save'], self.win.saveDict)
+            my_menu.addAction(self.interface_lang['save'], self.win.save_dict)
         my_menu.addAction('&' + self.interface_lang['close'], self.close)
 
     def make_my_view(self, my_view):
         if self.count != 1:
             my_view.clear()
-            my_view.addAction(self.interface_lang['short_view'], self.win.dictView)
+            my_view.addAction(self.interface_lang['short_view'], self.win.dict_view)
             my_view.addAction('&' + self.interface_lang['full_view'], self.sort_all)
-            my_view.addAction(self.interface_lang['view_cards'], self.win.cardsMode)
+            my_view.addAction(self.interface_lang['view_cards'], self.win.cards_mode)
         my_view.addAction(self.interface_lang['view_log'], self.view_logfile)
 
     def lang_choose(self, variant, my_menu, my_view):
@@ -93,11 +93,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.screen_path = os.path.join(self.images_path, 'Dic_de_148.png')
         self.count += 1
         self.setCentralWidget(self.win)
-        self.win.btncl.clicked.connect(self.close)
+        self.win.btn_close.clicked.connect(self.close)
         self.make_my_menu(my_menu)
         self.make_my_view(my_view)
         self.set_status_bar()
-        self.win.label_am.setText('Пусто')
+        self.win.label_amount.setText('Пусто')
         self.win.label_flag.setPixmap(QtGui.QPixmap(flag_path))
         self.win.label_flag.setAlignment(QtCore.Qt.AlignRight)
 
@@ -108,7 +108,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 defaultButton=QtWidgets.QMessageBox.No)
         if result == 16384:
             if flag == 1:
-                self.win.label_am.setText(self.lang)
+                self.win.label_amount.setText(self.lang)
                 self.win.status.setText('')
                 self.win.saveValues()
                 self.win.dw = {}
@@ -136,17 +136,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.icon_ru = icon_checkmark
 
     def save_instance_state(self):
-        self.win.saveDict()
+        self.win.save_dict()
         name = self.win.dict_name
         return name
 
     def set_status_bar(self):
         self.status_bar.addWidget(self.win.status)
-        self.status_bar.addPermanentWidget(self.win.st)
+        self.status_bar.addPermanentWidget(self.win.status_widget)
 
     def clear_status_bar(self):
         self.status_bar.removeWidget(self.win.status)
-        self.status_bar.removeWidget(self.win.st)
+        self.status_bar.removeWidget(self.win.status_widget)
 
     def restore_instance_state(self):
         name = self.save_instance_state()
@@ -159,7 +159,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.dict_name = name
         self.open_dict_background()
         self.set_status_bar()
-        self.win.dictView()
+        self.win.dict_view()
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
 
@@ -260,7 +260,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label_screen.setPixmap(QtGui.QPixmap(self.screen_path))
         label_screen.setAlignment(QtCore.Qt.AlignCenter)
         self.win.vtop_t.addWidget(label_screen)
-        self.win.label_am.setText(self.lang)
+        self.win.label_amount.setText(self.lang)
 
     def sort_all(self):
         def sa_close():
@@ -419,7 +419,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         if not hasattr(self.win, 'dict_name'): return
         if self.win.dict_name:
-            self.win.saveDict()
+            self.win.save_dict()
         event.accept()
         QtWidgets.QWidget.closeEvent(self, event)
 

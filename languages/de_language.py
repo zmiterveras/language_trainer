@@ -14,8 +14,8 @@ class MyWindowD(MyWindowLanguage):
     #     MyWindowLanguage.__init__(self, desktop, images_path, parent)
 
 
-    def onSearch(self):
-        sr, srhbox = MyWindowLanguage.onSearch(self)
+    def on_search(self):
+        sr, srhbox = MyWindowLanguage.on_search(self)
         if sr is None: return
         btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
         btn_u.clicked.connect(self.fonSign)
@@ -60,7 +60,7 @@ class MyWindowD(MyWindowLanguage):
         buttonBox = QtWidgets.QHBoxLayout()
         if hasattr(self, 'lv'):
             self.time_lv = self.lv
-        self.listBox(dic, flag=2, place=tvbox)
+        self.list_box(dic, flag=2, place=tvbox)
         tlfb_ok = QtWidgets.QPushButton('Ok')
         tlfb_close = QtWidgets.QPushButton(self.interface_lang['close'])
         buttonBox.addWidget(tlfb_ok)
@@ -103,15 +103,15 @@ class MyWindowD(MyWindowLanguage):
                     self.dw[value1] = [val_id] + dcont[1:5] + [value6_1]
                     txt = self.interface_lang['changed_word']
                     for i, name in enumerate([val_id] + dcont):
-                        self.changenote[i].append(name)
+                        self.change_note[i].append(name)
                 else:
                     txt = self.interface_lang['added_word']
                     self.dw[value1] = [None] + dcont[1:5] + [value6_1]
                     for j, n in enumerate(dcont):
-                        self.newname[j].append(n)
+                        self.new_name[j].append(n)
                 QtWidgets.QMessageBox.information(None, self.interface_lang['info'], txt + value1)
                 self.clear()
-                self.editDict()
+                self.edit_dict()
                 tla.close()
 
         tla = QtWidgets.QWidget(parent=None, flags=QtCore.Qt.Window)
@@ -170,9 +170,9 @@ class MyWindowD(MyWindowLanguage):
             self.ch = parser_controller(self.ch, self.ask)
             if self.ch == self.ask:
                 self.t_ans_count += 1
-                self.onTrueAnswer()
+                self.on_true_answer()
             else:
-                self.onFalseAnswer()
+                self.on_false_answer()
 
         if self.dw_key:
             self.on_sign_flag = 1

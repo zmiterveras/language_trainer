@@ -17,9 +17,9 @@ class MyWindowE(MyWindowLanguage):
                                               self.interface_lang['warn_no_response'])
             elif self.ch == self.ask:
                 self.t_ans_count += 1
-                self.onTrueAnswer()
+                self.on_true_answer()
             else:
-                self.onFalseAnswer()
+                self.on_false_answer()
 
         if self.dw_key:
             self.q_count += 1
@@ -41,7 +41,7 @@ class MyWindowE(MyWindowLanguage):
             btn.setAutoDefault(True) # Enter
             ent.returnPressed.connect(btn.click) #enter
         else:
-            self.onResult()
+            self.on_result()
 
     def onAdd(self, void, new=('', '', '', '', '', ''), flag=None):
         def getName():
@@ -70,15 +70,15 @@ class MyWindowE(MyWindowLanguage):
                     self.dw[value1] = [val_id] + dcont[1:5] + [value6_1]
                     txt = self.interface_lang['changed_word']
                     for i, name in enumerate([val_id] + dcont):
-                        self.changenote[i].append(name)
+                        self.change_note[i].append(name)
                 else:
                     txt = self.interface_lang['added_word']
                     self.dw[value1] = [None] + dcont[1:5] + [value6_1]
                     for j, n in enumerate(dcont):
-                        self.newname[j].append(n)
+                        self.new_name[j].append(n)
                 QtWidgets.QMessageBox.information(None, self.interface_lang['info'], txt + value1)
                 self.clear()
-                self.editDict()
+                self.edit_dict()
                 tla.close()
 
         def fonSign():
@@ -142,8 +142,8 @@ class MyWindowE(MyWindowLanguage):
         tla.setLayout(form)
         tla.show()
 
-    def onSearch(self):
-        sr, _ = MyWindowLanguage.onSearch(self)
+    def on_search(self):
+        sr, _ = MyWindowLanguage.on_search(self)
         if sr is None: return
         sr.show()
         
