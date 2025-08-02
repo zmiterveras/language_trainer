@@ -5,26 +5,26 @@
 import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 
-def firstScreensaver(abs_path, text, flag=None):
+def first_screensaver(abs_path: str, text: str, flag=None):
     widget = QtWidgets.QWidget()
     central_box = QtWidgets.QVBoxLayout()
     hor_box = QtWidgets.QHBoxLayout()
-    im_l = QtWidgets.QLabel()
-    te_l = QtWidgets.QLabel(text)
+    image_label = QtWidgets.QLabel()
+    text_label = QtWidgets.QLabel(text)
     img_path = os.path.join(abs_path, 'finger48.png')
-    im_l.setPixmap(QtGui.QPixmap(img_path))
-    im_l.setAlignment(QtCore.Qt.AlignLeft)
+    image_label.setPixmap(QtGui.QPixmap(img_path))
+    image_label.setAlignment(QtCore.Qt.AlignLeft)
     if not flag:
         hor_box.addWidget(QtWidgets.QLabel(14*' '))
-    hor_box.addWidget(im_l)
+    hor_box.addWidget(image_label)
     hor_box.setAlignment(QtCore.Qt.AlignLeft)
     central_box.addLayout(hor_box)
-    central_box.addWidget(te_l)
+    central_box.addWidget(text_label)
     widget.setLayout(central_box)
     return widget
 
 
-def simpleView(dictionary):
+def simple_view(dictionary: dict) -> list:
     keys = dictionary.keys()
     dic = []
     for key in keys:

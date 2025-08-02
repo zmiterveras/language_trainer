@@ -10,7 +10,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui, QtSql
 from languages.eng_language import MyWindowE
 from languages.de_language import MyWindowD
 from menulanguages import MenuLanguages
-from utils.utils import firstScreensaver
+from utils.utils import first_screensaver
 
 
 settings = QtCore.QSettings("@zmv", "Vokabelheft")
@@ -41,7 +41,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status_bar = self.statusBar()
 
     def set_screen_saver(self, text: str):
-        self.win = firstScreensaver(self.images_path, text) #self.firstScreensaver(self.images_path, text_ch)
+        self.win = first_screensaver(self.images_path, text) #self.firstScreensaver(self.images_path, text_ch)
         self.setCentralWidget(self.win)
 
     def make_menu(self, menu_bar):
@@ -77,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow):
             my_view.addAction(self.interface_lang['view_cards'], self.win.cards_mode)
         my_view.addAction(self.interface_lang['view_log'], self.view_logfile)
 
-    def lang_choose(self, variant, my_menu, my_view):
+    def lang_choose(self, variant: str, my_menu, my_view):
         if self.count != 1:
             if not self.check_change():
                 return
@@ -117,7 +117,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return True
         return False
 
-    def set_interface_language(self, language):
+    def set_interface_language(self, language: str):
         self.set_icon(language)
         if language == 'en':
             self.interface_lang = MenuLanguages.eng
@@ -125,7 +125,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.interface_lang = MenuLanguages.rus
         settings.setValue("Language", language)
 
-    def set_icon(self, language):
+    def set_icon(self, language: str):
         icon_checkmark = QtGui.QIcon(os.path.join(self.images_path,'galochka_16.png'))
         icon_minus = QtGui.QIcon(os.path.join(self.images_path, 'minus_16.png'))
         if language == 'en':
@@ -163,7 +163,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.win)
         self.win.btncl.clicked.connect(self.close)
 
-    def change_interface_language(self, language, menu_bar, my_menu, my_view):
+    def change_interface_language(self, language: str, menu_bar, my_menu, my_view):
         self.set_interface_language(language)
         menu_bar.clear()
         self.make_menu(menu_bar)

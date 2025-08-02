@@ -7,13 +7,13 @@ import os
 import random
 import time
 from PyQt5 import QtWidgets, QtCore, QtSql, QtGui
-from utils.utils import firstScreensaver
+from utils.utils import first_screensaver
 from utils.utils import ClickedLabel
-from utils.utils import simpleView
+from utils.utils import simple_view
 
 
 class MyWindowLanguage(QtWidgets.QWidget):
-    def __init__(self, desktop, root_dir, language, parent=None):
+    def __init__(self, desktop, root_dir: str, language: dict, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.dict_name = ''
         self.dw = {}
@@ -56,8 +56,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.vbox = QtWidgets.QVBoxLayout()
         self.vtop = QtWidgets.QVBoxLayout()
         self.vtop_t = QtWidgets.QVBoxLayout()
-        ss = firstScreensaver(self.wd, text, flag=1)
-        self.vtop_t.addWidget(ss)
+        screen_saver = first_screensaver(self.wd, text, flag=1)
+        self.vtop_t.addWidget(screen_saver)
         self.htop_b = QtWidgets.QHBoxLayout()
         self.vtop.addLayout(self.vtop_t)
         self.vtop.addLayout(self.htop_b)
@@ -144,10 +144,10 @@ class MyWindowLanguage(QtWidgets.QWidget):
             place.addWidget(self.label1)
         else:
             self.status.setText(self.interface_lang['mode_view'])
-            dic = simpleView(self.dw)
+            dic = simple_view(self.dw)
             self.list_box(dic, flag, place)
 
-    def list_box(self, dic, flag, place):
+    def list_box(self, dic: list, flag: int, place):
         self.lv = QtWidgets.QListView()
         slm = QtCore.QStringListModel(dic)
         self.lv.setModel(slm)
@@ -360,8 +360,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
         if self.log_flag:
             self.training_log()
 
-    def training_time(self, start, stop):
-        seconds = int(stop -start)
+    def training_time(self, start, stop) -> str:
+        seconds = int(stop - start)
         minutes = '0'
         if seconds > 60:
             minutes = seconds//60
@@ -369,7 +369,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         return "%s %s %s %s" % (minutes, self.interface_lang['minutes'],
                                 seconds, self.interface_lang['seconds'])
 
-    def skip_word(self, word):
+    def skip_word(self, word: str):
         self.dw_key.append(word)
         self.q_count -= 1
         self.on_run()
