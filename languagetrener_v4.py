@@ -23,7 +23,7 @@ else:
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        self.version = '''5, 2024г.'''
+        self.version = '''5.2, 2025г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.images_path = os.path.join(self.app_dir, 'images')
