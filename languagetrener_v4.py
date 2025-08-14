@@ -10,6 +10,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui, QtSql
 from languages.eng_language import MyWindowE
 from languages.de_language import MyWindowD
 from menulanguages import MenuLanguages
+from sql_handler.sql_handler import SqlHandler
 from utils.utils import first_screensaver
 
 
@@ -32,6 +33,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
         self.set_interface_language(menu_language)
+        self.sql_handler = SqlHandler(self.interface_lang)
         self.count = 1
         self.sort = 1
         self.view_page = False
@@ -183,53 +185,18 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['warn_not_set_dict_name'])
             return
-        conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
         new_dic = os.path.join(self.bases, name + '.sqlite')
-        conn.setDatabaseName(new_dic)
-        conn.open()
-        if 'dic' not in conn.tables():
-            query = QtSql.QSqlQuery()
-            querystr = '''create table dic (id integer primary key autoincrement,
-            key text, keyfon text, word text, form text, plural text ,partnumber integer)'''
-            query.exec(querystr)
-        if 'part' not in conn.tables():
-            query.clear()
-            querystr_ = """create table part (id integer primary key autoincrement,
-            partnumber integer, partname text)"""
-            query.exec(querystr_)
-            query.clear()
-            query.prepare('insert into part values (null, :count, :name)')
-            query.bindValue(':count', self.win.lst1)
-            query.bindValue(':name', self.win.lst2)
-            query.execBatch()
-        conn.close()
+        self.sql_handler.create_db(new_dic)
         self.win.clear()
         self.label_cr = QtWidgets.QLabel('<center>' + self.interface_lang['created_dict'] + name +'</center>')
         self.win.vtop_t.addWidget(self.label_cr)
 
     def open_dict_background(self):
-        conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        conn.setDatabaseName(self.win.dict_name)
-        conn.open()
-        query = QtSql.QSqlQuery()
-        query.exec(self.query_str)
-        if query.isActive():
-            query.first()
-            while query.isValid():
-                self.win.dw[query.value('key')] = [query.value('id'), query.value('keyfon'),
-                                                    query.value('word'), query.value('form'),
-                                                    query.value('plural'), query.value('partname')]
-                query.next()
-        conn.close()
+        self.win.dw = self.sql_handler.open_db(self.win.dict_name)
         self.win.page_max = int(len(self.win.dw) / 40)
 
     def open_dict_debug(self):
-        conn = sqlite3.connect(self.win.dict_name)
-        curs = conn.cursor()
-        curs.execute(self.query_str)
-        for row in curs.fetchall():
-            self.win.dw[row[1]] = [row[0], row[2], row[3], row[4], row[5], row[6]]
-        conn.close()
+        self.win.dw = self.sql_handler.open_db_debug(self.win.dict_name)
 
     def open_dict(self):
         open_flag = 0 # 1 - debug mode
@@ -244,9 +211,6 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['warn_not_selected_dict'])
             return
-        self.query_str = """select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural,
-            part.partname from dic inner join part on dic.partnumber=part.partnumber
-            """
         if open_flag == 0:
             self.open_dict_background()
         else:

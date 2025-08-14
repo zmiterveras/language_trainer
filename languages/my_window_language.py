@@ -25,12 +25,12 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.search_key = 0
         self.on_sign_flag = 0 # для немецкого для умляутов
         self.page_max = 0
-        self.lst1 = [1, 2, 3, 4, 5]
-        self.lst2 = [self.interface_lang['noun'],
-                     self.interface_lang['verb'],
-                     self.interface_lang['adjective'],
-                     self.interface_lang['adverb'],
-                     self.interface_lang['another']]
+        # self.lst1 = [1, 2, 3, 4, 5]
+        # self.lst2 = [self.interface_lang['noun'],
+        #              self.interface_lang['verb'],
+        #              self.interface_lang['adjective'],
+        #              self.interface_lang['adverb'],
+        #              self.interface_lang['another']]
         self.wd = os.path.join(self.root_dir, 'images')
         self.status = QtWidgets.QLabel()
         self.make_widget()
