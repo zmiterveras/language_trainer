@@ -13,24 +13,24 @@ from utils.utils import simple_view
 
 
 class MyWindowLanguage(QtWidgets.QWidget):
-    def __init__(self, desktop, root_dir: str, language: dict, parent=None):
+    def __init__(self, desktop, root_dir: str, language: dict, sql_handler, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.dict_name = ''
         self.dw = {}
         self.desktop = desktop
         self.root_dir = root_dir
         self.interface_lang = language
+        self.sql_handler = sql_handler
+        self.name_part_of_speech = [self.interface_lang['noun'],
+                                    self.interface_lang['verb'],
+                                    self.interface_lang['adjective'],
+                                    self.interface_lang['adverb'],
+                                    self.interface_lang['another']]
         self.search_flag = 0
         self.cards_flag = 0
         self.search_key = 0
         self.on_sign_flag = 0 # для немецкого для умляутов
         self.page_max = 0
-        # self.lst1 = [1, 2, 3, 4, 5]
-        # self.lst2 = [self.interface_lang['noun'],
-        #              self.interface_lang['verb'],
-        #              self.interface_lang['adjective'],
-        #              self.interface_lang['adverb'],
-        #              self.interface_lang['another']]
         self.wd = os.path.join(self.root_dir, 'images')
         self.status = QtWidgets.QLabel()
         self.make_widget()
@@ -81,45 +81,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
     def save_dict(self):
         if not self.dict_name:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_not_selected_dict'])#######
+                                          self.interface_lang['warn_not_selected_dict'])
             return
-        conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        conn.setDatabaseName(self.dict_name)
-        conn.open()
-        query = QtSql.QSqlQuery()
-        #удаление
-        if self.del_name:
-            query.prepare('delete from dic where id=:i')
-            query.bindValue(':i', self.del_name)
-            query.execBatch()
-            query.clear()
-        #добавление
-        if self.new_name[0]:
-            query_str = '''insert into dic values (null, :key, :keyfon, :word, :form,
-                                            :plural, :partnumber)'''
-            query.prepare(query_str)
-            query.bindValue(':key', self.new_name[0])
-            query.bindValue(':keyfon', self.new_name[1])
-            query.bindValue(':word', self.new_name[2])
-            query.bindValue(':form', self.new_name[3])
-            query.bindValue(':plural', self.new_name[4])
-            query.bindValue(':partnumber', self.new_name[5])
-            query.execBatch()
-            query.clear()
-        #изменение
-        if self.change_note[0]:
-            query_str_ = '''update dic set key=:key, keyfon=:keyfon, word=:word, form=:form,
-                    plural=:plural, partnumber=:partnumber where id=:id'''
-            query.prepare(query_str_)
-            query.bindValue(':key', self.change_note[1])
-            query.bindValue(':keyfon', self.change_note[2])
-            query.bindValue(':word', self.change_note[3])
-            query.bindValue(':form', self.change_note[4])
-            query.bindValue(':plural', self.change_note[5])
-            query.bindValue(':partnumber', self.change_note[6])
-            query.bindValue(':id', self.change_note[0])
-            query.execBatch()
-        conn.close()
+        self.sql_handler.save_dict(self.dict_name, self.del_name, self.new_name, self.change_note)
         self.save_values()
 
     def clear(self):

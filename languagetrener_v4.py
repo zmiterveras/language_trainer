@@ -84,12 +84,12 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self.check_change():
                 return
         if variant == 'en':
-            self.win = MyWindowE(desktop, self.app_dir, self.interface_lang)
+            self.win = MyWindowE(desktop, self.app_dir, self.interface_lang, self.sql_handler)
             self.lang = variant
             flag_path = os.path.join(self.images_path, 'gb_16.png')
             self.screen_path = os.path.join(self.images_path, 'Dic_eng_148.png')
         else:
-            self.win = MyWindowD(desktop, self.app_dir, self.interface_lang)
+            self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler)
             self.lang = variant
             flag_path = os.path.join(self.images_path, 'de_16.png')
             self.screen_path = os.path.join(self.images_path, 'Dic_de_148.png')

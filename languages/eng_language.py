@@ -112,7 +112,7 @@ class MyWindowE(MyWindowLanguage):
         lE_f = QtWidgets.QLineEdit()
         lE_pl = QtWidgets.QLineEdit()
         cb_pn = QtWidgets.QComboBox()
-        cb_pn.addItems(self.lst2)
+        cb_pn.addItems(self.name_part_of_speech)
         btn1 = QtWidgets.QPushButton('ʧ, ʊ, ʌ, ɳ, ʤ')
         btn2 = QtWidgets.QPushButton(self.interface_lang['add'])
         btn3 = QtWidgets.QPushButton(self.interface_lang['close'])

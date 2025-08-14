@@ -126,7 +126,7 @@ class MyWindowD(MyWindowLanguage):
         cb_pl = QtWidgets.QComboBox()
         cb_pl.addItems(['', '-e', '-¨e', '-en', '-n', '-¨er', '-¨en', '-¨', '-s', '-er'])
         cb_pn = QtWidgets.QComboBox()
-        cb_pn.addItems(self.lst2)
+        cb_pn.addItems(self.name_part_of_speech)
         btn2 = QtWidgets.QPushButton(self.interface_lang['add'])
         btn3 = QtWidgets.QPushButton(self.interface_lang['close'])
         hbox2 = QtWidgets.QHBoxLayout()
