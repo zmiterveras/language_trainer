@@ -28,7 +28,7 @@ def simple_view(dictionary: dict) -> list:
     keys = dictionary.keys()
     dic = []
     for key in keys:
-        word_full = dictionary[key][2]
+        word_full = dictionary[key][3]
         if len(word_full) > 15:
             word = "\n"  + word_full[:15] + "..."
         else:

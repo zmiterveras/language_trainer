@@ -10,6 +10,7 @@ from PyQt5 import QtWidgets, QtCore, QtSql, QtGui
 from utils.utils import first_screensaver
 from utils.utils import ClickedLabel
 from utils.utils import simple_view
+from menulanguages import MenuLanguages
 
 
 class MyWindowLanguage(QtWidgets.QWidget):
@@ -21,11 +22,11 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.root_dir = root_dir
         self.interface_lang = language
         self.sql_handler = sql_handler
-        self.name_part_of_speech = [self.interface_lang['noun'],
-                                    self.interface_lang['verb'],
-                                    self.interface_lang['adjective'],
-                                    self.interface_lang['adverb'],
-                                    self.interface_lang['another']]
+        self.name_part_of_speech = MenuLanguages.part_keys #[self.interface_lang['noun'],
+        #                             self.interface_lang['verb'],
+        #                             self.interface_lang['adjective'],
+        #                             self.interface_lang['adverb'],
+        #                             self.interface_lang['another']]
         self.search_flag = 0
         self.cards_flag = 0
         self.search_key = 0
@@ -97,10 +98,10 @@ class MyWindowLanguage(QtWidgets.QWidget):
             wb.deleteLater()
 
     def dict_view(self, flag=None):
-        if not self.dw:
-            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_dict_not_loaded'])
-            return
+        # if not self.dw:
+        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+        #                                   self.interface_lang['warn_dict_not_loaded'])
+        #     return
         place = self.vtop_t
         self.clear()
         if not self.dw:
@@ -155,7 +156,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             tlv_box = QtWidgets.QVBoxLayout()
             lk = QtWidgets.QLabel('<center><b>' + key + '</b>' + ' (<i>'+part_name+'</i>)</center>')
             tlv_box.addWidget(lk)
-            lfk = QtWidgets.QLabel('<center>[' + key_phonetic + ']</center>')
+            lfk = QtWidgets.QLabel('<center>[' + phonetic_article + ']</center>')
             tlv_box.addWidget(lfk)
             self.horizont_line(tlv_box)
             if form:
@@ -164,7 +165,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             if plural:
                 lp = QtWidgets.QLabel(self.interface_lang['plural'] + ': ' + '<b>' + plural + '</b>')
                 tlv_box.addWidget(lp)
-            lw = QtWidgets.QLabel(self.interface_lang['translation'] + ': ' + '<b>' + word + '</b>')
+            lw = QtWidgets.QLabel(self.interface_lang['translation'] + ': ' + '<b>' + translate + '</b>')
             tlv_box.addWidget(lw)
             tlh_box = QtWidgets.QHBoxLayout()
             btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
@@ -181,11 +182,11 @@ class MyWindowLanguage(QtWidgets.QWidget):
         else:
             key = self.lv.currentIndex().data()
             key = key.split("\n")[0]
-        key_phonetic = self.dw[key][1]
-        word = self.dw[key][2]
-        form = self.dw[key][3]
-        plural = self.dw[key][4]
-        part_name = self.dw[key][5]
+        phonetic_article = self.dw[key][1] if self.dw[key][7] == 1 else self.dw[key][2]
+        translate = self.dw[key][3]
+        form = self.dw[key][4]
+        plural = self.dw[key][5]
+        part_name = self.interface_lang[self.name_part_of_speech[self.dw[key][6]]]
         view()
 
     def on_training_mode(self):
