@@ -48,9 +48,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.status_widget.setLayout(status_box)
 
     def save_values(self):
-        self.new_name = [[], [], [], [], [], []]
+        self.new_name = [[], [], [], [], [], [], [], []]
         self.del_name = []
-        self.change_note = [[], [], [], [], [], [], []]
+        self.change_note = [[], [], [], [], [], [], [], [], []]
 
     def make_widget(self):
         # text = self.interface_lang['open_dict_text']
@@ -538,9 +538,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.tl_cr.show()
 
     def edit_dict(self):
-        if not self.dict_name:
+        if not self.dw:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_dict_not_loaded'])
+                                          self.interface_lang['dict_empty'])
             return
         self.dict_view(flag=1)
         self.status.setText(self.interface_lang['mode_edit'])

@@ -50,7 +50,7 @@ class MyWindowE(MyWindowLanguage):
             translation = lE_w.text().strip()
             verb_forms = lE_f.text()
             plural = lE_pl.text()
-            part_of_speech = cb_pn.currentText()
+            # part_of_speech = cb_pn.currentText()
             part_of_speech_index = cb_pn.currentIndex()
             if (word and translation) == '':
                 QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
@@ -60,20 +60,20 @@ class MyWindowE(MyWindowLanguage):
                     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                                   self.interface_lang['warn_word_in_dict'])
                     return
-                dcont = [word, phonetic, translation, verb_forms, plural, part_of_speech_index+1]
+                dcont = [word, phonetic, "", translation, verb_forms, plural, part_of_speech_index, 1]
                 if flag == 1:
                     if word != value_k_old:
                         val_id = self.dw[value_k_old][0]
                         del self.dw[value_k_old]
                     else:
                         val_id = self.dw[word][0]
-                    self.dw[word] = [val_id] + dcont[1:5] + [part_of_speech]
+                    self.dw[word] = [val_id] + dcont[1:] #+ [part_of_speech]
                     txt = self.interface_lang['changed_word']
                     for i, name in enumerate([val_id] + dcont):
                         self.change_note[i].append(name)
                 else:
                     txt = self.interface_lang['added_word']
-                    self.dw[word] = [None] + dcont[1:5] + [part_of_speech]
+                    self.dw[word] = [None] + dcont[1:] #+ [part_of_speech]
                     for j, n in enumerate(dcont):
                         self.new_name[j].append(n)
                 QtWidgets.QMessageBox.information(None, self.interface_lang['info'], txt + word)
