@@ -68,8 +68,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def make_my_menu(self, my_menu):
         if self.count != 1:
             my_menu.clear()
-            my_menu.addAction('&' + self.interface_lang['create'], self.create_dict)
-            my_menu.addAction('&' + self.interface_lang['open'], self.open_dict)
+            # my_menu.addAction('&' + self.interface_lang['create'], self.create_dict)
+            # my_menu.addAction('&' + self.interface_lang['open'], self.open_dict)
             my_menu.addAction(self.interface_lang['save'], self.win.save_dict)
         my_menu.addAction('&' + self.interface_lang['close'], self.close)
 
@@ -90,11 +90,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.lang = variant
             flag_path = os.path.join(self.images_path, 'gb_16.png')
             self.screen_path = os.path.join(self.images_path, 'Dic_eng_148.png')
+            self.open_dict(1)
         else:
             self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler)
             self.lang = variant
             flag_path = os.path.join(self.images_path, 'de_16.png')
             self.screen_path = os.path.join(self.images_path, 'Dic_de_148.png')
+            self.open_dict(2)
         self.count += 1
         self.setCentralWidget(self.win)
         self.win.btn_close.clicked.connect(self.close)
@@ -161,7 +163,7 @@ class MainWindow(QtWidgets.QMainWindow):
             case 'de':
                 self.win = MyWindowD(desktop, self.app_dir, self.interface_lang)
         self.win.dict_name = name
-        self.open_dict_background()
+        # self.open_dict_background()
         self.set_status_bar()
         self.win.dict_view()
         self.setCentralWidget(self.win)
@@ -178,49 +180,49 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.set_screen_saver(self.interface_lang["set_lang"])
 
-    def create_dict(self):
-        name, ok = QtWidgets.QInputDialog.getText(None, self.interface_lang['dict_name'],
-                                               self.interface_lang['enter_dict_name'],
-                                               text=self.lang + '_')
-        if not ok: return
-        if ok and not name:
-            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_not_set_dict_name'])
-            return
-        new_dic = os.path.join(self.bases, name + '.sqlite')
-        self.sql_handler.create_db(new_dic)
-        self.win.clear()
-        self.label_cr = QtWidgets.QLabel('<center>' + self.interface_lang['created_dict'] + name +'</center>')
-        self.win.vtop_t.addWidget(self.label_cr)
+    # def create_dict(self):
+    #     name, ok = QtWidgets.QInputDialog.getText(None, self.interface_lang['dict_name'],
+    #                                            self.interface_lang['enter_dict_name'],
+    #                                            text=self.lang + '_')
+    #     if not ok: return
+    #     if ok and not name:
+    #         QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+    #                                       self.interface_lang['warn_not_set_dict_name'])
+    #         return
+    #     new_dic = os.path.join(self.bases, name + '.sqlite')
+    #     self.sql_handler.create_db(new_dic)
+    #     self.win.clear()
+    #     self.label_cr = QtWidgets.QLabel('<center>' + self.interface_lang['created_dict'] + name +'</center>')
+    #     self.win.vtop_t.addWidget(self.label_cr)
 
-    def open_dict_background(self):
-        self.win.dw = self.sql_handler.open_db(self.win.dict_name)
+    def open_dict_background(self, language: int):
+        self.win.dw = self.sql_handler.open_db(language)
         self.win.page_max = int(len(self.win.dw) / 40)
 
     def open_dict_debug(self):
         self.win.dw = self.sql_handler.open_db_debug(self.win.dict_name)
 
-    def open_dict(self):
+    def open_dict(self, language: int):
         open_flag = 0 # 1 - debug mode
-        if self.win.dict_name:
-            if not self.check_change(flag=1):
-                return
-        self.win.dict_name, _ = QtWidgets.QFileDialog.getOpenFileName(None,
-                                              caption=self.interface_lang['open_dict'],
-                                              directory=self.bases,
-                                              filter='DB (*.sqlite)')
-        if not self.win.dict_name:
-            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_not_selected_dict'])
-            return
+    #     if self.win.dict_name:
+    #         if not self.check_change(flag=1):
+    #             return
+    #     self.win.dict_name, _ = QtWidgets.QFileDialog.getOpenFileName(None,
+    #                                           caption=self.interface_lang['open_dict'],
+    #                                           directory=self.bases,
+    #                                           filter='DB (*.sqlite)')
+    #     if not self.win.dict_name:
+    #         QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+    #                                       self.interface_lang['warn_not_selected_dict'])
+    #         return
         if open_flag == 0:
-            self.open_dict_background()
+            self.open_dict_background(language)
         else:
             self.open_dict_debug()
 
-        last_name = os.path.basename(self.win.dict_name)
+        # last_name = os.path.basename(self.win.dict_name)
         self.win.clear()
-        self.label2 = QtWidgets.QLabel('<center>' + self.interface_lang['loaded_dict'] + last_name+'</center>')
+        self.label2 = QtWidgets.QLabel('<center>' + self.interface_lang['loaded_dict'] + '</center>')
         self.win.vtop_t.addWidget(self.label2)
         label_screen = QtWidgets.QLabel()
         label_screen.setPixmap(QtGui.QPixmap(self.screen_path))

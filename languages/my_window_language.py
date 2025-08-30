@@ -52,12 +52,12 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.change_note = [[], [], [], [], [], [], []]
 
     def make_widget(self):
-        text = self.interface_lang['open_dict_text']
+        # text = self.interface_lang['open_dict_text']
         self.vbox = QtWidgets.QVBoxLayout()
         self.vtop = QtWidgets.QVBoxLayout()
         self.vtop_t = QtWidgets.QVBoxLayout()
-        screen_saver = first_screensaver(self.wd, text, flag=1)
-        self.vtop_t.addWidget(screen_saver)
+        # screen_saver = first_screensaver(self.wd, text, flag=1)
+        # self.vtop_t.addWidget(screen_saver)
         self.htop_b = QtWidgets.QHBoxLayout()
         self.vtop.addLayout(self.vtop_t)
         self.vtop.addLayout(self.htop_b)
@@ -97,7 +97,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             wb.deleteLater()
 
     def dict_view(self, flag=None):
-        if not self.dict_name:
+        if not self.dw:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['warn_dict_not_loaded'])
             return

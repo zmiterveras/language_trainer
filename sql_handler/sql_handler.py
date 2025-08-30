@@ -71,11 +71,11 @@ class SqlHandler:
     #     connect.close()
     #     return dictionary
 
-    def open_db(self, db_name, language) -> dict:
+    def open_db(self, language) -> dict:
         query_open_dict = '''
         select * from dictionary where language="%d"
         ''' % language
-        connect, query = self.connect_db(db_name)
+        connect, query = self.connect_db()
         query.exec(query_open_dict)
         dictionary = {}
         if query.isActive():
