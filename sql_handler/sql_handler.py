@@ -8,8 +8,8 @@ from PyQt5 import QtSql
 
 class SqlHandler:
 
-    def __init__(self, interface_language):
-        pass
+    def __init__(self,bases_path: str, interface_language):
+        self.database = os.path.join(bases_path, 'dictionary_desktop.sqlite')
         # self.interface_lang = interface_language
         # self.query_open_dict = """select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural,
         #             part.partname from dic inner join part on dic.partnumber=part.partnumber
@@ -21,9 +21,9 @@ class SqlHandler:
         #                             self.interface_lang['adverb'],
         #                             self.interface_lang['another']]
 
-    def connect_db(self, db_name: str):
+    def connect_db(self):
         connect = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        connect.setDatabaseName(db_name)
+        connect.setDatabaseName(self.database)
         connect.open()
         query = QtSql.QSqlQuery()
         return connect, query
@@ -46,8 +46,8 @@ class SqlHandler:
     #         query.execBatch()
     #     connect.close()
 
-    def create_db(self, db_name):
-        connect, query = self.connect_db(db_name)
+    def create_db(self):
+        connect, query = self.connect_db()
         if 'dictionary' not in connect.tables():
             query_create_table_dic = '''
             create table dictionary (id integer primary key autoincrement,
@@ -175,3 +175,6 @@ class SqlHandler:
             query.bindValue(':id', change_note[0])
             query.execBatch()
         connect.close()
+        
+    def is_db_available(self):
+        return True if os.path.exists(self.database) else False

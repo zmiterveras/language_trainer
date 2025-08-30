@@ -12,6 +12,7 @@ from languages.de_language import MyWindowD
 from menulanguages import MenuLanguages
 from sql_handler.sql_handler import SqlHandler
 from utils.utils import first_screensaver
+from utils.logger import logger
 
 
 settings = QtCore.QSettings("@zmv", "Vokabelheft")
@@ -33,7 +34,8 @@ class MainWindow(QtWidgets.QMainWindow):
         ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
         self.set_interface_language(menu_language)
-        self.sql_handler = SqlHandler(self.interface_lang)
+        self.sql_handler = SqlHandler(self.bases, self.interface_lang)
+        self.check_db()
         self.count = 1
         self.sort = 1
         self.view_page = False
@@ -386,6 +388,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.win.save_dict()
         event.accept()
         QtWidgets.QWidget.closeEvent(self, event)
+        
+    def check_db(self):
+        if not self.sql_handler.is_db_available():
+            logger.info('DB is not exist')
+            self.sql_handler.create_db()
+        else:
+            logger.info('DB is available')
 
 
 
