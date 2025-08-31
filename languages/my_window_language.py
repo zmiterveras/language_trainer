@@ -560,10 +560,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
             if isinstance(key, str):
                 key = key.split("\n")[0]
         try:
-            new = ((key,) + (self.dw[key][1],) + (self.dw[key][2],) +
-                   (self.dw[key][3],) + (self.dw[key][4],) + (self.dw[key][5],) +
-                   (self.dw[key][6],) + (self.dw[key][7],))
-            print('New: ' + str(new))
+            phonetic_article = self.dw[key][1] if self.dw[key][-1] == 1 else self.dw[key][2]
+            new = ((key,) + (phonetic_article,) + (self.dw[key][3],) +
+                   (self.dw[key][4],) + (self.dw[key][5],) + (self.dw[key][6],))
         except KeyError:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['warn_not_selected_word'])

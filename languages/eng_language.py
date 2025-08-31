@@ -43,7 +43,7 @@ class MyWindowE(MyWindowLanguage):
         else:
             self.on_result()
 
-    def on_add(self, void, new=('', '', '', '', '', '', '', ''), flag=None):
+    def on_add(self, void, new=('', '', '', '', '', ''), flag=None):
         def get_name():
             word = lE_key.text().strip()
             phonetic = lE_kf.text()
@@ -126,7 +126,7 @@ class MyWindowE(MyWindowLanguage):
             k += 1
         if flag == 1:
             tla.setWindowTitle(self.interface_lang['change'])
-            cb_pn.setCurrentText(self.name_part_of_speech[new[6]])
+            cb_pn.setCurrentText(self.name_part_of_speech[new[k]])
             value_k_old = new[0]
         form.addRow(self.interface_lang['foreign_word'], lE_key)
         form.addRow(self.interface_lang['phonetic_form_of_word'], lE_kf)
