@@ -81,12 +81,19 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.setLayout(self.vbox)
 
     def save_dict(self):
+        if not self.check_save_values():
+            return 
         # if not self.dict_name:
         #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
         #                                   self.interface_lang['warn_not_selected_dict'])
         #     return
         self.sql_handler.save_dict(self.del_name, self.new_name, self.change_note)
         self.save_values()
+        
+    def check_save_values(self):
+        if self.new_name[0] or self.change_note[0] or self.del_name:
+            return True
+        return False
 
     def clear(self):
         for i in reversed(range(self.vtop_t.count())):
