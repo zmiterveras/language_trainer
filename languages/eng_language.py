@@ -24,7 +24,7 @@ class MyWindowE(MyWindowLanguage):
         if self.dw_key:
             self.q_count += 1
             self.ask = self.dw_key.pop(0)
-            self.quest_word = self.dw[self.ask][2]
+            self.quest_word = self.dw[self.ask][3]
             question = self.interface_lang['translate_word'] + ' <b>' + self.quest_word + '</b>'
             self.clear()
             label_question = QtWidgets.QLabel('<center>'+question+'</center>')

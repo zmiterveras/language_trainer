@@ -219,10 +219,10 @@ class MyWindowLanguage(QtWidgets.QWidget):
                 sp_box.setRange(1, self.page_max)
                 tmv_box.insertWidget(1, sp_box)
 
-        if not self.dict_name:
-            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_dict_not_loaded'])
-            return
+        # if not self.dict_name:
+        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+        #                                   self.interface_lang['warn_dict_not_loaded'])
+        #     return
         if not self.dw:
             self.clear()
             self.label3 = QtWidgets.QLabel('<center>' + self.interface_lang['dict_empty'] + '</center>')
