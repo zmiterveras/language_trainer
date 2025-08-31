@@ -135,8 +135,8 @@ class SqlHandler:
     #         query.execBatch()
     #     connect.close()
 
-    def save_dict(self, db_name, del_names: list, new_name: list, change_note: list):
-        connect, query = self.connect_db(db_name)
+    def save_dict(self, del_names: list, new_name: list, change_note: list):
+        connect, query = self.connect_db()
         # удаление
         if del_names:
             query.prepare('delete from dictionary where id=:i')

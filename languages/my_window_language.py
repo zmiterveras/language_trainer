@@ -22,11 +22,12 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.root_dir = root_dir
         self.interface_lang = language
         self.sql_handler = sql_handler
-        self.name_part_of_speech = MenuLanguages.part_keys #[self.interface_lang['noun'],
+        self.key_part_of_speech = MenuLanguages.part_keys #[self.interface_lang['noun'],
         #                             self.interface_lang['verb'],
         #                             self.interface_lang['adjective'],
         #                             self.interface_lang['adverb'],
         #                             self.interface_lang['another']]
+        self.name_part_of_speech = [self.interface_lang[item] for item in MenuLanguages.part_keys]
         self.search_flag = 0
         self.cards_flag = 0
         self.search_key = 0
@@ -80,11 +81,11 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.setLayout(self.vbox)
 
     def save_dict(self):
-        if not self.dict_name:
-            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_not_selected_dict'])
-            return
-        self.sql_handler.save_dict(self.dict_name, self.del_name, self.new_name, self.change_note)
+        # if not self.dict_name:
+        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+        #                                   self.interface_lang['warn_not_selected_dict'])
+        #     return
+        self.sql_handler.save_dict(self.del_name, self.new_name, self.change_note)
         self.save_values()
 
     def clear(self):
@@ -186,7 +187,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         translate = self.dw[key][3]
         form = self.dw[key][4]
         plural = self.dw[key][5]
-        part_name = self.interface_lang[self.name_part_of_speech[self.dw[key][6]]]
+        part_name = self.interface_lang[self.key_part_of_speech[self.dw[key][6]]]
         view()
 
     def on_training_mode(self):
@@ -559,7 +560,10 @@ class MyWindowLanguage(QtWidgets.QWidget):
             if isinstance(key, str):
                 key = key.split("\n")[0]
         try:
-            new = (key,) + (self.dw[key][1],) + (self.dw[key][2],) + (self.dw[key][3],) + (self.dw[key][4],) + (self.dw[key][5],)
+            new = ((key,) + (self.dw[key][1],) + (self.dw[key][2],) +
+                   (self.dw[key][3],) + (self.dw[key][4],) + (self.dw[key][5],) +
+                   (self.dw[key][6],) + (self.dw[key][7],))
+            print('New: ' + str(new))
         except KeyError:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['warn_not_selected_word'])
