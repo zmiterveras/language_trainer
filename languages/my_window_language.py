@@ -579,11 +579,11 @@ class MyWindowLanguage(QtWidgets.QWidget):
 
     def on_search(self):
         self.on_sign_flag = 2
-        if not self.dict_name:
-            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_dict_not_loaded'])
-            self.on_sign_flag = 0
-            return None, None
+        # if not self.dict_name:
+        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+        #                                   self.interface_lang['warn_dict_not_loaded'])
+        #     self.on_sign_flag = 0
+        #     return None, None
         if not self.dw:
             self.clear()
             self.label3 = QtWidgets.QLabel('<center>' + self.interface_lang['dict_empty'] + '</center>')
