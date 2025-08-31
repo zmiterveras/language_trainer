@@ -367,18 +367,19 @@ class MyWindowLanguage(QtWidgets.QWidget):
     def on_answer(self):
         self.horizont_line(self.vtop_t)
         self.horizont_line(self.vtop_t)
-        lk = QtWidgets.QLabel('<center><b>'+self.ask+'</b>'+' (<i>'+self.dw[self.ask][5]+'</i>)</center>')
+        lk = QtWidgets.QLabel('<center><b>'+self.ask+'</b>'+' (<i>'+self.name_part_of_speech[self.dw[self.ask][6]]+'</i>)</center>')
         self.vtop_t.addWidget(lk)
-        lfk = QtWidgets.QLabel('<center>['+self.dw[self.ask][1]+']</center>')
+        phonetic_article = self.dw[self.ask][1] if self.dw[self.ask][7] == 1 else self.dw[self.ask][2]
+        lfk = QtWidgets.QLabel('<center>['+phonetic_article+']</center>')
         self.vtop_t.addWidget(lfk)
         self.horizont_line(self.vtop_t)
-        if self.dw[self.ask][3]:
-            lf = QtWidgets.QLabel('<b>' + self.interface_lang['verb_forms'] + ': </b>'+self.dw[self.ask][3])
-            self.vtop_t.addWidget(lf)
         if self.dw[self.ask][4]:
-            lp = QtWidgets.QLabel('<b>' + self.interface_lang['plural'] + ': </b>'+self.dw[self.ask][4])
+            lf = QtWidgets.QLabel('<b>' + self.interface_lang['verb_forms'] + ': </b>'+self.dw[self.ask][4])
+            self.vtop_t.addWidget(lf)
+        if self.dw[self.ask][5]:
+            lp = QtWidgets.QLabel('<b>' + self.interface_lang['plural'] + ': </b>'+self.dw[self.ask][5])
             self.vtop_t.addWidget(lp)
-        lw = QtWidgets.QLabel('<b>' + self.interface_lang['translation'] + ': </b>'+self.dw[self.ask][2])
+        lw = QtWidgets.QLabel('<b>' + self.interface_lang['translation'] + ': </b>'+self.dw[self.ask][3])
         self.vtop_t.addWidget(lw)
         btn_next = QtWidgets.QPushButton(self.interface_lang['next'], self)
         btn_next.setFocus()
