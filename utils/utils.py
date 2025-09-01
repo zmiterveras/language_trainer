@@ -36,6 +36,25 @@ def simple_view(dictionary: dict) -> list:
         dic.append(key + word + "\n")
     return dic
 
+def get_columns(dictionary: dict, lang: int, part_names: list):
+    columns = [[], [], [], [], [], []]
+    for key in dictionary.keys():
+            columns[0].append(key)
+            columns[1].append(dictionary[key][1] if lang == 1 else dictionary[key][2])
+            columns[2].append(dictionary[key][3])
+            columns[3].append(dictionary[key][4])
+            columns[4].append(dictionary[key][5])
+            columns[5].append(part_names[dictionary[key][6]])
+    return columns
+
+def get_part_names(keys: list, part_values: dict):
+    part_names = []
+    for key in keys:
+        part_names.append(part_values[key])
+    return part_names
+
+
+
 
 class ClickedLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()

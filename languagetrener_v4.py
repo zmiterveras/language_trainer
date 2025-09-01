@@ -12,6 +12,8 @@ from languages.de_language import MyWindowD
 from menulanguages import MenuLanguages
 from sql_handler.sql_handler import SqlHandler
 from utils.utils import first_screensaver
+from utils.utils import get_columns
+from utils.utils import get_part_names
 from utils.logger import logger
 
 
@@ -88,15 +90,17 @@ class MainWindow(QtWidgets.QMainWindow):
         if variant == 'en':
             self.win = MyWindowE(desktop, self.app_dir, self.interface_lang, self.sql_handler)
             self.lang = variant
+            self.lang_index = 1
             flag_path = os.path.join(self.images_path, 'gb_16.png')
             self.screen_path = os.path.join(self.images_path, 'Dic_eng_148.png')
-            self.open_dict(1)
+            self.open_dict(self.lang_index)
         else:
             self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler)
             self.lang = variant
+            self.lang_index = 2
             flag_path = os.path.join(self.images_path, 'de_16.png')
             self.screen_path = os.path.join(self.images_path, 'Dic_de_148.png')
-            self.open_dict(2)
+            self.open_dict(self.lang_index)
         self.count += 1
         self.setCentralWidget(self.win)
         self.win.btn_close.clicked.connect(self.close)
@@ -266,10 +270,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.view_page = True
                 sa_close()
 
-        if not self.win.dict_name:
-            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['warn_not_selected_dict'])
-            return
+        # if not self.win.dict_name:
+        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+        #                                   self.interface_lang['warn_not_selected_dict'])
+        #     return
         sort_widget = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         sort_widget.setWindowTitle(self.interface_lang['select_display'])
         sort_widget.resize(250, 80)
@@ -289,48 +293,147 @@ class MainWindow(QtWidgets.QMainWindow):
         sort_widget.setLayout(sort_widget_vbox)
         sort_widget.show()
 
+    # def view_all(self):
+    #     if not self.win.dw:
+    #         QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+    #                                       self.interface_lang['dict_empty'])
+    #         return
+    #     tabview = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
+    #     conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
+    #     conn.setDatabaseName(self.sql_handler.database)
+    #     conn.open()
+    #     query = '''select * from dictionary where language="%d"''' % self.lang_index
+    #     if not self.view_page:
+    #         # stm = QtSql.QSqlRelationalTableModel(parent=window)
+    #         stm = QtSql.QSqlQueryModel(parent=window)
+    #         stm.setQuery(query)
+    #         # stm.setRelation(6, QtSql.QSqlRelation('part', 'partnumber', 'partname'))
+    #         stm.sort(self.sort, QtCore.Qt.AscendingOrder)
+    #         # stm.select()
+    #     else:
+    #         stm = QtSql.QSqlQueryModel(parent=window)
+    #         # query = '''select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural, part.partname
+    #         # from dic inner join part on dic.partnumber=part.partnumber limit 40 offset %d''' % self.start_page
+    #         query_page =query + ''' limit 40 offset %d''' % self.start_page
+    #         stm.setQuery(query_page)
+    #         stm.sort(self.sort, QtCore.Qt.AscendingOrder)
+    #         self.view_page = False
+    #     # var_names = [self.interface_lang['phonetics'],
+    #     #              self.interface_lang['article']]
+    #     # if self.lang == 'de':
+    #     #     var_name = var_names[1]
+    #     #     l_1, l_2, l_4, l_5 = 160, 50, 180, 45
+    #     # else:
+    #     #     var_name = var_names[0]
+    #     #     l_1, l_2, l_4, l_5 = 100, 100, 150, 75
+    #     for i, n in ((1, self.interface_lang['word']),
+    #                 (2, self.interface_lang['phonetics']),
+    #                 (3, self.interface_lang['article']),
+    #                 (4, self.interface_lang['translation']),
+    #                 (5, self.interface_lang['verb_forms']),
+    #                 (6, self.interface_lang['plural']),
+    #                 (7, self.interface_lang['part_of_speech'])):
+    #         stm.setHeaderData(i, QtCore.Qt.Horizontal, n)
+    #     vbox = QtWidgets.QVBoxLayout()
+    #     tv = QtWidgets.QTableView()
+    #     tv.setModel(stm)
+    #     tv.hideColumn(0)
+    #     if self.lang == 'de':
+    #         l_1, l_3, l_5, l_6 = 160, 50, 180, 45
+    #         tv.hideColumn(2)
+    #         tv.setColumnWidth(3, l_3)
+    #     else:
+    #         l_1, l_2, l_5, l_6 = 100, 100, 150, 75
+    #         tv.hideColumn(3)
+    #         tv.setColumnWidth(3, l_2)
+    #     for i, n in ((1, l_1), (4, 300), (5, l_5), (6, l_6), (7, 150)):
+    #         tv.setColumnWidth(i, n)
+    #     vbox.addWidget(tv)
+    #     btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
+    #     btn_close.clicked.connect(tabview.close)
+    #     vbox.addWidget(btn_close)
+    #     tabview.setLayout(vbox)
+    #     tabview.resize(915, 350)
+    #     tabview.show()
+
     def view_all(self):
         if not self.win.dw:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['dict_empty'])
             return
         tabview = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-        conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        conn.setDatabaseName(self.win.dict_name)
-        conn.open()
+        tabview.setWindowTitle(self.interface_lang['dict'] + ' ' + self.lang)
+        sti = QtGui.QStandardItemModel(parent = tabview)
+        part_names = get_part_names(MenuLanguages.part_keys, self.interface_lang)
         if not self.view_page:
-            stm = QtSql.QSqlRelationalTableModel(parent=window)
-            stm.setTable('dic')
-            stm.setRelation(6, QtSql.QSqlRelation('part', 'partnumber', 'partname'))
-            stm.setSort(self.sort, QtCore.Qt.AscendingOrder)
-            stm.select()
+            columns = get_columns(self.win.dw, self.lang_index, part_names)
+            # stm = QtSql.QSqlRelationalTableModel(parent=window)
+            # stm = QtSql.QSqlQueryModel(parent=window)
+            # stm.setQuery(query)
+            # stm.setRelation(6, QtSql.QSqlRelation('part', 'partnumber', 'partname'))
+            # stm.sort(self.sort, QtCore.Qt.AscendingOrder)
+            # stm.select()
         else:
-            stm = QtSql.QSqlQueryModel(parent=window)
-            query = '''select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural, part.partname
-            from dic inner join part on dic.partnumber=part.partnumber limit 40 offset %d''' % self.start_page
-            stm.setQuery(query)
-            stm.sort(self.sort, QtCore.Qt.AscendingOrder)
+            columns = get_columns(self.win.dw, self.lang_index, part_names)
+            # stm = QtSql.QSqlQueryModel(parent=window)
+            # # query = '''select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural, part.partname
+            # # from dic inner join part on dic.partnumber=part.partnumber limit 40 offset %d''' % self.start_page
+            # query_page =query + ''' limit 40 offset %d''' % self.start_page
+            # stm.setQuery(query_page)
+            # stm.sort(self.sort, QtCore.Qt.AscendingOrder)
             self.view_page = False
-        var_names = [self.interface_lang['phonetics'],
-                     self.interface_lang['article']]
-        if self.lang == 'de':
-            var_name = var_names[1]
-            l_1, l_2, l_4, l_5 = 160, 50, 180, 45
-        else:
-            var_name = var_names[0]
-            l_1, l_2, l_4, l_5 = 100, 100, 150, 75
-        for i, n in ((1, self.interface_lang['word']),
-                    (2, var_name),
-                    (3, self.interface_lang['translation']),
-                    (4, self.interface_lang['verb_forms']),
-                    (5, self.interface_lang['plural']),
-                    (6, self.interface_lang['part_of_speech'])):
-            stm.setHeaderData(i, QtCore.Qt.Horizontal, n)
+        # var_names = [self.interface_lang['phonetics'],
+        #              self.interface_lang['article']]
+        # if self.lang == 'de':
+        #     var_name = var_names[1]
+        #     l_1, l_2, l_4, l_5 = 160, 50, 180, 45
+        # else:
+        #     var_name = var_names[0]
+        #     l_1, l_2, l_4, l_5 = 100, 100, 150, 75
+        headers = [self.interface_lang['word'],
+                   self.interface_lang['phonetics'] if self.lang_index ==1 else self.interface_lang['article'],
+                   self.interface_lang['translation'],
+                   self.interface_lang['verb_forms'],
+                   self.interface_lang['plural'],
+                   self.interface_lang['part_of_speech']]
+        sti.setHorizontalHeaderLabels(headers)
+        # for i, n in ((1, self.interface_lang['word']),
+        #             (2, self.interface_lang['phonetics']),
+        #             (3, self.interface_lang['article']),
+        #             (4, self.interface_lang['translation']),
+        #             (5, self.interface_lang['verb_forms']),
+        #             (6, self.interface_lang['plural']),
+        #             (7, self.interface_lang['part_of_speech'])):
+        #     stm.setHeaderData(i, QtCore.Qt.Horizontal, n)
+        for row in range(0, len(columns[0])):
+            word = QtGui.QStandardItem(columns[0][row])
+            phonetic_article = QtGui.QStandardItem(columns[1][row])
+            translate = QtGui.QStandardItem(columns[2][row])
+            form = QtGui.QStandardItem(columns[3][row])
+            plural = QtGui.QStandardItem(columns[4][row])
+            part_name = QtGui.QStandardItem(columns[5][row])
+            sti.appendRow([word, phonetic_article, translate, form, plural, part_name])
         vbox = QtWidgets.QVBoxLayout()
         tv = QtWidgets.QTableView()
-        tv.setModel(stm)
-        tv.hideColumn(0)
-        for i, n in ((1, l_1), (2, l_2), (3, 300), (4, l_4), (5, l_5), (6, 150)):
+        tv.setModel(sti)
+        if not self.view_page:
+            tv.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        # tv.hideColumn(0)
+        col_word, col_translate, col_form, col_part = 160, 300, 180, 160
+        if self.lang == 'de':
+            col_phonetic_article, col_plural = 50, 50
+            # tv.hideColumn(2)
+            # tv.setColumnWidth(3, l_3)
+        else:
+            col_phonetic_article, col_plural =  100, 160
+            # tv.hideColumn(3)
+            # tv.setColumnWidth(3, l_2)
+        for i, n in ((0, col_word),
+                     (1, col_phonetic_article),
+                     (2, col_translate),
+                     (3, col_form),
+                     (4, col_plural),
+                     (5, col_part)):
             tv.setColumnWidth(i, n)
         vbox.addWidget(tv)
         btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
