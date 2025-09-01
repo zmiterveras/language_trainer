@@ -174,7 +174,7 @@ class MyWindowD(MyWindowLanguage):
             self.on_sign_flag = 1
             self.q_count += 1
             self.ask = self.dw_key.pop(0)
-            self.quest_word = self.dw[self.ask][2]
+            self.quest_word = self.dw[self.ask][3]
             question = self.interface_lang['translate_word'] + ' <b>' + self.quest_word + '</b>'
             self.clear()
             label_q = QtWidgets.QLabel('<center>'+question+'</center>')
