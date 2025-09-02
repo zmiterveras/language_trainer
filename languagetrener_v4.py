@@ -14,6 +14,7 @@ from sql_handler.sql_handler import SqlHandler
 from utils.utils import first_screensaver
 from utils.utils import get_columns
 from utils.utils import get_part_names
+from utils.utils import get_page
 from utils.logger import logger
 
 
@@ -367,80 +368,50 @@ class MainWindow(QtWidgets.QMainWindow):
         part_names = get_part_names(MenuLanguages.part_keys, self.interface_lang)
         if not self.view_page:
             columns = get_columns(self.win.dw, self.lang_index, part_names)
-            # stm = QtSql.QSqlRelationalTableModel(parent=window)
-            # stm = QtSql.QSqlQueryModel(parent=window)
-            # stm.setQuery(query)
-            # stm.setRelation(6, QtSql.QSqlRelation('part', 'partnumber', 'partname'))
-            # stm.sort(self.sort, QtCore.Qt.AscendingOrder)
-            # stm.select()
         else:
-            columns = get_columns(self.win.dw, self.lang_index, part_names)
-            # stm = QtSql.QSqlQueryModel(parent=window)
-            # # query = '''select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural, part.partname
-            # # from dic inner join part on dic.partnumber=part.partnumber limit 40 offset %d''' % self.start_page
-            # query_page =query + ''' limit 40 offset %d''' % self.start_page
-            # stm.setQuery(query_page)
-            # stm.sort(self.sort, QtCore.Qt.AscendingOrder)
+            page_dictionary = get_page(self.win.dw, self.start_page)
+            columns = get_columns(page_dictionary, self.lang_index, part_names)
             self.view_page = False
-        # var_names = [self.interface_lang['phonetics'],
-        #              self.interface_lang['article']]
-        # if self.lang == 'de':
-        #     var_name = var_names[1]
-        #     l_1, l_2, l_4, l_5 = 160, 50, 180, 45
-        # else:
-        #     var_name = var_names[0]
-        #     l_1, l_2, l_4, l_5 = 100, 100, 150, 75
-        headers = [self.interface_lang['word'],
+        headers = ['', self.interface_lang['word'],
                    self.interface_lang['phonetics'] if self.lang_index ==1 else self.interface_lang['article'],
                    self.interface_lang['translation'],
                    self.interface_lang['verb_forms'],
                    self.interface_lang['plural'],
                    self.interface_lang['part_of_speech']]
         sti.setHorizontalHeaderLabels(headers)
-        # for i, n in ((1, self.interface_lang['word']),
-        #             (2, self.interface_lang['phonetics']),
-        #             (3, self.interface_lang['article']),
-        #             (4, self.interface_lang['translation']),
-        #             (5, self.interface_lang['verb_forms']),
-        #             (6, self.interface_lang['plural']),
-        #             (7, self.interface_lang['part_of_speech'])):
-        #     stm.setHeaderData(i, QtCore.Qt.Horizontal, n)
         for row in range(0, len(columns[0])):
-            word = QtGui.QStandardItem(columns[0][row])
-            phonetic_article = QtGui.QStandardItem(columns[1][row])
-            translate = QtGui.QStandardItem(columns[2][row])
-            form = QtGui.QStandardItem(columns[3][row])
-            plural = QtGui.QStandardItem(columns[4][row])
-            part_name = QtGui.QStandardItem(columns[5][row])
-            sti.appendRow([word, phonetic_article, translate, form, plural, part_name])
+            id = QtGui.QStandardItem(columns[0][row])
+            word = QtGui.QStandardItem(columns[1][row])
+            phonetic_article = QtGui.QStandardItem(columns[2][row])
+            translate = QtGui.QStandardItem(columns[3][row])
+            form = QtGui.QStandardItem(columns[4][row])
+            plural = QtGui.QStandardItem(columns[5][row])
+            part_name = QtGui.QStandardItem(columns[6][row])
+            sti.appendRow([id, word, phonetic_article, translate, form, plural, part_name])
         vbox = QtWidgets.QVBoxLayout()
         tv = QtWidgets.QTableView()
         tv.setModel(sti)
         if not self.view_page:
-            tv.sortByColumn(0, QtCore.Qt.AscendingOrder)
-        # tv.hideColumn(0)
-        col_word, col_translate, col_form, col_part = 160, 300, 180, 160
+            tv.sortByColumn(self.sort, QtCore.Qt.AscendingOrder)
+        tv.hideColumn(0)
+        col_word, col_translate, col_form, col_part = 160, 300, 180, 120
         if self.lang == 'de':
             col_phonetic_article, col_plural = 50, 50
-            # tv.hideColumn(2)
-            # tv.setColumnWidth(3, l_3)
         else:
             col_phonetic_article, col_plural =  100, 160
-            # tv.hideColumn(3)
-            # tv.setColumnWidth(3, l_2)
-        for i, n in ((0, col_word),
-                     (1, col_phonetic_article),
-                     (2, col_translate),
-                     (3, col_form),
-                     (4, col_plural),
-                     (5, col_part)):
+        for i, n in ((1, col_word),
+                     (2, col_phonetic_article),
+                     (3, col_translate),
+                     (4, col_form),
+                     (5, col_plural),
+                     (6, col_part)):
             tv.setColumnWidth(i, n)
         vbox.addWidget(tv)
         btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
         btn_close.clicked.connect(tabview.close)
         vbox.addWidget(btn_close)
         tabview.setLayout(vbox)
-        tabview.resize(915, 350)
+        tabview.resize(1080, 350)
         tabview.show()
 
     def view_logfile(self):

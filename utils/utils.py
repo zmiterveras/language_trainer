@@ -37,14 +37,15 @@ def simple_view(dictionary: dict) -> list:
     return dic
 
 def get_columns(dictionary: dict, lang: int, part_names: list):
-    columns = [[], [], [], [], [], []]
+    columns = [[], [], [], [], [], [], []]
     for key in dictionary.keys():
-            columns[0].append(key)
-            columns[1].append(dictionary[key][1] if lang == 1 else dictionary[key][2])
-            columns[2].append(dictionary[key][3])
-            columns[3].append(dictionary[key][4])
-            columns[4].append(dictionary[key][5])
-            columns[5].append(part_names[dictionary[key][6]])
+            columns[0].append(dictionary[key][0])
+            columns[1].append(key)
+            columns[2].append(dictionary[key][1] if lang == 1 else dictionary[key][2])
+            columns[3].append(dictionary[key][3])
+            columns[4].append(dictionary[key][4])
+            columns[5].append(dictionary[key][5])
+            columns[6].append(part_names[dictionary[key][6]])
     return columns
 
 def get_part_names(keys: list, part_values: dict):
@@ -53,8 +54,19 @@ def get_part_names(keys: list, part_values: dict):
         part_names.append(part_values[key])
     return part_names
 
+def get_page(dictionary, start_page):
+    sort_dictionary = sort_dict(dictionary)
+    page_keys = sort_dictionary.keys[start_page: start_page+40]
+    return page_dict(sort_dictionary, page_keys)
+    
+def sort_dict(dictionary):
+    return dict(sorted(dictionary.items(), key=lambda item: item[1][0]))
 
-
+def page_dict(sort_dictionary, page_keys):
+    page_dictionary = {}
+    for key in page_keys:
+        page_dictionary[key] = sort_dictionary[key]
+    return page_dictionary
 
 class ClickedLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
