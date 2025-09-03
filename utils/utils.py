@@ -56,7 +56,7 @@ def get_part_names(keys: list, part_values: dict):
 
 def get_page(dictionary, start_page):
     sort_dictionary = sort_dict(dictionary)
-    page_keys = sort_dictionary.keys[start_page: start_page+40]
+    page_keys = list(sort_dictionary.keys())[start_page: start_page+40]
     return page_dict(sort_dictionary, page_keys)
     
 def sort_dict(dictionary):
@@ -74,4 +74,5 @@ class ClickedLabel(QtWidgets.QLabel):
     def mouseReleaseEvent(self, e):
         super().mouseReleaseEvent(e)
         self.clicked.emit()
+
 

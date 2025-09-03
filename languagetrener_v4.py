@@ -391,8 +391,7 @@ class MainWindow(QtWidgets.QMainWindow):
         vbox = QtWidgets.QVBoxLayout()
         tv = QtWidgets.QTableView()
         tv.setModel(sti)
-        if not self.view_page:
-            tv.sortByColumn(self.sort, QtCore.Qt.AscendingOrder)
+        tv.sortByColumn(self.sort, QtCore.Qt.AscendingOrder)
         tv.hideColumn(0)
         col_word, col_translate, col_form, col_part = 160, 300, 180, 120
         if self.lang == 'de':
