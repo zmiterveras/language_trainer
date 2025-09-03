@@ -16,17 +16,12 @@ from menulanguages import MenuLanguages
 class MyWindowLanguage(QtWidgets.QWidget):
     def __init__(self, desktop, root_dir: str, language: dict, sql_handler, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
-        self.dict_name = ''
         self.dw = {}
         self.desktop = desktop
         self.root_dir = root_dir
         self.interface_lang = language
         self.sql_handler = sql_handler
-        self.key_part_of_speech = MenuLanguages.part_keys #[self.interface_lang['noun'],
-        #                             self.interface_lang['verb'],
-        #                             self.interface_lang['adjective'],
-        #                             self.interface_lang['adverb'],
-        #                             self.interface_lang['another']]
+        self.key_part_of_speech = MenuLanguages.part_keys
         self.name_part_of_speech = [self.interface_lang[item] for item in MenuLanguages.part_keys]
         self.search_flag = 0
         self.cards_flag = 0
@@ -54,12 +49,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.change_note = [[], [], [], [], [], [], [], [], []]
 
     def make_widget(self):
-        # text = self.interface_lang['open_dict_text']
         self.vbox = QtWidgets.QVBoxLayout()
         self.vtop = QtWidgets.QVBoxLayout()
         self.vtop_t = QtWidgets.QVBoxLayout()
-        # screen_saver = first_screensaver(self.wd, text, flag=1)
-        # self.vtop_t.addWidget(screen_saver)
         self.htop_b = QtWidgets.QHBoxLayout()
         self.vtop.addLayout(self.vtop_t)
         self.vtop.addLayout(self.htop_b)
@@ -82,11 +74,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
 
     def save_dict(self):
         if not self.check_save_values():
-            return 
-        # if not self.dict_name:
-        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-        #                                   self.interface_lang['warn_not_selected_dict'])
-        #     return
+            return
         self.sql_handler.save_dict(self.del_name, self.new_name, self.change_note)
         self.save_values()
         
@@ -106,10 +94,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
             wb.deleteLater()
 
     def dict_view(self, flag=None):
-        # if not self.dw:
-        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-        #                                   self.interface_lang['warn_dict_not_loaded'])
-        #     return
         place = self.vtop_t
         self.clear()
         if not self.dw:
@@ -219,10 +203,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
                 sp_box.setRange(1, self.page_max)
                 tmv_box.insertWidget(1, sp_box)
 
-        # if not self.dict_name:
-        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-        #                                   self.interface_lang['warn_dict_not_loaded'])
-        #     return
         if not self.dw:
             self.clear()
             self.label3 = QtWidgets.QLabel('<center>' + self.interface_lang['dict_empty'] + '</center>')
@@ -580,11 +560,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
 
     def on_search(self):
         self.on_sign_flag = 2
-        # if not self.dict_name:
-        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-        #                                   self.interface_lang['warn_dict_not_loaded'])
-        #     self.on_sign_flag = 0
-        #     return None, None
         if not self.dw:
             self.clear()
             self.label3 = QtWidgets.QLabel('<center>' + self.interface_lang['dict_empty'] + '</center>')

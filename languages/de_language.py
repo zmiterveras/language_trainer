@@ -79,7 +79,6 @@ class MyWindowD(MyWindowLanguage):
             translation = lE_w.text().strip()
             verb_forms = self.lE_f.text()
             plural = cb_pl.currentText()
-            # part_of_speech = cb_pn.currentText()
             part_of_speech_index = cb_pn.currentIndex()
             if (word and translation) == '':
                 QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
@@ -96,13 +95,13 @@ class MyWindowD(MyWindowLanguage):
                         del self.dw[value_k_old]
                     else:
                         val_id = self.dw[word][0]
-                    self.dw[word] = [val_id] + dcont[1:] # + [part_of_speech]
+                    self.dw[word] = [val_id] + dcont[1:]
                     txt = self.interface_lang['changed_word']
                     for i, name in enumerate([val_id] + dcont):
                         self.change_note[i].append(name)
                 else:
                     txt = self.interface_lang['added_word']
-                    self.dw[word] = [None] + dcont[1:] # + [part_of_speech]
+                    self.dw[word] = [None] + dcont[1:]
                     for j, n in enumerate(dcont):
                         self.new_name[j].append(n)
                 QtWidgets.QMessageBox.information(None, self.interface_lang['info'], txt + word)

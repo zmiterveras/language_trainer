@@ -146,11 +146,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.icon_eng = icon_minus
             self.icon_ru = icon_checkmark
 
-    # def save_instance_state(self):
-    #     self.win.save_dict()
-        # name = self.win.dict_name
-        # return name
-
     def set_status_bar(self):
         self.status_bar.addWidget(self.win.status)
         self.status_bar.addPermanentWidget(self.win.status_widget)
@@ -187,21 +182,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.set_screen_saver(self.interface_lang["set_lang"])
 
-    # def create_dict(self):
-    #     name, ok = QtWidgets.QInputDialog.getText(None, self.interface_lang['dict_name'],
-    #                                            self.interface_lang['enter_dict_name'],
-    #                                            text=self.lang + '_')
-    #     if not ok: return
-    #     if ok and not name:
-    #         QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-    #                                       self.interface_lang['warn_not_set_dict_name'])
-    #         return
-    #     new_dic = os.path.join(self.bases, name + '.sqlite')
-    #     self.sql_handler.create_db(new_dic)
-    #     self.win.clear()
-    #     self.label_cr = QtWidgets.QLabel('<center>' + self.interface_lang['created_dict'] + name +'</center>')
-    #     self.win.vtop_t.addWidget(self.label_cr)
-
     def open_dict_background(self, language: int):
         self.win.dw = self.sql_handler.open_db(language)
         self.win.page_max = int(len(self.win.dw) / 40)
@@ -211,23 +191,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def open_dict(self, language: int):
         open_flag = 0 # 1 - debug mode
-    #     if self.win.dict_name:
-    #         if not self.check_change(flag=1):
-    #             return
-    #     self.win.dict_name, _ = QtWidgets.QFileDialog.getOpenFileName(None,
-    #                                           caption=self.interface_lang['open_dict'],
-    #                                           directory=self.bases,
-    #                                           filter='DB (*.sqlite)')
-    #     if not self.win.dict_name:
-    #         QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-    #                                       self.interface_lang['warn_not_selected_dict'])
-    #         return
         if open_flag == 0:
             self.open_dict_background(language)
         else:
             self.open_dict_debug()
-
-        # last_name = os.path.basename(self.win.dict_name)
         self.win.clear()
         self.label2 = QtWidgets.QLabel('<center>' + self.interface_lang['loaded_dict'] + '</center>')
         self.win.vtop_t.addWidget(self.label2)
@@ -272,11 +239,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.start_page = len(self.win.dw) - 40
                 self.view_page = True
                 sa_close()
-
-        # if not self.win.dict_name:
-        #     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-        #                                   self.interface_lang['warn_not_selected_dict'])
-        #     return
         sort_widget = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
         sort_widget.setWindowTitle(self.interface_lang['select_display'])
         sort_widget.resize(250, 80)
@@ -295,69 +257,6 @@ class MainWindow(QtWidgets.QMainWindow):
         sort_widget_vbox.addWidget(btn)
         sort_widget.setLayout(sort_widget_vbox)
         sort_widget.show()
-
-    # def view_all(self):
-    #     if not self.win.dw:
-    #         QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-    #                                       self.interface_lang['dict_empty'])
-    #         return
-    #     tabview = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-    #     conn = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-    #     conn.setDatabaseName(self.sql_handler.database)
-    #     conn.open()
-    #     query = '''select * from dictionary where language="%d"''' % self.lang_index
-    #     if not self.view_page:
-    #         # stm = QtSql.QSqlRelationalTableModel(parent=window)
-    #         stm = QtSql.QSqlQueryModel(parent=window)
-    #         stm.setQuery(query)
-    #         # stm.setRelation(6, QtSql.QSqlRelation('part', 'partnumber', 'partname'))
-    #         stm.sort(self.sort, QtCore.Qt.AscendingOrder)
-    #         # stm.select()
-    #     else:
-    #         stm = QtSql.QSqlQueryModel(parent=window)
-    #         # query = '''select dic.id, dic.key, dic.keyfon, dic.word, dic.form, dic.plural, part.partname
-    #         # from dic inner join part on dic.partnumber=part.partnumber limit 40 offset %d''' % self.start_page
-    #         query_page =query + ''' limit 40 offset %d''' % self.start_page
-    #         stm.setQuery(query_page)
-    #         stm.sort(self.sort, QtCore.Qt.AscendingOrder)
-    #         self.view_page = False
-    #     # var_names = [self.interface_lang['phonetics'],
-    #     #              self.interface_lang['article']]
-    #     # if self.lang == 'de':
-    #     #     var_name = var_names[1]
-    #     #     l_1, l_2, l_4, l_5 = 160, 50, 180, 45
-    #     # else:
-    #     #     var_name = var_names[0]
-    #     #     l_1, l_2, l_4, l_5 = 100, 100, 150, 75
-    #     for i, n in ((1, self.interface_lang['word']),
-    #                 (2, self.interface_lang['phonetics']),
-    #                 (3, self.interface_lang['article']),
-    #                 (4, self.interface_lang['translation']),
-    #                 (5, self.interface_lang['verb_forms']),
-    #                 (6, self.interface_lang['plural']),
-    #                 (7, self.interface_lang['part_of_speech'])):
-    #         stm.setHeaderData(i, QtCore.Qt.Horizontal, n)
-    #     vbox = QtWidgets.QVBoxLayout()
-    #     tv = QtWidgets.QTableView()
-    #     tv.setModel(stm)
-    #     tv.hideColumn(0)
-    #     if self.lang == 'de':
-    #         l_1, l_3, l_5, l_6 = 160, 50, 180, 45
-    #         tv.hideColumn(2)
-    #         tv.setColumnWidth(3, l_3)
-    #     else:
-    #         l_1, l_2, l_5, l_6 = 100, 100, 150, 75
-    #         tv.hideColumn(3)
-    #         tv.setColumnWidth(3, l_2)
-    #     for i, n in ((1, l_1), (4, 300), (5, l_5), (6, l_6), (7, 150)):
-    #         tv.setColumnWidth(i, n)
-    #     vbox.addWidget(tv)
-    #     btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
-    #     btn_close.clicked.connect(tabview.close)
-    #     vbox.addWidget(btn_close)
-    #     tabview.setLayout(vbox)
-    #     tabview.resize(915, 350)
-    #     tabview.show()
 
     def view_all(self):
         if not self.win.dw:
@@ -460,8 +359,6 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(None, self.interface_lang['about_me'], text)
 
     def closeEvent(self, event):
-        # if not hasattr(self.win, 'dict_name'): return
-        # if self.win.dict_name:
         self.win.save_dict()
         event.accept()
         QtWidgets.QWidget.closeEvent(self, event)
