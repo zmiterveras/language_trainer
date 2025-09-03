@@ -146,10 +146,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.icon_eng = icon_minus
             self.icon_ru = icon_checkmark
 
-    def save_instance_state(self):
-        self.win.save_dict()
-        name = self.win.dict_name
-        return name
+    # def save_instance_state(self):
+    #     self.win.save_dict()
+        # name = self.win.dict_name
+        # return name
 
     def set_status_bar(self):
         self.status_bar.addWidget(self.win.status)
@@ -160,19 +160,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status_bar.removeWidget(self.win.status_widget)
 
     def restore_instance_state(self):
-        name = self.save_instance_state()
+        self.win.save_dict()
         self.clear_status_bar()
         match self.lang:
             case 'en':
-                self.win = MyWindowE(desktop, self.app_dir, self.interface_lang)
+                self.win = MyWindowE(desktop, self.app_dir, self.interface_lang, self.sql_handler)
+                self.lang_index = 1
             case 'de':
-                self.win = MyWindowD(desktop, self.app_dir, self.interface_lang)
-        self.win.dict_name = name
-        # self.open_dict_background()
+                self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler)
+                self.lang_index = 2
+        # self.win.dict_name = name
+        self.open_dict_background(self.lang_index)
         self.set_status_bar()
         self.win.dict_view()
         self.setCentralWidget(self.win)
-        self.win.btncl.clicked.connect(self.close)
+        self.win.btn_close.clicked.connect(self.close)
 
     def change_interface_language(self, language: str, menu_bar, my_menu, my_view):
         self.set_interface_language(language)
