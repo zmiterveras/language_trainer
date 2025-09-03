@@ -418,8 +418,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.f_word = random.choice(self.dw_key)
             self.keys.append(self.f_word)
             self.dw_key.remove(self.f_word)
-            self.f_f_word = self.dw[self.f_word][1]
-            self.n_word = self.parse_word(self.dw[self.f_word][2])
+            self.f_f_word = self.dw[self.f_word][1] if self.dw[self.f_word][7] == 1 else self.dw[self.f_word][2]
+            self.n_word = self.parse_word(self.dw[self.f_word][3])
             self.foreign = "<center><b>%s</b> [%s]</center>" % (self.f_word, self.f_f_word)
             self.native = "<center><b>%s</b></center>" % self.n_word
             self.card_toggle = 'f'
