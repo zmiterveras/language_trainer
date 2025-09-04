@@ -359,7 +359,8 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(None, self.interface_lang['about_me'], text)
 
     def closeEvent(self, event):
-        self.win.save_dict()
+        if hasattr(self.win, 'save_dict'):
+            self.win.save_dict()
         event.accept()
         QtWidgets.QWidget.closeEvent(self, event)
         
