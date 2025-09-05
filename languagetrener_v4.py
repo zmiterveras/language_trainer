@@ -71,8 +71,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def make_my_menu(self, my_menu):
         if self.count != 1:
             my_menu.clear()
-            # my_menu.addAction('&' + self.interface_lang['create'], self.create_dict)
-            # my_menu.addAction('&' + self.interface_lang['open'], self.open_dict)
             my_menu.addAction(self.interface_lang['save'], self.win.save_dict)
         my_menu.addAction('&' + self.interface_lang['close'], self.close)
 
@@ -108,7 +106,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.make_my_menu(my_menu)
         self.make_my_view(my_view)
         self.set_status_bar()
-        self.win.label_amount.setText('Пусто')
         self.win.label_flag.setPixmap(QtGui.QPixmap(flag_path))
         self.win.label_flag.setAlignment(QtCore.Qt.AlignRight)
 
@@ -164,7 +161,6 @@ class MainWindow(QtWidgets.QMainWindow):
             case 'de':
                 self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler)
                 self.lang_index = 2
-        # self.win.dict_name = name
         self.open_dict_background(self.lang_index)
         self.set_status_bar()
         self.win.dict_view()
@@ -196,7 +192,8 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.open_dict_debug()
         self.win.clear()
-        self.label2 = QtWidgets.QLabel('<center>' + self.interface_lang['loaded_dict'] + '</center>')
+        pages = '\n<center>' + self.interface_lang['pages'] + str(self.win.page_max) + '</center>'
+        self.label2 = QtWidgets.QLabel('<center>' + self.interface_lang['loaded_dict'] + self.lang + '</center>' + pages)
         self.win.vtop_t.addWidget(self.label2)
         label_screen = QtWidgets.QLabel()
         label_screen.setPixmap(QtGui.QPixmap(self.screen_path))
