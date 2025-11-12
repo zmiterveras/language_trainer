@@ -28,7 +28,7 @@ else:
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        self.version = '''5.3, 2025г.'''
+        self.version = '''6, 2025г.'''
         QtWidgets.QMainWindow.__init__(self, parent)
         self.app_dir = os.path.dirname(os.path.abspath(__file__))
         self.images_path = os.path.join(self.app_dir, 'images')
@@ -37,7 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ico = QtGui.QIcon(ico_path)
         self.setWindowIcon(ico)
         self.set_interface_language(menu_language)
-        self.sql_handler = SqlHandler(self.bases, self.interface_lang)
+        self.sql_handler = SqlHandler(self.bases)
         self.check_db()
         self.count = 1
         self.sort = 1

@@ -8,7 +8,7 @@ from PyQt5 import QtSql
 
 class SqlHandler:
 
-    def __init__(self,bases_path: str, interface_language):
+    def __init__(self,bases_path: str):
         self.database = os.path.join(bases_path, 'dictionary_desktop.sqlite')
 
     def connect_db(self):
