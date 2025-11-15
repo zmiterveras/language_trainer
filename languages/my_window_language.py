@@ -97,7 +97,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         place = self.vtop_t
         self.clear()
         if not self.dw:
-            self.label1 = QtWidgets.QLabel('<center>' + self.interface_lang['dict_empty'] + '</center>')
+            self.label1 = QtWidgets.QLabel(f'<center>{self.interface_lang['dict_empty']}</center>')
             place.addWidget(self.label1)
         else:
             self.status.setText(self.interface_lang['mode_view'])
@@ -110,7 +110,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.lv.setModel(slm)
         place.addWidget(self.lv)
         amount = str(len(dic))
-        text = '<center>' + self.interface_lang['amount_words'] + '<b>' + amount + '</b></center>'
+        text = f'<center>{self.interface_lang['amount_words']} <b>{amount}</b></center>'
         if flag != 2: self.label_amount.setText(text)
         if not flag:
             self.lv.doubleClicked.connect(self.view_word)
@@ -146,18 +146,18 @@ class MyWindowLanguage(QtWidgets.QWidget):
             tl.setWindowModality(QtCore.Qt.WindowModal)
             tl.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
             tlv_box = QtWidgets.QVBoxLayout()
-            lk = QtWidgets.QLabel('<center><b>' + key + '</b>' + ' (<i>'+part_name+'</i>)</center>')
+            lk = QtWidgets.QLabel(f'<center><b>{key}</b> (<i>{part_name}</i>)</center>')
             tlv_box.addWidget(lk)
-            lfk = QtWidgets.QLabel('<center>[' + phonetic_article + ']</center>')
+            lfk = QtWidgets.QLabel(f'<center>[{phonetic_article}]</center>')
             tlv_box.addWidget(lfk)
             self.horizont_line(tlv_box)
             if form:
-                lf = QtWidgets.QLabel(self.interface_lang['verb_forms'] + ': ' + '<b>' + form + '</b>')
+                lf = QtWidgets.QLabel(f'{self.interface_lang['verb_forms']}: <b>{form}</b>')
                 tlv_box.addWidget(lf)
             if plural:
-                lp = QtWidgets.QLabel(self.interface_lang['plural'] + ': ' + '<b>' + plural + '</b>')
+                lp = QtWidgets.QLabel(f'{self.interface_lang['plural']}: <b>{plural}</b>')
                 tlv_box.addWidget(lp)
-            lw = QtWidgets.QLabel(self.interface_lang['translation'] + ': ' + '<b>' + translate + '</b>')
+            lw = QtWidgets.QLabel(f'{self.interface_lang['translation']}: <b>{translate}</b>')
             tlv_box.addWidget(lw)
             tlh_box = QtWidgets.QHBoxLayout()
             btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
@@ -279,16 +279,16 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.clear()
         self.stop_training = time.time()
         str_training_time = self.training_time(self.start_training, self.stop_training)
-        label_time_header = QtWidgets.QLabel('<center><b>' + self.interface_lang['training_time'] + '</b></center>')
-        label_time_value = QtWidgets.QLabel('<center>' + str_training_time + '</center>')
+        label_time_header = QtWidgets.QLabel(f'<center><b>{self.interface_lang['training_time']}</b></center>')
+        label_time_value = QtWidgets.QLabel(f'<center>{str_training_time}</center>')
         label_time_value.setStyleSheet("color:darkBlue")
-        label_question = QtWidgets.QLabel('<center><b>' + self.interface_lang['questions'] + '</b></center>')
-        label_question_count = QtWidgets.QLabel('<center>' + str(self.q_count) + '</center>')
-        label_true_answer = QtWidgets.QLabel('<center><b>' + self.interface_lang['true_answers'] + '</b></center>')
-        label_true_answer_count = QtWidgets.QLabel('<center>' + str(self.t_ans_count) + '</center>')
+        label_question = QtWidgets.QLabel(f'<center><b>{self.interface_lang['questions']}</b></center>')
+        label_question_count = QtWidgets.QLabel(f'<center>{str(self.q_count)}</center>')
+        label_true_answer = QtWidgets.QLabel(f'<center><b>{self.interface_lang['true_answers']}</b></center>')
+        label_true_answer_count = QtWidgets.QLabel(f'<center>{str(self.t_ans_count)}</center>')
         label_true_answer_count.setStyleSheet("color:green")
-        label_false_answer = QtWidgets.QLabel('<center><b>' + self.interface_lang['wrong_answers'] + '</b></center>')
-        label_false_answer_count = QtWidgets.QLabel('<center>' + str(self.q_count - self.t_ans_count) + '</center>')
+        label_false_answer = QtWidgets.QLabel(f'<center><b>{self.interface_lang['wrong_answers']}</b></center>')
+        label_false_answer_count = QtWidgets.QLabel(f'<center>{str(self.q_count - self.t_ans_count)}</center>')
         label_false_answer_count.setStyleSheet("color:red")
         for i in (label_time_header, label_time_value, label_question, label_question_count,
                   label_true_answer, label_true_answer_count, label_false_answer, label_false_answer_count):
@@ -303,7 +303,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         else:
             result_estimate = self.interface_lang['bad_work']
             img = 'bad148.png'
-        label_result_estimate = QtWidgets.QLabel('<center><b>' + result_estimate + '</b></center>')
+        label_result_estimate = QtWidgets.QLabel(f'<center><b>{result_estimate}</b></center>')
         self.vtop_t.addWidget(label_result_estimate)
         label_result_image = QtWidgets.QLabel()
         img_path = os.path.join(self.wd, img)
@@ -319,8 +319,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         if seconds > 60:
             minutes = seconds//60
             seconds = seconds%60
-        return "%s %s %s %s" % (minutes, self.interface_lang['minutes'],
-                                seconds, self.interface_lang['seconds'])
+        return f'{minutes} {self.interface_lang['minutes']} {seconds} {self.interface_lang['seconds']}'
 
     def skip_word(self, word: str):
         self.dw_key.append(word)
@@ -338,7 +337,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.clear()
         label_false = QtWidgets.QLabel('<center><b>False</b></center>')
         label_false.setStyleSheet("color:red")
-        label_false_answer = QtWidgets.QLabel('<center>' + self.answer + '</center>')
+        label_false_answer = QtWidgets.QLabel(f'<center>{self.answer}</center>')
         label_false_answer.setStyleSheet("text-decoration:line-through")
         self.vtop_t.addWidget(label_false)
         self.vtop_t.addWidget(label_false_answer)
@@ -347,19 +346,19 @@ class MyWindowLanguage(QtWidgets.QWidget):
     def on_answer(self):
         self.horizont_line(self.vtop_t)
         self.horizont_line(self.vtop_t)
-        lk = QtWidgets.QLabel('<center><b>'+self.ask+'</b>'+' (<i>'+self.name_part_of_speech[self.dw[self.ask][6]]+'</i>)</center>')
+        lk = QtWidgets.QLabel(f'<center><b>{self.ask}</b> (<i>{self.name_part_of_speech[self.dw[self.ask][6]]}</i>)</center>')
         self.vtop_t.addWidget(lk)
         phonetic_article = self.dw[self.ask][1] if self.dw[self.ask][7] == 1 else self.dw[self.ask][2]
-        lfk = QtWidgets.QLabel('<center>['+phonetic_article+']</center>')
+        lfk = QtWidgets.QLabel(f'<center>[{phonetic_article}]</center>')
         self.vtop_t.addWidget(lfk)
         self.horizont_line(self.vtop_t)
         if self.dw[self.ask][4]:
-            lf = QtWidgets.QLabel('<b>' + self.interface_lang['verb_forms'] + ': </b>'+self.dw[self.ask][4])
+            lf = QtWidgets.QLabel(f'<b>{self.interface_lang['verb_forms']}: </b>{self.dw[self.ask][4]}')
             self.vtop_t.addWidget(lf)
         if self.dw[self.ask][5]:
-            lp = QtWidgets.QLabel('<b>' + self.interface_lang['plural'] + ': </b>'+self.dw[self.ask][5])
+            lp = QtWidgets.QLabel(f'<b>{self.interface_lang['plural']}: </b>{self.dw[self.ask][5]}')
             self.vtop_t.addWidget(lp)
-        lw = QtWidgets.QLabel('<b>' + self.interface_lang['translation'] + ': </b>'+self.dw[self.ask][3])
+        lw = QtWidgets.QLabel(f'<b>{self.interface_lang['translation']}: </b>{self.dw[self.ask][3]}')
         self.vtop_t.addWidget(lw)
         btn_next = QtWidgets.QPushButton(self.interface_lang['next'], self)
         btn_next.setFocus()
@@ -369,7 +368,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         btn_stop.clicked.connect(self.on_result)
         self.htop_b.addWidget(btn_next)
         self.htop_b.addWidget(btn_stop)
-        text = self.interface_lang['true_answers_questions'] + str(self.t_ans_count) + "/" + str(self.q_count)
+        text = f'{self.interface_lang['true_answers_questions']} {str(self.t_ans_count)}/{str(self.q_count)}'
         self.label_amount.setText(text)
 
     def training_log(self):
@@ -377,13 +376,14 @@ class MyWindowLanguage(QtWidgets.QWidget):
         file = open(log_path, 'a')
         lang = ' - ' + self.__class__.__name__[-1]
         page = ''
-        if self.ch_value == 3: page = self.interface_lang['mode_page'] + ': ' + str(self.page)
-        note = ['***' + time.asctime() + lang + '***',
-                self.interface_lang['mode'] + self.mode_tr[self.ch_value],
+        if self.ch_value == 3: page = f'{self.interface_lang['mode_page']}: {str(self.page)}'
+        note = [f'***{time.asctime()}{lang}***',
+                f'{self.interface_lang['mode']}{self.mode_tr[self.ch_value]}',
                 page,
-                self.interface_lang['questions'] + ' ' + str(self.q_count),
-                self.interface_lang['true_answers'] + ' ' + str(self.t_ans_count),
-                self.interface_lang['wrong_answers'] + ' ' + str(self.q_count - self.t_ans_count), 34 * '*']
+                f'{self.interface_lang['questions']} {str(self.q_count)}',
+                f'{self.interface_lang['true_answers']} {str(self.t_ans_count)}',
+                f'{self.interface_lang['wrong_answers']} {str(self.q_count - self.t_ans_count)}',
+                34 * '*']
         for line in note:
             file.write(line + '\n')
         file.close()
@@ -400,8 +400,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.dw_key.remove(self.f_word)
             self.f_f_word = self.dw[self.f_word][1] if self.dw[self.f_word][7] == 1 else self.dw[self.f_word][2]
             self.n_word = self.parse_word(self.dw[self.f_word][3])
-            self.foreign = "<center><b>%s</b> [%s]</center>" % (self.f_word, self.f_f_word)
-            self.native = "<center><b>%s</b></center>" % self.n_word
+            self.foreign = f'<center><b>{self.f_word}</b> [{self.f_f_word}]</center>'
+            self.native = f'<center><b>{self.n_word}</b></center>'
             self.card_toggle = 'f'
         else:
             result = QtWidgets.QMessageBox.question(None, self.interface_lang['warning'],
@@ -562,7 +562,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.on_sign_flag = 2
         if not self.dw:
             self.clear()
-            self.label3 = QtWidgets.QLabel('<center>' + self.interface_lang['dict_empty'] + '</center>')
+            self.label3 = QtWidgets.QLabel(f'<center>{self.interface_lang['dict_empty']}</center>')
             self.vtop_t.addWidget(self.label3)
             self.on_sign_flag = 0
             return None, None

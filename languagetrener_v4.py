@@ -201,6 +201,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.vtop_t.addWidget(label_screen)
         self.win.label_amount.setText(self.lang)
 
+    def update_dict(self):
+        if self.win.check_save_values:
+            self.win.save_dict()
+            self.open_dict_background(self.lang_index)
+
     def sort_all(self):
         def sa_close():
             sort_widget.close()
