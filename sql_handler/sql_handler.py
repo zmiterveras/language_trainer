@@ -30,9 +30,7 @@ class SqlHandler:
         connect.close()
 
     def open_db(self, language) -> dict:
-        query_open_dict = '''
-        select * from dictionary where language="%d"
-        ''' % language
+        query_open_dict = f'select * from dictionary where language={language}'
         connect, query = self.connect_db()
         query.exec(query_open_dict)
         dictionary = {}

@@ -174,9 +174,9 @@ class MyWindowD(MyWindowLanguage):
             self.q_count += 1
             self.ask = self.dw_key.pop(0)
             self.quest_word = self.dw[self.ask][3]
-            question = self.interface_lang['translate_word'] + ' <b>' + self.quest_word + '</b>'
+            question = f'{self.interface_lang['translate_word']} <b>{self.quest_word}</b>'
             self.clear()
-            label_q = QtWidgets.QLabel('<center>'+question+'</center>')
+            label_q = QtWidgets.QLabel(f'<center>{question}</center>')
             self.vtop_t.addWidget(label_q)
             self.ent = QtWidgets.QLineEdit('', self)
             self.ent.setFocus()
