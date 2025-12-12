@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#v4
 # pylint: disable=C0115, C0103, C0116, C0321, C0301, C0410, C0114
 # pylint: disable=W0201
 # pylint: disable=R0914, R0902, R0904
@@ -12,9 +11,9 @@ from languages.de_language import MyWindowD
 from menulanguages import MenuLanguages
 from sql_handler.sql_handler import SqlHandler
 from utils.utils import first_screensaver
-from utils.utils import get_columns
-from utils.utils import get_part_names
-from utils.utils import get_page
+# from utils.utils import get_columns
+# from utils.utils import get_part_names
+# from utils.utils import get_page
 from utils.logger import logger
 
 
@@ -40,8 +39,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sql_handler = SqlHandler(self.bases)
         self.check_db()
         self.count = 1
-        self.sort = 1
-        self.view_page = False
         self.set_screen_saver(self.interface_lang["set_lang"])
         menu_bar = self.menuBar()
         self.make_menu(menu_bar)
@@ -78,7 +75,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.count != 1:
             my_view.clear()
             my_view.addAction(self.interface_lang['short_view'], self.win.dict_view)
-            my_view.addAction('&' + self.interface_lang['full_view'], self.sort_all)
+            my_view.addAction('&' + self.interface_lang['full_view'], self.win.sort_all)
             my_view.addAction(self.interface_lang['view_cards'], self.win.cards_mode)
         my_view.addAction(self.interface_lang['view_log'], self.view_logfile)
 
@@ -87,14 +84,14 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self.check_change():
                 return
         if variant == 'en':
-            self.win = MyWindowE(desktop, self.app_dir, self.interface_lang, self.sql_handler)
+            self.win = MyWindowE(desktop, self.app_dir, self.interface_lang, self.sql_handler, variant)
             self.lang = variant
             self.lang_index = 1
             flag_path = os.path.join(self.images_path, 'gb_16.png')
             self.screen_path = os.path.join(self.images_path, 'Dic_eng_148.png')
             self.open_dict(self.lang_index)
         else:
-            self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler)
+            self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler, variant)
             self.lang = variant
             self.lang_index = 2
             flag_path = os.path.join(self.images_path, 'de_16.png')
@@ -156,10 +153,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.clear_status_bar()
         match self.lang:
             case 'en':
-                self.win = MyWindowE(desktop, self.app_dir, self.interface_lang, self.sql_handler)
+                self.win = MyWindowE(desktop, self.app_dir, self.interface_lang, self.sql_handler, self.lang)
                 self.lang_index = 1
             case 'de':
-                self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler)
+                self.win = MyWindowD(desktop, self.app_dir, self.interface_lang, self.sql_handler, self.lang)
                 self.lang_index = 2
         self.open_dict_background(self.lang_index)
         self.set_status_bar()
@@ -205,116 +202,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.win.check_save_values:
             self.win.save_dict()
             self.open_dict_background(self.lang_index)
-
-    def sort_all(self):
-        def sa_close():
-            sort_widget.close()
-            self.view_all()
-
-        def choose_page():
-            self.view_page = True
-            page = sp_box.value()
-            self.start_page = (page-1) * 40
-            sa_close()
-
-        def sort_choose():
-            index = cb_sa.currentIndex()
-            if index == 0:
-                self.sort = 1
-                sa_close()
-            elif index == 1:
-                self.sort = 0
-                sa_close()
-            elif index == 2:
-                if self.win.page_max < 2:
-                    text = self.interface_lang['warn_not_enough_word_view']
-                    QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'], text)
-                    return
-                cb_sa.setEnabled(False)
-                sp_box.setRange(1, self.win.page_max)
-                sort_widget_vbox.insertWidget(2, sp_box)
-                btn.clicked.connect(choose_page)
-            elif index == 3:
-                if len(self.win.dw) <= 40:
-                    self.start_page = 0
-                else:
-                    self.start_page = len(self.win.dw) - 40
-                self.view_page = True
-                sa_close()
-        sort_widget = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-        sort_widget.setWindowTitle(self.interface_lang['select_display'])
-        sort_widget.resize(250, 80)
-        sort_widget.setWindowModality(QtCore.Qt.WindowModal)
-        sort_widget_vbox = QtWidgets.QVBoxLayout()
-        sort_widget_vbox.addWidget(QtWidgets.QLabel(self.interface_lang['select_mode_sort']))
-        cb_sa = QtWidgets.QComboBox()
-        cb_sa.addItems([self.interface_lang['mode_alphabet'],
-                        self.interface_lang['mode_page_by_page'],
-                        self.interface_lang['mode_page'],
-                        self.interface_lang['mode_last_40']])
-        sp_box = QtWidgets.QSpinBox()
-        sort_widget_vbox.addWidget(cb_sa)
-        btn = QtWidgets.QPushButton('Ok')
-        btn.clicked.connect(sort_choose)
-        sort_widget_vbox.addWidget(btn)
-        sort_widget.setLayout(sort_widget_vbox)
-        sort_widget.show()
-
-    def view_all(self):
-        if not self.win.dw:
-            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                          self.interface_lang['dict_empty'])
-            return
-        tabview = QtWidgets.QWidget(parent=window, flags=QtCore.Qt.Window)
-        tabview.setWindowTitle(self.interface_lang['dict'] + ' ' + self.lang)
-        sti = QtGui.QStandardItemModel(parent = tabview)
-        part_names = get_part_names(MenuLanguages.part_keys, self.interface_lang)
-        if not self.view_page:
-            columns = get_columns(self.win.dw, self.lang_index, part_names)
-        else:
-            page_dictionary = get_page(self.win.dw, self.start_page)
-            columns = get_columns(page_dictionary, self.lang_index, part_names)
-            self.view_page = False
-        headers = ['', self.interface_lang['word'],
-                   self.interface_lang['phonetics'] if self.lang_index ==1 else self.interface_lang['article'],
-                   self.interface_lang['translation'],
-                   self.interface_lang['verb_forms'],
-                   self.interface_lang['plural'],
-                   self.interface_lang['part_of_speech']]
-        sti.setHorizontalHeaderLabels(headers)
-        for row in range(0, len(columns[0])):
-            id = QtGui.QStandardItem(columns[0][row])
-            word = QtGui.QStandardItem(columns[1][row])
-            phonetic_article = QtGui.QStandardItem(columns[2][row])
-            translate = QtGui.QStandardItem(columns[3][row])
-            form = QtGui.QStandardItem(columns[4][row])
-            plural = QtGui.QStandardItem(columns[5][row])
-            part_name = QtGui.QStandardItem(columns[6][row])
-            sti.appendRow([id, word, phonetic_article, translate, form, plural, part_name])
-        vbox = QtWidgets.QVBoxLayout()
-        tv = QtWidgets.QTableView()
-        tv.setModel(sti)
-        tv.sortByColumn(self.sort, QtCore.Qt.AscendingOrder)
-        tv.hideColumn(0)
-        col_word, col_translate, col_form, col_part = 160, 300, 180, 120
-        if self.lang == 'de':
-            col_phonetic_article, col_plural = 50, 50
-        else:
-            col_phonetic_article, col_plural =  100, 160
-        for i, n in ((1, col_word),
-                     (2, col_phonetic_article),
-                     (3, col_translate),
-                     (4, col_form),
-                     (5, col_plural),
-                     (6, col_part)):
-            tv.setColumnWidth(i, n)
-        vbox.addWidget(tv)
-        btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
-        btn_close.clicked.connect(tabview.close)
-        vbox.addWidget(btn_close)
-        tabview.setLayout(vbox)
-        tabview.resize(1080, 350)
-        tabview.show()
 
     def view_logfile(self):
         fp = os.path.join(self.app_dir, 'vokabelheftlogfile')
