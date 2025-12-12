@@ -644,6 +644,17 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.start_page = (page-1) * 40
             sa_close()
 
+        def pagination():
+            index = cb_sa.currentIndex()
+            if index == 2:
+                if self.page_max < 2:
+                    text = self.interface_lang['warn_not_enough_word_view']
+                    QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'], text)
+                    return
+                cb_sa.setEnabled(False)
+                sp_box.setRange(1, self.page_max)
+                sort_widget_vbox.insertWidget(2, sp_box)
+
         def sort_choose():
             index = cb_sa.currentIndex()
             if index == 0:
@@ -653,14 +664,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
                 self.sort = 0
                 sa_close()
             elif index == 2:
-                if self.page_max < 2:
-                    text = self.interface_lang['warn_not_enough_word_view']
-                    QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'], text)
-                    return
-                cb_sa.setEnabled(False)
-                sp_box.setRange(1, self.page_max)
-                sort_widget_vbox.insertWidget(2, sp_box)
-                btn.clicked.connect(choose_page)
+                choose_page()
             elif index == 3:
                 if len(self.dw) <= 40:
                     self.start_page = 0
@@ -679,6 +683,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
                         self.interface_lang['mode_page_by_page'],
                         self.interface_lang['mode_page'],
                         self.interface_lang['mode_last_40']])
+        cb_sa.currentIndexChanged.connect(pagination)
         sp_box = QtWidgets.QSpinBox()
         sort_widget_vbox.addWidget(cb_sa)
         btn = QtWidgets.QPushButton('Ok')
