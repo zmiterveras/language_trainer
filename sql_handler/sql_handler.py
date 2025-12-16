@@ -99,19 +99,37 @@ class SqlHandler:
     def is_db_available(self):
         return True if os.path.exists(self.database) else False
 
-    def add_record(self, new_name: list):
+    def add_record(self, new_rec: list):
         connect, query = self.connect_db()
         query_add_records = '''insert into dictionary values (null, :word, :phonetic, :article, :translate, :form,
                                                             :plural, :part, :language)'''
         query.prepare(query_add_records)
-        query.bindValue(':word', new_name[0])
-        query.bindValue(':phonetic', new_name[1])
-        query.bindValue(':article', new_name[2])
-        query.bindValue(':translate', new_name[3])
-        query.bindValue(':form', new_name[4])
-        query.bindValue(':plural', new_name[5])
-        query.bindValue(':part', new_name[6])
-        query.bindValue(':language', new_name[7])
+        query.bindValue(':word', new_rec[0])
+        query.bindValue(':phonetic', new_rec[1])
+        query.bindValue(':article', new_rec[2])
+        query.bindValue(':translate', new_rec[3])
+        query.bindValue(':form', new_rec[4])
+        query.bindValue(':plural', new_rec[5])
+        query.bindValue(':part', new_rec[6])
+        query.bindValue(':language', new_rec[7])
+        query.exec_()
+        connect.close()
+        
+    def update_record(self, updated_rec: list):
+        connect, query = self.connect_db()
+        query_change_records = '''update dictionary set word=:word, phonetic=:phonetic, article=:article,
+                                    translate=:translate, form=:form, plural=:plural, part=:part, language=:language
+                                    where id=:id'''
+        query.prepare(query_change_records)
+        query.bindValue(':word', updated_rec[1])
+        query.bindValue(':phonetic', updated_rec[2])
+        query.bindValue(':article', updated_rec[3])
+        query.bindValue(':translate', updated_rec[4])
+        query.bindValue(':form', updated_rec[5])
+        query.bindValue(':plural', updated_rec[6])
+        query.bindValue(':part', updated_rec[7])
+        query.bindValue(':language', updated_rec[8])
+        query.bindValue(':id', updated_rec[0])
         query.exec_()
         connect.close()
 

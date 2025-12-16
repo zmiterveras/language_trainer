@@ -63,13 +63,10 @@ class MyWindowE(MyWindowLanguage):
                 if flag == 1:
                     if word != value_k_old:
                         val_id = self.dw[value_k_old][0]
-                        del self.dw[value_k_old]
                     else:
                         val_id = self.dw[word][0]
-                    self.dw[word] = [val_id] + new_rec[1:]
                     txt = self.interface_lang['changed_word']
-                    for i, name in enumerate([val_id] + new_rec):
-                        self.change_note[i].append(name)
+                    self.sql_handler.update_record([val_id] + new_rec)
                 else:
                     txt = self.interface_lang['added_word']
                     self.sql_handler.add_record(new_rec)
