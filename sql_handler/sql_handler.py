@@ -99,6 +99,22 @@ class SqlHandler:
     def is_db_available(self):
         return True if os.path.exists(self.database) else False
 
+    def add_record(self, new_name: list):
+        connect, query = self.connect_db()
+        query_add_records = '''insert into dictionary values (null, :word, :phonetic, :article, :translate, :form,
+                                                            :plural, :part, :language)'''
+        query.prepare(query_add_records)
+        query.bindValue(':word', new_name[0])
+        query.bindValue(':phonetic', new_name[1])
+        query.bindValue(':article', new_name[2])
+        query.bindValue(':translate', new_name[3])
+        query.bindValue(':form', new_name[4])
+        query.bindValue(':plural', new_name[5])
+        query.bindValue(':part', new_name[6])
+        query.bindValue(':language', new_name[7])
+        query.exec_()
+        connect.close()
+
     def delete_record(self, rec_id: int):
         connect, query = self.connect_db()
         query.prepare('delete from dictionary where id=:rec_id')
