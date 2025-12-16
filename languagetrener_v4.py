@@ -112,7 +112,6 @@ class MainWindow(QtWidgets.QMainWindow):
             if flag == 1:
                 self.win.label_amount.setText(self.lang)
                 self.win.status.setText('')
-                self.win.saveValues()
                 self.win.dw = {}
             else:
                 self.clear_status_bar()
@@ -195,11 +194,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.vtop_t.addWidget(label_screen)
         self.win.label_amount.setText(self.lang)
 
-    def update_dict(self):
-        if self.win.check_save_values:
-            self.win.save_dict()
-            self.open_dict_background(self.lang_index)
-
     def view_logfile(self):
         fp = os.path.join(self.app_dir, 'vokabelheftlogfile')
         if not os.path.exists(fp):
@@ -245,8 +239,6 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(None, self.interface_lang['about_me'], text)
 
     def closeEvent(self, event):
-        if hasattr(self.win, 'save_dict'):
-            self.win.save_dict()
         event.accept()
         QtWidgets.QWidget.closeEvent(self, event)
         

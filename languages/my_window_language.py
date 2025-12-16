@@ -38,7 +38,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.wd = os.path.join(self.root_dir, 'images')
         self.status = QtWidgets.QLabel()
         self.make_widget()
-        self.save_values()
+        self.save_values() # delete
         self.set_status_widget()
 
     def set_status_widget(self):
@@ -50,7 +50,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         status_box.addWidget(self.label_flag)
         self.status_widget.setLayout(status_box)
 
-    def save_values(self):
+    def save_values(self): # delete
         self.new_name = [[], [], [], [], [], [], [], []]
         self.del_name = []
         self.change_note = [[], [], [], [], [], [], [], [], []]
@@ -78,17 +78,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.vbox.addLayout(self.vtop)
         self.vbox.addLayout(self.hbox)
         self.setLayout(self.vbox)
-
-    def save_dict(self):
-        if not self.check_save_values():
-            return
-        self.sql_handler.save_dict(self.del_name, self.new_name, self.change_note)
-        self.save_values()
-        
-    def check_save_values(self):
-        if self.new_name[0] or self.change_note[0] or self.del_name:
-            return True
-        return False
 
     def clear(self):
         for i in reversed(range(self.vtop_t.count())):

@@ -54,47 +54,6 @@ class SqlHandler:
             dictionary[row[1]] = [row[0], row[2], row[3], row[4], row[5], row[6]]
         conn.close()
         return dictionary
-
-    def save_dict(self, del_names: list, new_name: list, change_note: list):
-        connect, query = self.connect_db()
-        # удаление
-        if del_names:
-            query.prepare('delete from dictionary where id=:i')
-            query.bindValue(':i', del_names)
-            query.execBatch()
-            query.clear()
-        # добавление
-        if new_name[0]:
-            query_add_records = '''insert into dictionary values (null, :word, :phonetic, :article, :translate, :form,
-                                                    :plural, :part, :language)'''
-            query.prepare(query_add_records)
-            query.bindValue(':word', new_name[0])
-            query.bindValue(':phonetic', new_name[1])
-            query.bindValue(':article', new_name[2])
-            query.bindValue(':translate', new_name[3])
-            query.bindValue(':form', new_name[4])
-            query.bindValue(':plural', new_name[5])
-            query.bindValue(':part', new_name[6])
-            query.bindValue(':language', new_name[7])
-            query.execBatch()
-            query.clear()
-        # изменение
-        if change_note[0]:
-            query_change_records = '''update dictionary set word=:word, phonetic=:phonetic, article=:article,
-                            translate=:translate, form=:form, plural=:plural, part=:part, language=:language
-                            where id=:id'''
-            query.prepare(query_change_records)
-            query.bindValue(':word', change_note[1])
-            query.bindValue(':phonetic', change_note[2])
-            query.bindValue(':article', change_note[3])
-            query.bindValue(':translate', change_note[4])
-            query.bindValue(':form', change_note[5])
-            query.bindValue(':plural', change_note[6])
-            query.bindValue(':part', change_note[7])
-            query.bindValue(':language', change_note[8])
-            query.bindValue(':id', change_note[0])
-            query.execBatch()
-        connect.close()
         
     def is_db_available(self):
         return True if os.path.exists(self.database) else False
