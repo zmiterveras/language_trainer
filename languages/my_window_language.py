@@ -626,7 +626,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
                                           self.interface_lang['warn_not_selected_record'])
             return
         key = key.split("\n")[0]
-        self.del_name.append(self.dw[key][0])
+        self.sql_handler.delete_record(self.dw[key][0])
         self.dw.pop(key)
         QtWidgets.QMessageBox.information(None, self.interface_lang['info'],
                                           self.interface_lang['record_deleted'] + key)

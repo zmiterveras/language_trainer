@@ -98,3 +98,10 @@ class SqlHandler:
         
     def is_db_available(self):
         return True if os.path.exists(self.database) else False
+
+    def delete_record(self, rec_id: int):
+        connect, query = self.connect_db()
+        query.prepare('delete from dictionary where id=:rec_id')
+        query.bindValue(':rec_id', rec_id)
+        query.exec_()
+        connect.close()
