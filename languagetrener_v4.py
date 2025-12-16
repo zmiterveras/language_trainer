@@ -11,9 +11,6 @@ from languages.de_language import MyWindowD
 from menulanguages import MenuLanguages
 from sql_handler.sql_handler import SqlHandler
 from utils.utils import first_screensaver
-# from utils.utils import get_columns
-# from utils.utils import get_part_names
-# from utils.utils import get_page
 from utils.logger import logger
 
 
