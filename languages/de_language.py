@@ -88,24 +88,23 @@ class MyWindowD(MyWindowLanguage):
                     QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                                   self.interface_lang['warn_word_in_dict'])
                     return
-                dcont = [word, "", article, translation, verb_forms, plural, part_of_speech_index, 2]
+                new_rec = [word, "", article, translation, verb_forms, plural, part_of_speech_index, 2]
                 if flag == 1:
                     if word != value_k_old:
                         val_id = self.dw[value_k_old][0]
                         del self.dw[value_k_old]
                     else:
                         val_id = self.dw[word][0]
-                    self.dw[word] = [val_id] + dcont[1:]
+                    self.dw[word] = [val_id] + new_rec[1:]
                     txt = self.interface_lang['changed_word']
-                    for i, name in enumerate([val_id] + dcont):
+                    for i, name in enumerate([val_id] + new_rec):
                         self.change_note[i].append(name)
                 else:
                     txt = self.interface_lang['added_word']
-                    self.dw[word] = [None] + dcont[1:]
-                    for j, n in enumerate(dcont):
-                        self.new_name[j].append(n)
+                    self.sql_handler.add_record(new_rec)
                 QtWidgets.QMessageBox.information(None, self.interface_lang['info'], txt + word)
                 self.clear()
+                self.update_dict(2)
                 self.edit_dict()
                 tla.close()
 

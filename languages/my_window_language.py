@@ -99,6 +99,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
             wb = self.htop_b.itemAt(i).widget()
             wb.setParent(None)
             wb.deleteLater()
+            
+    def update_dict(self, language: int):
+        self.dw = self.sql_handler.open_db(language)
 
     def dict_view(self, flag=None):
         place = self.vtop_t
