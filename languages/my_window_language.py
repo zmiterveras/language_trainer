@@ -38,7 +38,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.wd = os.path.join(self.root_dir, 'images')
         self.status = QtWidgets.QLabel()
         self.make_widget()
-        self.save_values() # delete
         self.set_status_widget()
 
     def set_status_widget(self):
@@ -49,11 +48,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
         status_box.addWidget(self.label_amount)
         status_box.addWidget(self.label_flag)
         self.status_widget.setLayout(status_box)
-
-    def save_values(self): # delete
-        self.new_name = [[], [], [], [], [], [], [], []]
-        self.del_name = []
-        self.change_note = [[], [], [], [], [], [], [], [], []]
 
     def make_widget(self):
         self.vbox = QtWidgets.QVBoxLayout()
@@ -234,24 +228,19 @@ class MyWindowLanguage(QtWidgets.QWidget):
         def sort(x, flag=None):
             def sort_id(item):
                 return item[0]
-            if (len(self.new_name[0]) + len(list(self.dw.keys()))) < x+1:
+            if len(list(self.dw.keys())) < x+1:
                 QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                               self.interface_lang['warn_not_enough_word_for_mode'])
-            old_list = []
+            sorted_key_list = []
             for key in list(self.dw.keys()):
-                if self.dw[key][0] != None:
-                    old_list.append((self.dw[key][0], key))
-            old_list.sort(key=sort_id)
+                sorted_key_list.append((self.dw[key][0], key))
+            sorted_key_list.sort(key=sort_id)
             if not flag:
-                if len(self.new_name[0]) >= x:
-                    self.dw_key = self.new_name[0][-x:]
-                else:
-                    self.dw_key = self.new_name[0]
-                    for item in old_list[-(x-len(self.new_name[0])):]:
-                        self.dw_key.append(item[1])
+                for item in sorted_key_list[-x:]:
+                    self.dw_key.append(item[1])
             else:
                 start = (self.page - 1)*40
-                for item in old_list[start:start+40]:
+                for item in sorted_key_list[start:start+40]:
                     self.dw_key.append(item[1])
 
         self.dw_key = []

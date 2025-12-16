@@ -65,7 +65,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def make_my_menu(self, my_menu):
         if self.count != 1:
             my_menu.clear()
-            my_menu.addAction(self.interface_lang['save'], self.win.save_dict)
         my_menu.addAction('&' + self.interface_lang['close'], self.close)
 
     def make_my_view(self, my_view):
