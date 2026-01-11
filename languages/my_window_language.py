@@ -13,6 +13,7 @@ from utils.utils import simple_view
 from utils.utils import get_part_names
 from utils.utils import get_columns
 from utils.utils import get_page
+from utils.utils import get_irregular_verbs
 from menulanguages import MenuLanguages
 
 
@@ -28,7 +29,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.sql_handler = sql_handler
         self.key_part_of_speech = MenuLanguages.part_keys
         self.name_part_of_speech = [self.interface_lang[item] for item in MenuLanguages.part_keys]
-        self.view_page = False
+        self.view_mode = None
         self.sort = 0
         self.search_flag = 0
         self.cards_flag = 0
@@ -620,7 +621,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.view_all()
 
         def choose_page():
-            self.view_page = True
+            self.view_mode = 'page'
             page = sp_box.value()
             self.start_page = (page-1) * 40
 
@@ -648,7 +649,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
                     self.start_page = 0
                 else:
                     self.start_page = len(self.dw) - 40
-                self.view_page = True
+                self.view_mode = 'page'
+            elif index ==4:
+                self.view_mode = 'verbs'
             sa_close()
         sort_widget = QtWidgets.QWidget(parent=None, flags=QtCore.Qt.Window)
         sort_widget.setWindowTitle(self.interface_lang['select_display'])
@@ -660,7 +663,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
         cb_sa.addItems([self.interface_lang['mode_page_by_page'],
                         self.interface_lang['mode_alphabet'],
                         self.interface_lang['mode_page'],
-                        self.interface_lang['mode_last_40']])
+                        self.interface_lang['mode_last_40'],
+                        self.interface_lang['irregular_verbs']])
         cb_sa.currentIndexChanged.connect(pagination)
         sp_box = QtWidgets.QSpinBox()
         sort_widget_vbox.addWidget(cb_sa)
@@ -673,6 +677,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
     def view_all(self):
         def close_tabview():
             self.sort = 0
+            self.view_mode = None
             tabview.close()
             
         if not self.dw:
@@ -680,22 +685,30 @@ class MyWindowLanguage(QtWidgets.QWidget):
                                           self.interface_lang['dict_empty'])
             return
         tabview = QtWidgets.QWidget(parent=self, flags=QtCore.Qt.Window)
-        tabview.setWindowTitle(self.interface_lang['dict'] + ' ' + self.lang)
+        tabview.setWindowTitle(f'{self.interface_lang['dict']} {self.lang}')
         sti = QtGui.QStandardItemModel(parent = tabview)
-        part_names = get_part_names(self.key_part_of_speech, self.interface_lang)
-        if not self.view_page:
-            columns = get_columns(self.dw, self.lang_index, part_names)
-        else:
-            page_dictionary = get_page(self.dw, self.start_page)
-            columns = get_columns(page_dictionary, self.lang_index, part_names)
-            self.view_page = False
         headers = ['', self.interface_lang['word'],
-                   self.interface_lang['phonetics'] if self.lang_index ==1 else self.interface_lang['article'],
+                   self.interface_lang['phonetics'] if self.lang_index == 1 else self.interface_lang['article'],
                    self.interface_lang['translation'],
                    self.interface_lang['verb_forms'],
                    self.interface_lang['plural'],
                    self.interface_lang['part_of_speech']]
         sti.setHorizontalHeaderLabels(headers)
+        tv = QtWidgets.QTableView()
+        tv.setModel(sti)
+        tv.hideColumn(0)
+        part_names = get_part_names(self.key_part_of_speech, self.interface_lang)
+        match self.view_mode:
+            case 'page':
+                page_dictionary = get_page(self.dw, self.start_page)
+                columns = get_columns(page_dictionary, self.lang_index, part_names)
+            case 'verbs':
+                irregular_verbs = get_irregular_verbs(self.dw)
+                columns = get_columns(irregular_verbs, self.lang_index, part_names)
+                for col_numb in (2, 5, 6):
+                    tv.hideColumn(col_numb)
+            case _:
+                columns = get_columns(self.dw, self.lang_index, part_names)
         for row in range(0, len(columns[0])):
             id = QtGui.QStandardItem(columns[0][row])
             word = QtGui.QStandardItem(columns[1][row])
@@ -706,10 +719,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             part_name = QtGui.QStandardItem(columns[6][row])
             sti.appendRow([id, word, phonetic_article, translate, form, plural, part_name])
         vbox = QtWidgets.QVBoxLayout()
-        tv = QtWidgets.QTableView()
-        tv.setModel(sti)
         tv.sortByColumn(self.sort, QtCore.Qt.AscendingOrder)
-        tv.hideColumn(0)
         col_word, col_translate, col_form, col_part = 160, 300, 180, 120
         if self.lang == 'de':
             col_phonetic_article, col_plural = 50, 50
