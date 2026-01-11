@@ -29,7 +29,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.key_part_of_speech = MenuLanguages.part_keys
         self.name_part_of_speech = [self.interface_lang[item] for item in MenuLanguages.part_keys]
         self.view_page = False
-        self.sort = 1
+        self.sort = 0
         self.search_flag = 0
         self.cards_flag = 0
         self.search_key = 0
@@ -623,7 +623,6 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.view_page = True
             page = sp_box.value()
             self.start_page = (page-1) * 40
-            sa_close()
 
         def pagination():
             index = cb_sa.currentIndex()
@@ -639,11 +638,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
         def sort_choose():
             index = cb_sa.currentIndex()
             if index == 0:
-                self.sort = 1
-                sa_close()
+                self.sort = index
             elif index == 1:
-                self.sort = 0
-                sa_close()
+                self.sort = index
             elif index == 2:
                 choose_page()
             elif index == 3:
@@ -652,7 +649,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
                 else:
                     self.start_page = len(self.dw) - 40
                 self.view_page = True
-                sa_close()
+            sa_close()
         sort_widget = QtWidgets.QWidget(parent=None, flags=QtCore.Qt.Window)
         sort_widget.setWindowTitle(self.interface_lang['select_display'])
         sort_widget.resize(250, 80)
@@ -660,8 +657,8 @@ class MyWindowLanguage(QtWidgets.QWidget):
         sort_widget_vbox = QtWidgets.QVBoxLayout()
         sort_widget_vbox.addWidget(QtWidgets.QLabel(self.interface_lang['select_mode_sort']))
         cb_sa = QtWidgets.QComboBox()
-        cb_sa.addItems([self.interface_lang['mode_alphabet'],
-                        self.interface_lang['mode_page_by_page'],
+        cb_sa.addItems([self.interface_lang['mode_page_by_page'],
+                        self.interface_lang['mode_alphabet'],
                         self.interface_lang['mode_page'],
                         self.interface_lang['mode_last_40']])
         cb_sa.currentIndexChanged.connect(pagination)
@@ -674,6 +671,10 @@ class MyWindowLanguage(QtWidgets.QWidget):
         sort_widget.show()
 
     def view_all(self):
+        def close_tabview():
+            self.sort = 0
+            tabview.close()
+            
         if not self.dw:
             QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                           self.interface_lang['dict_empty'])
@@ -723,7 +724,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             tv.setColumnWidth(i, n)
         vbox.addWidget(tv)
         btn_close = QtWidgets.QPushButton(self.interface_lang['close'])
-        btn_close.clicked.connect(tabview.close)
+        btn_close.clicked.connect(close_tabview)
         vbox.addWidget(btn_close)
         tabview.setLayout(vbox)
         tabview.resize(1080, 350)
