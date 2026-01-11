@@ -68,6 +68,13 @@ def page_dict(sort_dictionary, page_keys):
         page_dictionary[key] = sort_dictionary[key]
     return page_dictionary
 
+def get_irregular_verbs(dictionary: dict):
+    verb_dict = {}
+    for key in dictionary.keys():
+        if dictionary[key][4] != '':
+            verb_dict[key] = dictionary[key]
+    return verb_dict
+
 class ClickedLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
 
