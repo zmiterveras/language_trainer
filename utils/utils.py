@@ -36,6 +36,20 @@ def simple_view(dictionary: dict) -> list:
         dic.append(key + word + "\n")
     return dic
 
+def training_trace_view(training_list: list):
+    RED = "\033[91m"
+    GREEN = "\033[92m"
+    RESET = "\033[0m"
+    view_list = []
+    for item in training_list:
+        if item[2] == True:
+            word = f'{GREEN}{item[1]} = {item[0]}{RESET}'
+            view_list.append(word)
+        else:
+            word = f'{RED}{item1} != {item[0]}{RESET}'
+            view_list.append(word)
+    return view_list
+
 def get_columns(dictionary: dict, lang: int, part_names: list):
     columns = [[], [], [], [], [], [], []]
     for key in dictionary.keys():
