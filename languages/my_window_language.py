@@ -36,6 +36,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.search_key = 0
         self.on_sign_flag = 0 # для немецкого для умляутов
         self.page_max = 0
+        self.training_trace_list =[]
         self.wd = os.path.join(self.root_dir, 'images')
         self.status = QtWidgets.QLabel()
         self.make_widget()
@@ -320,6 +321,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         label_true = QtWidgets.QLabel('<center><b>True</b></center>')
         label_true.setStyleSheet("color:green")
         self.vtop_t.addWidget(label_true)
+        self.training_trace_register(self.ask, self.answer, True)
         self.on_answer()
 
     def on_false_answer(self):
@@ -330,6 +332,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         label_false_answer.setStyleSheet("text-decoration:line-through")
         self.vtop_t.addWidget(label_false)
         self.vtop_t.addWidget(label_false_answer)
+        self.training_trace_register(self.ask, self.answer, False)
         self.on_answer()
 
     def on_answer(self):
@@ -359,6 +362,12 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.htop_b.addWidget(btn_stop)
         text = f'{self.interface_lang['true_answers_questions']} {str(self.t_ans_count)}/{str(self.q_count)}'
         self.label_amount.setText(text)
+        
+    def training_trace_register(self, ask: str, answer: str, result: bool):
+        self.training_trace_list.append((ask, answer, result))
+        
+    def show_training_trace(self):
+        pass
 
     def training_log(self):
         log_path = os.path.join(self.root_dir, 'vokabelheftlogfile')
