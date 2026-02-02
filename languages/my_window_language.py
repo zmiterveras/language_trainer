@@ -371,7 +371,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.training_trace_list.append((ask, answer, result))
         
     def show_training_trace(self):
-        view_list = training_trace_view(self.training_trace_list)
+        view_list = training_trace_view(self.training_trace_list, self.dw)
         self.training_trace_list = []
         self.clear()
         self.list_box(view_list, 3, self.vtop_t)
