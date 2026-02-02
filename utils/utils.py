@@ -3,6 +3,8 @@
 # pylint: disable=C0114, C0115, C0103, C0116, C0321, C0301
 # pylint: disable=W0201
 import os
+import colorama
+from colorama import Fore, Style
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 def first_screensaver(abs_path: str, text: str, flag=None):
@@ -37,16 +39,16 @@ def simple_view(dictionary: dict) -> list:
     return dic
 
 def training_trace_view(training_list: list):
-    RED = "\033[91m"
-    GREEN = "\033[92m"
-    RESET = "\033[0m"
+    # RED = "\033[91m"
+    # GREEN = "\033[92m"
+    # RESET = "\033[0m"
     view_list = []
     for item in training_list:
-        if item[2] == True:
-            word = f'{GREEN}{item[1]} = {item[0]}{RESET}'
+        if item[2]:
+            word = f'\t{item[0]}\n'
             view_list.append(word)
         else:
-            word = f'{RED}{item1} != {item[0]}{RESET}'
+            word = f'\t\u2026!{item[1]}! \u2260 {item[0]}\n'
             view_list.append(word)
     return view_list
 

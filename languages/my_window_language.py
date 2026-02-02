@@ -14,6 +14,7 @@ from utils.utils import get_part_names
 from utils.utils import get_columns
 from utils.utils import get_page
 from utils.utils import get_irregular_verbs
+from utils.utils import training_trace_view
 from menulanguages import MenuLanguages
 
 
@@ -300,6 +301,9 @@ class MyWindowLanguage(QtWidgets.QWidget):
         label_result_image.setPixmap(QtGui.QPixmap(img_path))
         label_result_image.setAlignment(QtCore.Qt.AlignCenter)
         self.vtop_t.addWidget(label_result_image)
+        btn_show_trace = QtWidgets.QPushButton('trace', self)
+        btn_show_trace.clicked.connect(self.show_training_trace)
+        self.vtop_t.addWidget(btn_show_trace)
         if self.log_flag:
             self.training_log()
 
@@ -367,7 +371,10 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.training_trace_list.append((ask, answer, result))
         
     def show_training_trace(self):
-        pass
+        view_list = training_trace_view(self.training_trace_list)
+        self.training_trace_list = []
+        self.clear()
+        self.list_box(view_list, 3, self.vtop_t)
 
     def training_log(self):
         log_path = os.path.join(self.root_dir, 'vokabelheftlogfile')
