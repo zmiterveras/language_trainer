@@ -301,7 +301,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         label_result_image.setPixmap(QtGui.QPixmap(img_path))
         label_result_image.setAlignment(QtCore.Qt.AlignCenter)
         self.vtop_t.addWidget(label_result_image)
-        btn_show_trace = QtWidgets.QPushButton('trace', self)
+        btn_show_trace = QtWidgets.QPushButton(self.interface_lang['show_training_process'])
         btn_show_trace.clicked.connect(self.show_training_trace)
         self.vtop_t.addWidget(btn_show_trace)
         if self.log_flag:
