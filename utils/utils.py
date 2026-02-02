@@ -25,16 +25,20 @@ def first_screensaver(abs_path: str, text: str, flag=None):
     widget.setLayout(central_box)
     return widget
 
+def prepare_translate_view(dictionary: dict, key: str):
+    word_full = dictionary[key][3]
+    if len(word_full) > 25:
+        word = "\n" + word_full[:25] + "..."
+    else:
+        word = "\n" + word_full
+    return word
+
 
 def simple_view(dictionary: dict) -> list:
     keys = dictionary.keys()
     dic = []
     for key in keys:
-        word_full = dictionary[key][3]
-        if len(word_full) > 15:
-            word = "\n"  + word_full[:15] + "..."
-        else:
-            word = "\n"  + word_full
+        word = prepare_translate_view(dictionary, key)
         dic.append(key + word + "\n")
     return dic
 
