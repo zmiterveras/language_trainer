@@ -49,10 +49,11 @@ class MainWindow(QtWidgets.QMainWindow):
         my_menu = menu_bar.addMenu('&' + self.interface_lang['file'])
         self.make_my_menu(my_menu)
         my_lang = menu_bar.addMenu('&' + self.interface_lang['language'])
-        my_lang.addAction('English', lambda lang='en': self.lang_choose(lang, my_menu, my_view))
-        my_lang.addAction('Deutsch', lambda lang='de': self.lang_choose(lang, my_menu, my_view))
+        my_lang.addAction('English', lambda lang='en': self.lang_choose(lang, my_menu, my_view, my_search))
+        my_lang.addAction('Deutsch', lambda lang='de': self.lang_choose(lang, my_menu, my_view, my_search))
         my_view = menu_bar.addMenu(self.interface_lang['viewing'])
         self.make_my_view(my_view)
+        my_search = menu_bar.addMenu(self.interface_lang['search'])
         my_settings = menu_bar.addMenu(self.interface_lang['settings'])
         my_settings.addSection('Menu language')
         my_settings.addAction(self.icon_eng, 'english', lambda ln='en': self.change_interface_language(ln, menu_bar, my_menu, my_view))
@@ -75,7 +76,13 @@ class MainWindow(QtWidgets.QMainWindow):
             my_view.addAction(self.interface_lang['view_cards'], self.win.cards_mode)
         my_view.addAction(self.interface_lang['view_log'], self.view_logfile)
 
-    def lang_choose(self, variant: str, my_menu, my_view):
+    def make_my_search(self, my_search):
+        if self.count != 1:
+            my_search.clear()
+            my_search.addAction(self.interface_lang['word'])
+            my_search.addAction(self.interface_lang['translation'])
+
+    def lang_choose(self, variant: str, my_menu, my_view, my_search):
         if self.count != 1:
             if not self.check_change():
                 return
@@ -98,6 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.win.btn_close.clicked.connect(self.close)
         self.make_my_menu(my_menu)
         self.make_my_view(my_view)
+        self.make_my_search(my_search)
         self.set_status_bar()
         self.win.label_flag.setPixmap(QtGui.QPixmap(flag_path))
         self.win.label_flag.setAlignment(QtCore.Qt.AlignRight)
