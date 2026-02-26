@@ -152,7 +152,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status_bar.removeWidget(self.win.status_widget)
 
     def restore_instance_state(self):
-        self.win.save_dict()
         self.clear_status_bar()
         match self.lang:
             case 'en':
