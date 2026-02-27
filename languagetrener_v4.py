@@ -54,10 +54,11 @@ class MainWindow(QtWidgets.QMainWindow):
         my_view = menu_bar.addMenu(self.interface_lang['viewing'])
         self.make_my_view(my_view)
         my_search = menu_bar.addMenu(self.interface_lang['search'])
+        self.make_my_search(my_search)
         my_settings = menu_bar.addMenu(self.interface_lang['settings'])
         my_settings.addSection('Menu language')
-        my_settings.addAction(self.icon_eng, 'english', lambda ln='en': self.change_interface_language(ln, menu_bar, my_menu, my_view))
-        my_settings.addAction(self.icon_ru, 'русский', lambda ln='ru': self.change_interface_language(ln, menu_bar, my_menu, my_view))
+        my_settings.addAction(self.icon_eng, 'english', lambda ln='en': self.change_interface_language(ln, menu_bar, my_menu, my_view, my_search))
+        my_settings.addAction(self.icon_ru, 'русский', lambda ln='ru': self.change_interface_language(ln, menu_bar, my_menu, my_view, my_search))
         my_settings.addSeparator()
         my_about = menu_bar.addMenu(self.interface_lang['about'])
         my_about.addAction(self.interface_lang['about_prog'], self.about_program)
@@ -166,13 +167,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.win)
         self.win.btn_close.clicked.connect(self.close)
 
-    def change_interface_language(self, language: str, menu_bar, my_menu, my_view):
+    def change_interface_language(self, language: str, menu_bar, my_menu, my_view, my_search):
         self.set_interface_language(language)
         menu_bar.clear()
         self.make_menu(menu_bar)
         if self.count > 1:
             self.make_my_menu(my_menu)
             self.make_my_view(my_view)
+            self.make_my_search(my_search)
             self.restore_instance_state()
         else:
             self.set_screen_saver(self.interface_lang["set_lang"])
