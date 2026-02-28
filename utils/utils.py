@@ -3,6 +3,7 @@
 # pylint: disable=C0114, C0115, C0103, C0116, C0321, C0301
 # pylint: disable=W0201
 import os
+import re
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 def first_screensaver(abs_path: str, text: str, flag=None):
@@ -89,6 +90,11 @@ def get_irregular_verbs(dictionary: dict):
         if dictionary[key][4] != '':
             verb_dict[key] = dictionary[key]
     return verb_dict
+
+def regexp_match(pattern: str, input_string: str):
+    if input_string is None:
+        return False
+    return bool(re.search(pattern, input_string))
 
 class ClickedLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
