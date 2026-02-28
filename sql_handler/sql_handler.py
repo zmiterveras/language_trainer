@@ -4,6 +4,7 @@
 import os
 import sqlite3
 from PyQt5 import QtSql
+from utils.utils import regexp_match
 
 
 class SqlHandler:
@@ -98,3 +99,9 @@ class SqlHandler:
         query.bindValue(':rec_id', rec_id)
         query.exec_()
         connect.close()
+        
+    def open_db_sqlite_reg_exp(self):
+        conn = sqlite3.connect(self.database)
+        conn.create_function('regexp', 2, regexp_match)
+        curs = conn.cursor()
+        return conn, curs
