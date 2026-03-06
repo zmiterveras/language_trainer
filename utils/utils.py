@@ -91,11 +91,6 @@ def get_irregular_verbs(dictionary: dict):
             verb_dict[key] = dictionary[key]
     return verb_dict
 
-def regexp_match(pattern: str, input_string: str):
-    if input_string is None:
-        return False
-    return bool(re.search(pattern, input_string))
-
 class ClickedLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
 
