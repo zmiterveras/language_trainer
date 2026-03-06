@@ -16,6 +16,9 @@ from utils.utils import get_page
 from utils.utils import get_irregular_verbs
 from utils.utils import training_trace_view
 from menulanguages import MenuLanguages
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 class MyWindowLanguage(QtWidgets.QWidget):
@@ -566,7 +569,29 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.on_add(None, new, flag=1)
         self.search_flag = 0
 
-    def on_search(self):
+    def on_find_word(self, value):
+        if value not in list(self.dw.keys()):
+            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                            self.interface_lang['warn_word_not_in_dict'])
+        else:
+            self.search_flag = 1
+            self.search_key = value
+            self.display_word()
+
+    def on_find_translate(self, value):
+        dict_translate = {}
+        for key in self.dw.keys():
+            if value in self.dw[key][3]:
+                dict_translate[key] = self.dw[key]
+        if dict_translate:
+            dic_translate = simple_view(dict_translate)
+            self.clear()
+            self.list_box(dic_translate, None, self.vtop_t)
+        else:
+            QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
+                                          self.interface_lang['warn_word_not_in_dict'])
+
+    def on_search(self, mode):
         self.on_sign_flag = 2
         if not self.dw:
             self.clear()
@@ -575,20 +600,18 @@ class MyWindowLanguage(QtWidgets.QWidget):
             self.on_sign_flag = 0
             return None, None
 
-        def on_find():
+        def on_start_find():
             value = self.se.text()
             if value == '':
                 QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                               self.interface_lang['warn_values_not_entered'])
             else:
-                if value not in list(self.dw.keys()):
-                    QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
-                                                  self.interface_lang['warn_word_not_in_dict'])
-                else:
-                    self.search_flag = 1
-                    self.search_key = value
-                    self.display_word()
-                    sr_close()
+                match mode:
+                    case 'word':
+                        self.on_find_word(value)
+                    case 'translate':
+                        self.on_find_translate(value)
+                sr_close()
 
         def sr_close():
             self.status.setText(text)
@@ -607,7 +630,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         srh_box = QtWidgets.QHBoxLayout()
         btn1 = QtWidgets.QPushButton(self.interface_lang['find'])
         btn2 = QtWidgets.QPushButton(self.interface_lang['close'])
-        btn1.clicked.connect(on_find)
+        btn1.clicked.connect(on_start_find)
         btn2.clicked.connect(sr_close)
         btn1.setAutoDefault(True) # enter
         self.se.returnPressed.connect(btn1.click) #enter

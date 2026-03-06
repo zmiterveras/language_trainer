@@ -137,8 +137,8 @@ class MyWindowE(MyWindowLanguage):
         tla.setLayout(form)
         tla.show()
 
-    def on_search(self):
-        sr, _ = MyWindowLanguage.on_search(self)
+    def on_search(self, mode='word'):
+        sr, _ = MyWindowLanguage.on_search(self, mode)
         if sr is None: return
         sr.show()
         

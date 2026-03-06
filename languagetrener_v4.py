@@ -81,7 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.count != 1:
             my_search.clear()
             my_search.addAction(self.interface_lang['word'], self.win.on_search)
-            my_search.addAction(self.interface_lang['translation'])
+            my_search.addAction(self.interface_lang['translation'], lambda : self.win.on_search(mode='translate'))
 
     def lang_choose(self, variant: str, my_menu, my_view, my_search):
         if self.count != 1:

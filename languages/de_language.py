@@ -11,8 +11,8 @@ from utils.parser import parser_controller
 
 class MyWindowD(MyWindowLanguage):
 
-    def on_search(self):
-        sr, srhbox = MyWindowLanguage.on_search(self)
+    def on_search(self, mode='word'):
+        sr, srhbox = MyWindowLanguage.on_search(self, mode)
         if sr is None: return
         btn_u = QtWidgets.QPushButton('ä, ö, ü, ß')
         btn_u.clicked.connect(self.fon_sign)
