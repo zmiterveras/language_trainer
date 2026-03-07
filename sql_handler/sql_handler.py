@@ -4,7 +4,6 @@
 import os
 import sqlite3
 from PyQt5 import QtSql
-from utils.utils import regexp_match
 
 
 class SqlHandler:
