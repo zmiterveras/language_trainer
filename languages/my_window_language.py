@@ -15,6 +15,7 @@ from utils.utils import get_columns
 from utils.utils import get_page
 from utils.utils import get_irregular_verbs
 from utils.utils import training_trace_view
+from utils.utils import check_word_in_string
 from menulanguages import MenuLanguages
 from logging import getLogger
 
@@ -581,7 +582,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
     def on_find_translate(self, value):
         dict_translate = {}
         for key in self.dw.keys():
-            if value in self.dw[key][3]:
+            if check_word_in_string(self.dw[key][3], value):
                 dict_translate[key] = self.dw[key]
         if dict_translate:
             dic_translate = simple_view(dict_translate)

@@ -5,6 +5,9 @@
 import os
 import re
 from PyQt5 import QtWidgets, QtCore, QtGui
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 def first_screensaver(abs_path: str, text: str, flag=None):
     widget = QtWidgets.QWidget()
@@ -90,6 +93,11 @@ def get_irregular_verbs(dictionary: dict):
         if dictionary[key][4] != '':
             verb_dict[key] = dictionary[key]
     return verb_dict
+
+def check_word_in_string(string: str, word: str):
+    pattern = f'\\b{word}\\b'
+    result = re.search(pattern, string)
+    return True if result else False
 
 class ClickedLabel(QtWidgets.QLabel):
     clicked = QtCore.pyqtSignal()
