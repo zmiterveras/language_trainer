@@ -158,8 +158,8 @@ class MyWindowD(MyWindowLanguage):
                 QtWidgets.QMessageBox.warning(None, self.interface_lang['warning'],
                                               self.interface_lang['warn_no_response'])
                 return
-            self.answer = parser_controller(self.answer, self.ask)
-            if self.answer == self.ask:
+            _answer, _ask = parser_controller(self.answer, self.ask)
+            if _answer == _ask:
                 self.t_ans_count += 1
                 self.on_true_answer()
             else:
