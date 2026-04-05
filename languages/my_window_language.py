@@ -16,6 +16,7 @@ from utils.utils import get_page
 from utils.utils import get_irregular_verbs
 from utils.utils import training_trace_view
 from utils.utils import check_word_in_string
+from utils.utils import check_training_viewing
 from menulanguages import MenuLanguages
 from logging import getLogger
 
@@ -174,7 +175,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
             key = self.search_key
         else:
             key = self.lv.currentIndex().data()
-            key = key.split("\n")[0]
+            key = check_training_viewing(key.split("\n")[0])
         phonetic_article = self.dw[key][1] if self.dw[key][7] == 1 else self.dw[key][2]
         translate = self.dw[key][3]
         form = self.dw[key][4]
@@ -381,7 +382,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         view_list = training_trace_view(self.training_trace_list, self.dw)
         self.training_trace_list = []
         self.clear()
-        self.list_box(view_list, 3, self.vtop_t)
+        self.list_box(view_list, None, self.vtop_t)
 
     def training_log(self):
         log_path = os.path.join(self.root_dir, 'vokabelheftlogfile')

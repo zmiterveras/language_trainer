@@ -44,7 +44,7 @@ def simple_view(dictionary: dict) -> list:
         dic.append(key + word + "\n")
     return dic
 
-def training_trace_view(training_list: list, dictionary: dict):
+def training_trace_view(training_list: list, dictionary: dict) -> list:
     view_list = []
     for item in training_list:
         if item[2]:
@@ -54,6 +54,12 @@ def training_trace_view(training_list: list, dictionary: dict):
             word = f'\u2026! {item[1]} !\u2026 \u2260 {item[0]}{prepare_translate_view(dictionary, item[0])}\n'
             view_list.append(word)
     return view_list
+
+def check_training_viewing(key: str) -> str:
+    if '\u2260' in key:
+        index = key.index('\u2260')
+        return key[index+1:].strip()
+    return key
 
 def get_columns(dictionary: dict, lang: int, part_names: list):
     columns = [[], [], [], [], [], [], []]
