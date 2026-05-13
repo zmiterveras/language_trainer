@@ -254,6 +254,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.sql_handler.is_db_available():
             logger.info('DB is not exist')
             self.sql_handler.create_db()
+            logger.info('DB created')
         else:
             logger.info('DB is available')
 

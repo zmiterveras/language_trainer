@@ -67,7 +67,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
         self.hbox = QtWidgets.QHBoxLayout()
         btn_names = [(self.interface_lang['viewing'],self.dict_view),
                     (self.interface_lang['training'], self.on_training_mode),
-                    (self.interface_lang['search'], self.on_search),
+                    (self.interface_lang['search'], lambda: self.on_search(mode='word')),
                     (self.interface_lang['edit'], self.edit_dict)]
         btn_list = []
         for i in btn_names:
@@ -595,6 +595,7 @@ class MyWindowLanguage(QtWidgets.QWidget):
 
     def on_search(self, mode):
         self.on_sign_flag = 2
+        logger.debug(f'searching mode is {mode}')
         if not self.dw:
             self.clear()
             self.label3 = QtWidgets.QLabel(f'<center>{self.interface_lang['dict_empty']}</center>')
