@@ -11,6 +11,7 @@ a foreign language. With exercise mode
 
 ## Languages
 * russian
+* english
 
 ## Learning languages
 * english
@@ -18,5 +19,4 @@ a foreign language. With exercise mode
 
 
 ## Requared improvement
-* improve and add interfaces languages
 * add new learnings languages
