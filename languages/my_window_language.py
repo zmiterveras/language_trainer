@@ -87,11 +87,13 @@ class MyWindowLanguage(QtWidgets.QWidget):
             wt.setParent(None)
             wt.deleteLater()
         for i in reversed(range(self.htop_b.count())):
+            if isinstance(self.htop_b.itemAt(i), QtWidgets.QSpacerItem):
+                self.htop_b.removeItem(self.htop_b.itemAt(i).spacerItem())
+                continue
             wb = self.htop_b.itemAt(i).widget()
-            if wb:
-                wb.setParent(None)
-                wb.deleteLater()
-            
+            wb.setParent(None)
+            wb.deleteLater()
+
     def update_dict(self, language: int):
         self.dw = self.sql_handler.open_db(language)
 
